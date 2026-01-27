@@ -1,0 +1,40 @@
+server:
+  port: 9600
+
+spring:
+  application:
+    name: fs01-3rd-1team-smart_apartment_management
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?serverTimezone=Asia/Seoul
+    username: sample
+    password: 1234
+  sql:
+    init:
+      encoding: UTF-8
+      mode: always
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+    defer-datasource-initialization: true
+
+  springdoc:
+    cache:
+      disabled: true              # 캐시 사용 여부
+    api-docs:
+      path: /v3/api-docs
+      groups:
+        enabled: true
+    swagger-ui:
+      enabled: true               # Swagger UI 접근 경로 => http://localhost:8080/swagger-ui/index.html
+      path: /swagger.html         # Swagger UI 추가 접근 경로 => http://localhost:8080/swagger.html
+      tags-sorter: alpha          # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+      operations-sorter: alpha    # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
