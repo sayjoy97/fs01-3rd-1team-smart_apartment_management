@@ -24,10 +24,10 @@ public class ParkingSession {
     private Vehicle vehicle; // 어떤 차량의 주차인지
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Gate entryGate; // 입차한 게이트
+    private CarGate entryCarGate; // 입차한 게이트
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Gate exitGate; // 출차한 게이트
+    private CarGate exitCarGate; // 출차한 게이트
 
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime entryAt; // 입차시간
@@ -39,18 +39,18 @@ public class ParkingSession {
     private ParkingStatus status;  // 현재 상태(IN/OUT)
 
     //입차 시
-    public static ParkingSession entry( Vehicle vehicle, Gate gate, LocalDateTime time) {
+    public static ParkingSession entry(Vehicle vehicle, CarGate carGate, LocalDateTime time) {
         ParkingSession ps = new ParkingSession();
         ps.vehicle = vehicle;
-        ps.entryGate = gate;
+        ps.entryCarGate = carGate;
         ps.entryAt = time;
         ps.status = ParkingStatus.IN;
         return ps;
     }
 
     // 출차시
-    public void exit(Gate gate, LocalDateTime time) {
-        this.exitGate = gate;
+    public void exit(CarGate carGate, LocalDateTime time) {
+        this.exitCarGate = carGate;
         this.exitAt = time;
         this.status = ParkingStatus.OUT;
     }

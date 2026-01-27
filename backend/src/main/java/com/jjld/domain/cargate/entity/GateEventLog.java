@@ -21,7 +21,7 @@ public class GateEventLog {
     private Long gateEventId; // 이벤트 로그 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Gate gate; // 발생 게이트 위치
+    private CarGate carGate; // 발생 게이트 위치
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Vehicle vehicle; // OCR결과 매핑된 차량, OCR실패시 null
