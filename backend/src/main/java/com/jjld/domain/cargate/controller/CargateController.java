@@ -33,15 +33,15 @@ public class CargateController {
 
     // 방문차량 상세정보 수정
     @PostMapping("/detail")
-    ResponseEntity<?> updateVehicleInfo(@RequestParam(name = "vehicle_id") Long vehicle_id, @RequestBody updateVehicleInfoRequest request){
-        return null;
-    }
+//    ResponseEntity<?> updateVehicleInfo(@RequestParam(name = "vehicle_id") Long vehicle_id, @RequestBody updateVehicleInfoRequest request){
+//        return null;
+//    }
 
     // 차량등록 요청
-    @PostMapping("/register")
-    ResponseEntity<?> createVehicleInfo(@RequestBody createVehicleRequest request){
-        return null;
-    }
+//    @PostMapping("/register")
+//    ResponseEntity<?> createVehicleInfo(@RequestBody createVehicleRequest request){
+//        return null;
+//    }
 
     // 차량정보 삭제
     @DeleteMapping("/delete")

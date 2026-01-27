@@ -4,6 +4,7 @@ import com.jjld.domain.elevator.entity.Enum.CallMethod;
 import com.jjld.domain.elevator.entity.Enum.Direction;
 import com.jjld.domain.elevator.entity.Enum.DoorStatus;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
+import com.jjld.domain.house.entity.House;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;

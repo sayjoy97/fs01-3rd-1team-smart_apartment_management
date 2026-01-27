@@ -27,8 +27,8 @@ public class ParkingFeecontroller {
     }
 
     // 주차 요금 설정 수정
-    @PostMapping("/charge/setting")
-    ResponseEntity<?> updateChargeSetting(@RequestBody updateChargeRequest request){
-        return null;
-    }
+//    @PostMapping("/charge/setting")
+//    ResponseEntity<?> updateChargeSetting(@RequestBody updateChargeRequest request){
+//        return null;
+//    }
 }

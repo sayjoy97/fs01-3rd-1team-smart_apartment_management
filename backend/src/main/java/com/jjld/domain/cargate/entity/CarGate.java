@@ -8,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "gate")
+@Table(name = "car_gate")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Gate {
+public class CarGate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
