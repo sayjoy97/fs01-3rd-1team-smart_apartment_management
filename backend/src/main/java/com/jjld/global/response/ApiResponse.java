@@ -25,7 +25,7 @@ public class ApiResponse<T> {
     }
 
     // 성공 + 데이터 없이 반환
-    // (등록, 삭제 등 <- 이런 경우에도 String으로 데이터를 보내고 싶으면 위에 거 사용)
+    // (등록, 수정, 삭제 등 <- 이런 경우에도 String으로 데이터를 보내고 싶으면 위에 거 사용)
     public static ApiResponse<?> success() {
         return new ApiResponse<>(true, null, null);
     }

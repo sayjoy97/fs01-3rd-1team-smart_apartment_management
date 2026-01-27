@@ -1,5 +1,6 @@
 package com.jjld.global.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.jjld.global.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 우리가 만든 비즈니스 예외 처리
+    // 우리가 만들 비즈니스 예외 처리
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<?> handleBusinessException(BusinessException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -32,14 +33,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error("VALIDATION_FAILED", message));
+        // 지금 코드는 첫 번째 오류만 볼 수 있음
+        // 모든 오류를 볼 수 있게 할 수 있지만 메시지가 길어질 수 있음
+        // 상의 필요
     }
 
-    // JSON 형식 오류
+    // JSON / ENUM 형식 오류
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleBadRequest() {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error("INVALID_REQUEST", "요청 형식이 올바르지 않습니다."));
+    public ResponseEntity<?> handleJsonParseException(HttpMessageNotReadableException e) {
+        if (e.getCause() instanceof InvalidFormatException ex &&
+                ex.getTargetType().isEnum()) {
+
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("INVALID_ENUM_VALUE",
+                            "요청한 enum 값이 올바르지 않습니다."));
+        }
+
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error("INVALID_JSON",
+                        "요청 본문 형식이 올바르지 않습니다."));
+        // .status(HttpStatus.BAD_REQUEST)와 차이
+        // num으로 관리할 경우 .status()가 좋음
+        // 하지만 고정 에러인 경우 .badRequest()쓴다고 함
+        // -> 에러코드 enum 기반 = status()
+        // -> 고정 에러 = badRequest()
     }
 
     // 모든 예외의 마지막 처리
@@ -51,7 +68,6 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(
                         ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
-                        ErrorCode.INTERNAL_SERVER_ERROR.getMessage()
-                ));
+                        ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
     }
 }

@@ -37,7 +37,7 @@ public class Admin {
     private String adminEmail;  // 이메일
 
     @Column(nullable = false)
-    private Boolean state;  // 로그인 상태 (true=로그인, false=로그아웃)
+    private Boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

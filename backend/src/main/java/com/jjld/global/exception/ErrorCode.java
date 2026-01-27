@@ -11,20 +11,20 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    // HttpStatus 뒤에 쓸 값들 예시--------------------------------------------------
+    // HttpStatus 뒤에 쓸 값들 예시 --------------------------------------------------
     //
     // 400번대 - 클라이언트 측 실수
-    // 400 BAD_REQUEST ---------- 요청 형식/값이 잘못됨 (JSON 형식 오류, 필수값 누락)
-    // 401 UNAUTHORIZED --------- 인증 안 됨 (로그인 안 한 사용자가 접근)
-    // 403 FORBIDDEN ------------ 인증은 됐지만 권한 없음 (일반 사용자가 관리자 API 호출)
-    // 404 NOT_FOUND ------------ 리소스 없음 (존재하지 않는 사용자 조회)
-    // 409 CONFLICT ------------- 데이터 충돌 (중복 아이디 회원가입)
-    // 422 UNPROCESSABLE_ENTITY - 값은 있지만 규칙 위반 (비밀번호 길이 부족)
+    // 400 BAD_REQUEST ------------ 요청 형식/값이 잘못됨 (JSON 형식 오류, 필수값 누락)
+    // 401 UNAUTHORIZED ----------- 인증 안 됨 (로그인 안 한 사용자가 접근)
+    // 403 FORBIDDEN -------------- 인증은 됐지만 권한 없음 (일반 사용자가 관리자 API 호출)
+    // 404 NOT_FOUND -------------- 리소스 없음 (존재하지 않는 사용자 조회)
+    // 409 CONFLICT --------------- 데이터 충돌 (중복 아이디 회원가입)
+    // 422 UNPROCESSABLE_ENTITY --- 값은 있지만 규칙 위반 (비밀번호 길이 부족)
     //
     // 500번대 - 서버 측 실수
-    // 500 INTERNAL_SERVER ----- 서버 내부 오류 (NullPointer, DB 장애)
-    // 503 SERVICE_UNAVAILABLE - 서버 일시적 장애 (서버 점검 중)
-    // ----------------------------------------------------------------------------
+    // 500 INTERNAL_SERVER ------- 서버 내부 오류 (NullPointer, DB 장애)
+    // 503 SERVICE_UNAVAILABLE --- 서버 일시적 장애 (서버 점검 중)
+    // -----------------------------------------------------------------------------
 
     // 공통
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "잘못된 요청입니다."),
