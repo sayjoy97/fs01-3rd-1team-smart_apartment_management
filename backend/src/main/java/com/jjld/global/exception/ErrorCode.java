@@ -32,6 +32,7 @@ public enum ErrorCode {
 
     // Admin
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND, "ADMIN_NOT_FOUND", "관리자를 찾을 수 없습니다."),
+    DUPLICATE_ADMIN_LOGIN_ID(HttpStatus.CONFLICT, "DUPLICATE_ADMIN_LOGIN_ID", "이미 사용 중인 관리자 아이디입니다."),
 
     // Alarm
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM_NOT_FOUND", "알람을 찾을 수 없습니다."),

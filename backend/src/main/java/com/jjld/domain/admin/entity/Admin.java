@@ -36,8 +36,8 @@ public class Admin {
     @Column(nullable = false, length = 100)
     private String adminEmail;  // 이메일
 
-    @Column(nullable = false)
-    private Boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -46,4 +46,13 @@ public class Admin {
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime createdAt;  // 생성일
+
+    public Admin(String adminLoginId, String adminPass, String adminName, String adminPhone, String adminEmail, AdminRole adminRole) {
+        this.adminLoginId = adminLoginId;
+        this.adminPass = adminPass;
+        this.adminName = adminName;
+        this.adminPhone = adminPhone;
+        this.adminEmail = adminEmail;
+        this.adminRole = adminRole;
+    }
 }
