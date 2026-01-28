@@ -10,20 +10,22 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "gate_event_log")
+@Table(name = "cargate_event_log")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GateEventLog {
+public class CargateEventLog {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long gateEventId; // 이벤트 로그 식별자
+    private Long cargateEventId; // 이벤트 로그 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cargate_id")
     private CarGate carGate; // 발생 게이트 위치
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle; // OCR결과 매핑된 차량, OCR실패시 null
 
     @Enumerated(EnumType.STRING)
