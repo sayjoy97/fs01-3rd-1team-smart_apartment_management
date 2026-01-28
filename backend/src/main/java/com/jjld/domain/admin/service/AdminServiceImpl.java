@@ -1,10 +1,7 @@
 package com.jjld.domain.admin.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
-import com.jjld.domain.admin.dto.AdminReq;
-import com.jjld.domain.admin.dto.AdminRes;
-import com.jjld.domain.admin.dto.AdminSearchCondition;
-import com.jjld.domain.admin.dto.UpdateAdminReq;
+import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.repository.AdminRepository;
@@ -12,6 +9,7 @@ import com.jjld.domain.admin.specification.AdminSpecification;
 import com.jjld.global.exception.admin.*;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,12 +18,12 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
-
-import static com.jjld.global.exception.ErrorCode.PASSWORD_MISMATCH;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Builder
+@Slf4j
 public class AdminServiceImpl implements AdminService {
     private final AdminDAO adminDAO;
     private final ModelMapper modelMapper;
@@ -77,8 +75,10 @@ public class AdminServiceImpl implements AdminService {
     // 관리자 목록을 조회
     @Override
     public List<AdminRes> getAdmins() {
-        List<Admin> admins = adminDAO.getAdmins();
-        List<AdminRes> response = modelMapper.map(admins, List.class);
+        List<AdminRes> response = adminDAO.getAdmins()
+                .stream()
+                .map(A -> modelMapper.map(A, AdminRes.class))
+                .collect(Collectors.toList());
 
         return response;
     }
@@ -93,6 +93,7 @@ public class AdminServiceImpl implements AdminService {
         return response;
     }
 
+    // 관리자 권한 수정
     @Override
     public void updateAdminAuthority(Long adminId, Long targetAdminId, AdminRole adminRole) {
         Admin superAdmin = adminDAO.getAdmin(adminId)
@@ -112,13 +113,14 @@ public class AdminServiceImpl implements AdminService {
         adminDAO.updateAdminAuthority(targetAdmin);
     }
 
+    // 관리자 정보 수정
     @Override
     public void updateAdmin(Long adminId, UpdateAdminReq updateAdminReq) {
-        Admin Admin = adminDAO.getAdmin(adminId)
+        Admin admin = adminDAO.getAdmin(adminId)
                 .orElseThrow(() -> new AdminNotFoundException());
 
         // 입력한 현재 비밀번호와 DB에 저장된 비밀번호 비교
-        if (!encoder.matches(updateAdminReq.getCurrentPassword(), Admin.getAdminPass())) {
+        if (!encoder.matches(updateAdminReq.getCurrentPassword(), admin.getAdminPass())) {
             throw new InvalidCurrentPassword();
         }
 
@@ -132,11 +134,38 @@ public class AdminServiceImpl implements AdminService {
             throw new PasswordMismatchException();
         }
 
-        Admin.setAdminName(updateAdminReq.getAdminName());
-        Admin.setAdminPass(encoder.encode(updateAdminReq.getNewPassword()));
-        Admin.setAdminPhone(updateAdminReq.getAdminPhone());
-        Admin.setAdminEmail(updateAdminReq.getAdminEmail());
+        admin.setAdminName(updateAdminReq.getAdminName());
+        admin.setAdminPass(encoder.encode(updateAdminReq.getNewPassword()));
+        admin.setAdminPhone(updateAdminReq.getAdminPhone());
+        admin.setAdminEmail(updateAdminReq.getAdminEmail());
 
-        adminDAO.updateAdmin(Admin);
+        adminDAO.updateAdmin(admin);
+    }
+
+    @Override
+    public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq) {
+        Admin admin = adminDAO.findByAdminLoginId(loginAdminReq.getAdminLoginId()).orElse(null);
+        boolean isException = false;
+
+        if (admin == null) {
+            isException = true;
+            log.info("아이디가 존재하지 않습니다.");
+        }
+
+        if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
+            isException = true;
+            log.info("비밀번호가 틀렸습니다.");
+        }
+
+        if (!isException) {
+            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (admin.getIsFirstLogin()) admin.setState(true);
+        adminDAO.updateAdmin(admin);
+
+        LoginAdminRes response = modelMapper.map(admin, LoginAdminRes.class);
+
+        return response;
     }
 }
