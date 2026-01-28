@@ -57,4 +57,9 @@ public class AdminDAOImpl implements AdminDAO {
     public void updateAdminAuthority(Admin targetAdmin) {
         adminRepository.save(targetAdmin);
     }
+
+    @Override
+    public void updateAdmin(Admin admin) {
+        adminRepository.save(admin);
+    }
 }
