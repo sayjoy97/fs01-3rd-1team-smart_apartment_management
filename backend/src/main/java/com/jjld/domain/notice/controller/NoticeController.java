@@ -21,8 +21,8 @@ public class NoticeController {
     // 페이지&개수만큼의 리스트 호출
     @GetMapping("/list")
     public ResponseEntity<?> noticeList(
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "1") int page
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") int page
     ){
         Page<NoticeListResponse> noticeList = noticeService.getNoticeList(size, page-1);
         return ResponseEntity.ok(noticeList);

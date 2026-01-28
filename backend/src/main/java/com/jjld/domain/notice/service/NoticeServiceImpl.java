@@ -1,11 +1,13 @@
 package com.jjld.domain.notice.service;
 
+import com.jjld.domain.admin.dao.AdminDAO;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.notice.dao.NoticeDAO;
 import com.jjld.domain.notice.dto.NoticeDetailRequest;
 import com.jjld.domain.notice.dto.NoticeDetailResponse;
 import com.jjld.domain.notice.dto.NoticeListResponse;
 import com.jjld.domain.notice.entity.Notice;
+import com.jjld.global.exception.admin.AdminNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
     private final NoticeDAO noticeDAO;
+    private final AdminDAO adminDAO;
 
     private final ModelMapper modelMapper;
 
@@ -62,11 +65,11 @@ public class NoticeServiceImpl implements NoticeService {
     // 공지사항 등록
     @Override
     public void noticeWrite(NoticeDetailRequest writeRequest) {
-//        Admin adminEntity = adminDAO.getAdmin(writeRequest.getAdminName());
+        Admin adminEntity = adminDAO.getAdmin(writeRequest.getAdminId())
+                .orElseThrow(() -> new AdminNotFoundException());
 
         Notice entity = Notice.builder()
-                .admin(Admin.builder().build())
-//                .admin(adminEntity)
+                .admin(adminEntity)
                 .noticeTitle(writeRequest.getNoticeTitle())
                 .noticeContent(writeRequest.getNoticeContent())
                 .fixStatus(false)
@@ -87,9 +90,10 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void updateNotice(NoticeDetailRequest updateRequest) {
         Notice noticeEntity = noticeDAO.findByNoticeId(updateRequest.getNoticeId());
-//        Admin adminEntity = adminDAO.findByAdminId(updateRequest.getAdminId());
+        Admin adminEntity = adminDAO.getAdmin(updateRequest.getAdminId())
+                .orElseThrow(() -> new AdminNotFoundException());
 
-//        noticeEntity.setAdmin(adminEntity);
+        noticeEntity.setAdmin(adminEntity);
         noticeEntity.setNoticeTitle(updateRequest.getNoticeTitle());
         noticeEntity.setNoticeContent(updateRequest.getNoticeContent());
 
