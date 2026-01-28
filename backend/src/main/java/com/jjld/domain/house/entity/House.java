@@ -41,10 +41,6 @@ public class House {
     private String householderPhone;
     private String householderEmail;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vehicle_id")
-    private RegisteredCar registeredCar;
-
     @Column(nullable = true, columnDefinition = "DATETIME")
     private LocalDate moveInAt;
 
