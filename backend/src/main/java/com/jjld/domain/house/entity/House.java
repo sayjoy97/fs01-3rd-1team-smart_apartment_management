@@ -53,7 +53,7 @@ public class House {
 
     private String appLoginPass;
 
-    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<NoiseSensor> noiseSensors = new ArrayList<>();
+    @OneToMany( mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RegisteredCar> registeredCars = new ArrayList<>();
 
 }
