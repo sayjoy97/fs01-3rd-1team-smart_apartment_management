@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -22,9 +24,9 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminDAO.getAdmin(adminId)
                 .orElseThrow(() -> new AdminNotFoundException());
 
-        AdminRes adminResDTO = modelMapper.map(admin, AdminRes.class);
+        AdminRes response = modelMapper.map(admin, AdminRes.class);
 
-        return adminResDTO;
+        return response;
     }
 
     // 관리자 추가
@@ -46,5 +48,13 @@ public class AdminServiceImpl implements AdminService {
         }
 
         adminDAO.deleteAdmin(adminId);
+    }
+
+    // 관리자 목록을 조회
+    @Override
+    public List<AdminRes> getAdmins() {
+        List<Admin> admins = adminDAO.getAdmins();
+        List<AdminRes> response = modelMapper.map(admins, List.class);
+        return response;
     }
 }

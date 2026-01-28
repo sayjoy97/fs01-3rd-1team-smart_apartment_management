@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/api")
 @RequiredArgsConstructor
@@ -36,5 +38,12 @@ public class AdminController {
     public ResponseEntity<?> deleteAdmin(@PathVariable("adminId") String adminId) {
         adminService.deleteAdmin(Long.parseLong(adminId));
         return ResponseEntity.ok(ApiResponse.success("관리자 삭제를 성공했습니다."));
+    }
+
+    // 관리자 목록을 조회
+    @GetMapping
+    public ResponseEntity<?> getAdmins() {
+        List<AdminRes> response = adminService.getAdmins();
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

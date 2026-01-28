@@ -5,6 +5,7 @@ import com.jjld.domain.admin.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -34,5 +35,12 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public void deleteAdmin(Long adminId) {
         adminRepository.deleteById(adminId);
+    }
+
+    // 관리자 목록을 조회
+    @Override
+    public List<Admin> getAdmins() {
+        List<Admin> admins = adminRepository.findAll();
+        return admins;
     }
 }
