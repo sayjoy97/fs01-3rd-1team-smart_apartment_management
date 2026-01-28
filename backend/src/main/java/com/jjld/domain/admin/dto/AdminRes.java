@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+// 관리자 조회시 응답할 DTO
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

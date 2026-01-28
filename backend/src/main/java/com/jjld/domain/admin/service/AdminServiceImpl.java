@@ -16,6 +16,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminDAO adminDAO;
     private final ModelMapper modelMapper;
 
+    // adminId를 이용해 관리자 반환
     @Override
     public AdminRes getAdmin(Long adminId) {
         Admin admin = adminDAO.getAdmin(adminId)
@@ -26,13 +27,24 @@ public class AdminServiceImpl implements AdminService {
         return adminResDTO;
     }
 
+    // 관리자 추가
     @Override
     public void createAdmin(AdminReq adminReq) {
         if (adminDAO.findByAdminLoginId(adminReq.getAdminLoginId()).isPresent()) {
-            throw new DuplicateAdminLoginIdException("test");
+            throw new DuplicateAdminLoginIdException();
         }
 
         Admin admin = modelMapper.map(adminReq, Admin.class);
         adminDAO.createAdmin(admin);
+    }
+
+    // adminId를 이용해 관리자 삭제
+    @Override
+    public void deleteAdmin(Long adminId) {
+        if (adminDAO.getAdmin(adminId).isEmpty()) {
+            throw new AdminNotFoundException();
+        }
+
+        adminDAO.deleteAdmin(adminId);
     }
 }

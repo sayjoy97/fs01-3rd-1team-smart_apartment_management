@@ -7,4 +7,6 @@ public interface AdminService {
     AdminRes getAdmin(Long adminId);
 
     void createAdmin(AdminReq adminReq);
+
+    void deleteAdmin(Long adminId);
 }

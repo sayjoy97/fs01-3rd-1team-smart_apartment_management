@@ -10,4 +10,6 @@ public interface AdminDAO {
     void createAdmin(Admin admin);
 
     Optional<Admin> findByAdminLoginId(String adminLoginId);
+
+    void deleteAdmin(Long adminId);
 }

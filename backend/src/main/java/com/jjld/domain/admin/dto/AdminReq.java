@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+// 관리자 추가 시 요청 받을 DTO
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
