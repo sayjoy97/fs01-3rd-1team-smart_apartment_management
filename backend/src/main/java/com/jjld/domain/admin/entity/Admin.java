@@ -44,6 +44,6 @@ public class Admin {
     private AdminRole adminRole;  // 관리자 권한
 
     @CreationTimestamp
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;  // 생성일
 }
