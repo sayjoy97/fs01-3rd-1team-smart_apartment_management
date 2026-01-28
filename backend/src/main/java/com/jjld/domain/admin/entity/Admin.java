@@ -37,14 +37,14 @@ public class Admin {
     private String adminEmail;  // 이메일
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
+    private Boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AdminRole adminRole;  // 관리자 권한
 
     @CreationTimestamp
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;  // 생성일
 
     public Admin(String adminLoginId, String adminPass, String adminName, String adminPhone, String adminEmail, AdminRole adminRole) {

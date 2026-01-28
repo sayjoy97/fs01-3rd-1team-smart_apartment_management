@@ -2,13 +2,16 @@ package com.jjld.domain.admin.controller;
 
 import com.jjld.domain.admin.dto.AdminReq;
 import com.jjld.domain.admin.dto.AdminRes;
+import com.jjld.domain.admin.dto.AdminSearchCondition;
 import com.jjld.domain.admin.service.AdminService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RestController
@@ -40,10 +43,19 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("관리자 삭제를 성공했습니다."));
     }
 
-    // 관리자 목록을 조회.
+    // 관리자 목록을 조회
     @GetMapping
     public ResponseEntity<?> getAdmins() {
         List<AdminRes> response = adminService.getAdmins();
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // 관리자 목록 필터 조회
+    @GetMapping("/filter")
+    public ResponseEntity<?> getAdmins(
+            AdminSearchCondition cond, Pageable pageable
+    ) {
+        Page<AdminRes> response = adminService.getAdmins(cond, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
