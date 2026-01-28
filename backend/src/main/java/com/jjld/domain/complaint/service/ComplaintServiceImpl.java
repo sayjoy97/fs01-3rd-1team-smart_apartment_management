@@ -4,6 +4,7 @@ import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dao.ComplaintDAOImpl;
 import com.jjld.domain.complaint.dto.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.ComplaintUserResponse;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
 import com.jjld.domain.complaint.entity.ComplaintReply;
@@ -18,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,5 +77,23 @@ public class ComplaintServiceImpl implements ComplaintService {
                 .build();
 
         return adminDetailResponse;
+    }
+
+    @Override
+    public List<ComplaintUserResponse> findByHouse_HouseId(Long houseId) {
+        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseId(houseId);
+        if(userComplaint.isEmpty()){
+            throw new ComplaintNotFoundException("작성한 민원이 없습니다");
+        }
+
+        return userComplaint.stream()
+                .map(complaint -> ComplaintUserResponse.builder()
+                        .complaintId(complaint.getComplaintId())
+                        .title(complaint.getTitle())
+                        .category(String.valueOf(complaint.getCategory()))
+                        .status(String.valueOf(complaint.getStatus()))
+                        .createAt(complaint.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
