@@ -40,7 +40,7 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("관리자 삭제를 성공했습니다."));
     }
 
-    // 관리자 목록을 조회
+    // 관리자 목록을 조회.
     @GetMapping
     public ResponseEntity<?> getAdmins() {
         List<AdminRes> response = adminService.getAdmins();
