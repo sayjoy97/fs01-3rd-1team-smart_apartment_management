@@ -29,4 +29,7 @@ public interface NoticeService {
 
     // 아이디로 공지사항 삭제
     void deleteNotice(Long noticeId);
+
+    // 게시글 고정으로 바꾸기
+    void fixStatusChange(Long noticeId);
 }

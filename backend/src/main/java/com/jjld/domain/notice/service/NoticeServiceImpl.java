@@ -102,4 +102,14 @@ public class NoticeServiceImpl implements NoticeService {
 
         noticeDAO.deleteByNoticeId(noticeId);
     }
+
+    // 게시글 고정으로 바꾸기
+    @Override
+    public void fixStatusChange(Long noticeId) {
+        Notice noticeEntity = noticeDAO.findByNoticeId(noticeId);
+
+        noticeEntity.setFixStatus(!noticeEntity.getFixStatus());
+
+        noticeDAO.updateNotice(noticeEntity);
+    }
 }
