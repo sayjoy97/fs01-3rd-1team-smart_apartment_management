@@ -8,6 +8,7 @@ import com.jjld.domain.notice.dto.NoticeDetailResponse;
 import com.jjld.domain.notice.dto.NoticeListResponse;
 import com.jjld.domain.notice.entity.Notice;
 import com.jjld.global.exception.admin.AdminNotFoundException;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Builder
 public class NoticeServiceImpl implements NoticeService {
     private final NoticeDAO noticeDAO;
     private final AdminDAO adminDAO;
@@ -32,16 +34,25 @@ public class NoticeServiceImpl implements NoticeService {
     public Page<NoticeListResponse> getNoticeList(int size, int page) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
 
-        return noticeDAO.findAll(pageable)
-                .map(notice -> modelMapper.map(notice, NoticeListResponse.class)
-                );
+        return noticeDAO.findAll(pageable).map(
+                entity ->new NoticeListResponse(
+                        entity.getNoticeId(),
+                        entity.getAdmin().getAdminName(),
+                        entity.getNoticeTitle(),
+                        entity.getCreateAt()
+                ));
     }
 
     // 고정 게시글 리스트
     @Override
     public List<NoticeListResponse> getFixedNoticeList() {
         return noticeDAO.findAllByFixStatus().stream()
-                .map(notice -> modelMapper.map(notice, NoticeListResponse.class))
+                .map(entity -> new NoticeListResponse(
+                        entity.getNoticeId(),
+                        entity.getAdmin().getAdminName(),
+                        entity.getNoticeTitle(),
+                        entity.getCreateAt()
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -58,8 +69,13 @@ public class NoticeServiceImpl implements NoticeService {
         }
 
         return noticeList.stream()
-                .map(notice -> modelMapper.map(notice, NoticeListResponse.class))
-                .toList();
+                .map(entity -> new NoticeListResponse(
+                        entity.getNoticeId(),
+                        entity.getAdmin().getAdminName(),
+                        entity.getNoticeTitle(),
+                        entity.getCreateAt()
+                ))
+                .collect(Collectors.toList());
     }
 
     // 공지사항 등록
@@ -81,9 +97,17 @@ public class NoticeServiceImpl implements NoticeService {
     // 아이디로 상세내역 조회
     @Override
     public NoticeDetailResponse findByNoticeId(Long noticeId) {
-        Notice noticeEntity = noticeDAO.findByNoticeId(noticeId);
+        Notice entity = noticeDAO.findByNoticeId(noticeId);
 
-        return modelMapper.map(noticeEntity, NoticeDetailResponse.class);
+        return NoticeDetailResponse.builder()
+                .noticeId(noticeId)
+                .adminName(entity.getAdmin().getAdminName())
+                .noticeTitle(entity.getNoticeTitle())
+                .noticeContent(entity.getNoticeContent())
+                .fixStatus(entity.getFixStatus())
+                .createAt(entity.getCreateAt())
+                .updateAt(entity.getUpdateAt())
+                .build();
     }
 
     // 공지사항 수정
