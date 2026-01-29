@@ -36,4 +36,3 @@ public class CargateEventLog {
 
     private String imagePath; // 촬영된 이미지 경로
 }
-
