@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 public interface ParkingFeeHistoryRepository extends JpaRepository<ParkingFeeHistory, Long> {
     @Query("""
-        SELECT count(history.totalCharge)
+        SELECT COALESCE(SUM(history.totalCharge), 0)
         FROM ParkingFeeHistory history
         WHERE history.parkingSession.status = :parkingStatus
         AND history.paid = true

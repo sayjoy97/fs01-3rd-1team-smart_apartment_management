@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Repository
 @RequiredArgsConstructor
-public class ParkingFeeHistoryDAOImpl implements ParkingFeeHistoryDAO {
+public class VehicleFeeDAOImpl implements VehicleFeeDAO {
     private final ParkingFeeHistoryRepository feeHistoryRepository;
 
     // 조건 날짜별 누적금액 조회
