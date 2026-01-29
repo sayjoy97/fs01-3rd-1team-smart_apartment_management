@@ -1,6 +1,5 @@
 package com.jjld.domain.cargate.dto;
 
-import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

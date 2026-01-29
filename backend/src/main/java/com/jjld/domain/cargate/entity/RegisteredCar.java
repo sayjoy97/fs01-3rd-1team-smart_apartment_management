@@ -24,6 +24,6 @@ public class RegisteredCar {
     private Vehicle vehicle; // 차량 엔티티
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id", nullable = false)
+    @JoinColumn(name = "house_id")
     private House house;
 }

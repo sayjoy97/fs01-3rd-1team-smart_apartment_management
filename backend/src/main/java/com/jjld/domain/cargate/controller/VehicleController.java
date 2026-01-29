@@ -3,9 +3,11 @@ package com.jjld.domain.cargate.controller;
 import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
 import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
 import com.jjld.domain.cargate.dto.RecordDetailResponse;
+import com.jjld.domain.cargate.dto.VehicleRegisterRequest;
 import com.jjld.domain.cargate.service.CargateService;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/cargate/api")
 @RequiredArgsConstructor
-public class CargateController {
+public class VehicleController {
     private final CargateService cargateService;
 
     // 최근 7일 유형별 카운트 조회
@@ -25,6 +27,14 @@ public class CargateController {
     ResponseEntity<?> getLastWeekList() {
         List<DailyVehicleTypeCountResponse> vehicleTypeCountList = cargateService.getDailyVehicleTypeCountList();
         return ResponseEntity.ok(ApiResponse.success(vehicleTypeCountList));
+    }
+
+    // 최근 7일 유형별 카운트 - 테스트
+    @GetMapping("/lastweek/test")
+    @Operation(summary = "최근 7일 유형별 카운트 조회")
+    ResponseEntity<?> getLastWeekList_test() {
+        List<DailyVehicleTypeCountResponse> test = cargateService.getDailyVehicleTypeCountList_test();
+        return ResponseEntity.ok(ApiResponse.success(test));
     }
 
     // 백엔드 페이지네이션을 이용한 차량출입기록 전체기록 조회
@@ -43,12 +53,12 @@ public class CargateController {
         RecordDetailResponse detailResponse = cargateService.getDetailInfo(cargate_event_log_id);
         return ResponseEntity.ok(ApiResponse.success(detailResponse));
     }
+    @PostMapping("/register")
+    public ResponseEntity<?> registerCar( @RequestBody @Valid VehicleRegisterRequest request) {
+        Long vehicleId = cargateService.registerVehicle(request);
 
-    // 차량등록 요청
-//    @PostMapping("/register")
-//    ResponseEntity<?> createVehicleInfo(@RequestBody createVehicleRequest request){
-//        return ResponseEntity.ok(ApiResponse.success());
-//    }
+        return ResponseEntity.ok(ApiResponse.success(vehicleId));
+    }
 
     // 방문차량 상세정보 수정
 //    @PostMapping("/detail")

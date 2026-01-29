@@ -1,15 +1,16 @@
 package com.jjld.domain.cargate.service;
 
 import com.jjld.domain.cargate.dao.CargateDAO;
-import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
-import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
-import com.jjld.domain.cargate.dto.ParkingSessionResponse;
-import com.jjld.domain.cargate.dto.RecordDetailResponse;
+import com.jjld.domain.cargate.dto.*;
+import com.jjld.domain.cargate.entity.ApprovedCar;
 import com.jjld.domain.cargate.entity.CargateEventLog;
-import com.jjld.domain.cargate.entity.Enum.GateType;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
-import com.jjld.domain.cargate.entity.ParkingSession;
+import com.jjld.domain.cargate.entity.RegisteredCar;
 import com.jjld.domain.cargate.entity.Vehicle;
+import com.jjld.domain.cargate.repository.ApprovedCarRepository;
+import com.jjld.domain.cargate.repository.RegisteredCarRepository;
+import com.jjld.domain.cargate.repository.VehicleRepository;
+import com.jjld.domain.house.repository.HouseRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,19 +20,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
-import static com.jjld.domain.cargate.entity.Enum.GateType.ENTRY;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Builder
 public class CargateServiceImpl implements CargateService {
     private final CargateDAO cargateDAO;
+
+    private final VehicleRepository vehicleRepository;
+    private final ApprovedCarRepository approvedCarRepository;
+    private final HouseRepository houseRepository;
+    private final RegisteredCarRepository registeredCarRepository;
 
     private final ModelMapper modelMapper;
 
@@ -51,6 +53,43 @@ public class CargateServiceImpl implements CargateService {
             }
             last7DaysCountByTypeList.add(new DailyVehicleTypeCountResponse(selectedDay, countMap));
         }
+        return last7DaysCountByTypeList;
+    }
+
+    // 최근 7일 차량 출입현황 리스트 조회 - repo단에서 한번에 호출하는 방식(테스트)
+    @Override
+    public List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList_test() {
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(6);
+
+        List<Object[]> rows = cargateDAO.countByTypeList_test(startDate, today);
+
+        Map<LocalDate, Map<VehicleType, Long>> groupMap = new HashMap<>();
+
+        for (Object[] row : rows) {
+            LocalDate date = ((Date) row[0]).toLocalDate();
+            VehicleType vehicleType = (VehicleType) row[1];
+            Long count = (Long) row[2];
+
+            groupMap
+                    .computeIfAbsent(date, k -> new EnumMap<>(VehicleType.class))
+                    .put(vehicleType, count);
+
+        }
+        List<DailyVehicleTypeCountResponse> last7DaysCountByTypeList = new ArrayList<>();
+
+        for(int i=0; i<7; i++){
+            LocalDate selectedDay = today.minusDays(i);
+
+            Map<VehicleType, Long> countMap = groupMap.getOrDefault(selectedDay, new EnumMap<>(VehicleType.class));
+
+            for (VehicleType type : VehicleType.values()) {
+                countMap.putIfAbsent(type, 0L);
+            }
+
+            last7DaysCountByTypeList.add(new DailyVehicleTypeCountResponse(selectedDay, countMap));
+        }
+
         return last7DaysCountByTypeList;
     }
 
@@ -83,5 +122,70 @@ public class CargateServiceImpl implements CargateService {
                 .status(cargateLogById.getParkingSession().getStatus())
                 .imagePath(cargateLogById.getImagePath())
                 .build();
+    }
+
+    // 컨트롤러에서 직접 요청하는 작업내용
+    @Override
+    public Long registerVehicle(VehicleRegisterRequest req) {
+        Vehicle vehicle = vehicleRepository.findByPlateNumber(req.getPlateNumber())
+                .orElseGet(() -> vehicleRepository.save(
+                        new Vehicle(req.getPlateNumber(), req.getVehicleType())
+                ));
+
+        switch (req.getRegisterType()) {
+            case 1 -> registerHouseVehicle(vehicle, req);
+            case 2 -> registerApprovedVehicle(vehicle, req);
+            default -> throw new IllegalArgumentException("잘못된 등록 유형");
+        }
+
+        return vehicle.getVehicleId();
+    }
+
+    // 세대 등록차량일 때 필요한 작업내용
+    @Override
+    public void registerHouseVehicle(Vehicle vehicle, VehicleRegisterRequest req) {
+        if (req.getHouseId() == null) {
+            throw new IllegalArgumentException("세대 정보 필수");
+        }
+
+        RegisteredCar registeredCar = RegisteredCar.builder()
+                .vehicle(vehicle)
+                .house(houseRepository.getReferenceById(req.getHouseId()))
+                .build();
+
+        registeredCarRepository.save(registeredCar);
+    }
+
+    // 관리자 승인차량 등록일 때 필요한 작업내용
+    @Override
+    public void registerApprovedVehicle(Vehicle vehicle, VehicleRegisterRequest req) {
+
+        LocalDate startAt = req.getStartAt() != null
+                ? req.getStartAt()
+                : LocalDate.now();
+
+        ApprovedCar approvedCar = ApprovedCar.builder()
+                .vehicle(vehicle)
+                .approvalReason(
+                        "[" + req.getApprovalType() + "] " + req.getApprovalReason()
+                )
+                .startAt(startAt)
+                .endAt(req.getEndAt())
+                .build();
+
+        approvedCarRepository.save(approvedCar);
+    }
+
+    // 차량정보 수정
+    @Override
+    public VehicleRegisterRequest updateCar(Long cargateEventId, VehicleRegisterRequest request) {
+
+        return null;
+    }
+
+    // 차량정보 삭제
+    @Override
+    public boolean deleteCar(Long cargateEventId) {
+        return false;
     }
 }
