@@ -20,9 +20,9 @@ public class CargateDAOImpl implements CargateDAO {
 
     // 기간내 유형별 출입기록 리스트
     @Override
-    public Map<VehicleType, Long> countByTypeList(GateType gateType, LocalDate selectedDay) {
+    public Map<VehicleType, Long> countByTypeList(LocalDate selectedDay) {
         return cargateRepository.getCargateEventLogs(
-                gateType, selectedDay.atStartOfDay(), selectedDay.plusDays(1).atStartOfDay()
+                selectedDay.atStartOfDay(), selectedDay.plusDays(1).atStartOfDay()
         ).stream() // 리스트를 Stream<Object>로
                 // Stream의 요소를 Map<>에 적어둔 타입(VehicleType, Long)별로 key와 value에 저장
                 .collect(Collectors.toMap(

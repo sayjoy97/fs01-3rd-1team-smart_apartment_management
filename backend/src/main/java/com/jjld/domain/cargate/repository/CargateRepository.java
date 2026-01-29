@@ -17,12 +17,11 @@ public interface CargateRepository extends JpaRepository<CargateEventLog, Long> 
     @Query("""
     SELECT log.vehicle.vehicleType, count(log.cargateEventId)
     FROM CargateEventLog log
-    WHERE log.carGate.gateType = :gateType
-    AND log.eventAt >= :start
+    WHERE log.eventAt >= :start
     AND log.eventAt < :end
     GROUP BY log.vehicle.vehicleType
     """)
-    List<Object[]> getCargateEventLogs(@Param("gateType") GateType gateType, @Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
+    List<Object[]> getCargateEventLogs(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end);
 
     // 페이지&개수만큼의 데이터 호출
     Page<CargateEventLog> findAll(Pageable pageable);

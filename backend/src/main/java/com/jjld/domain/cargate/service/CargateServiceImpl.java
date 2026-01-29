@@ -8,6 +8,7 @@ import com.jjld.domain.cargate.dto.RecordDetailResponse;
 import com.jjld.domain.cargate.entity.CargateEventLog;
 import com.jjld.domain.cargate.entity.Enum.GateType;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
+import com.jjld.domain.cargate.entity.ParkingSession;
 import com.jjld.domain.cargate.entity.Vehicle;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,6 @@ public class CargateServiceImpl implements CargateService {
     // 최근 7일 차량 출입현황 리스트 조회
     @Override
     public List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList() {
-        GateType gateType = ENTRY;
         LocalDate today = LocalDate.now();
 
         List<DailyVehicleTypeCountResponse> last7DaysCountByTypeList = new ArrayList<>();
@@ -44,7 +45,7 @@ public class CargateServiceImpl implements CargateService {
         for(int i=0; i<7; i++){
             LocalDate selectedDay = today.minusDays(i);
 
-            Map<VehicleType, Long> countMap = cargateDAO.countByTypeList(gateType, selectedDay);
+            Map<VehicleType, Long> countMap = cargateDAO.countByTypeList(selectedDay);
             for (VehicleType type : VehicleType.values()) {
                 countMap.putIfAbsent(type, 0L);
             }
@@ -73,21 +74,13 @@ public class CargateServiceImpl implements CargateService {
     public RecordDetailResponse getDetailInfo(Long cargate_event_log_id) {
         CargateEventLog cargateLogById = cargateDAO.findCargateLogById(cargate_event_log_id);
 
-        Vehicle vehicle = cargateLogById.getVehicle();
-
-        List<ParkingSessionResponse> parkingSessionResponses = vehicle.getParkingSessions().stream()
-                .map(parkingSession -> new ParkingSessionResponse(
-                        parkingSession.getEntryAt(),
-                        parkingSession.getExitAt(),
-                        parkingSession.getStatus()
-                ))
-                .toList();
-
         return RecordDetailResponse.builder()
                 .cargateEventId(cargateLogById.getCargateEventId())
                 .plateNumber(cargateLogById.getVehicle().getPlateNumber())
                 .parkingStatus(cargateLogById.getGateType().name())
-                .parkingSessions(parkingSessionResponses)
+                .entryAt(cargateLogById.getParkingSession().getEntryAt())
+                .exitAt(cargateLogById.getParkingSession().getExitAt())
+                .status(cargateLogById.getParkingSession().getStatus())
                 .imagePath(cargateLogById.getImagePath())
                 .build();
     }

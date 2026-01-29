@@ -14,7 +14,7 @@ import java.util.Map;
 public interface CargateDAO {
 
     // 기간내 유형별 출입기록 리스트
-    Map<VehicleType, Long> countByTypeList(GateType gateType, LocalDate selectedDay);
+    Map<VehicleType, Long> countByTypeList(LocalDate selectedDay);
 
     // 페이지&개수만큼의 리스트 호출
     Page<CargateEventLog> findAllCargateEventLogs(Pageable pageable);

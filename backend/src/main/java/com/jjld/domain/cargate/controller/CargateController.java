@@ -39,8 +39,8 @@ public class CargateController {
 
     // 방문차량 상세정보 조회
     @GetMapping("/detail")
-    ResponseEntity<?> detailResponse(@RequestParam(name = "vehicle_id") Long vehicle_id) {
-        RecordDetailResponse detailResponse = cargateService.getDetailInfo(vehicle_id);
+    ResponseEntity<?> detailResponse(@RequestParam(name = "cargate_event_log_id") Long cargate_event_log_id) {
+        RecordDetailResponse detailResponse = cargateService.getDetailInfo(cargate_event_log_id);
         return ResponseEntity.ok(ApiResponse.success(detailResponse));
     }
 
