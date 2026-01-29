@@ -4,9 +4,9 @@ import com.jjld.domain.admin.dao.AdminDAO;
 import com.jjld.domain.admin.dao.HistoryDAO;
 import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.entity.History;
-import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.admin.specification.AdminSpecification;
 import com.jjld.global.exception.admin.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -146,6 +146,7 @@ public class AdminServiceImpl implements AdminService {
         adminDAO.updateAdmin(admin);
     }
 
+    // 관리자 로그인
     @Override
     public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest) {
         // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
@@ -165,6 +166,7 @@ public class AdminServiceImpl implements AdminService {
             History history = History.builder()
                     .admin(admin)
                     .ipAddress(ipAddress)
+                    .accessType(AccessType.LOGIN)
                     .success(false)
                     .message("아이디 또는 비밀번호 불일치")
                     .build();
@@ -176,6 +178,7 @@ public class AdminServiceImpl implements AdminService {
         History history = History.builder()
                 .admin(admin)
                 .ipAddress(ipAddress)
+                .accessType(AccessType.LOGIN)
                 .success(true)
                 .message("로그인 성공")
                 .build();
@@ -189,6 +192,7 @@ public class AdminServiceImpl implements AdminService {
         return response;
     }
 
+    // 관리자 최초 로그인 처리
     @Override
     public void initialSetupAdmin(Long adminId, SetupAdminReq setupAdminReq, HttpServletRequest servletRequest) {
         // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
@@ -218,6 +222,7 @@ public class AdminServiceImpl implements AdminService {
         History history = History.builder()
                 .admin(admin)
                 .ipAddress(ipAddress)
+                .accessType(AccessType.INITIAL_SETUP)
                 .success(true)
                 .message("최초 설정 성공")
                 .build();
@@ -226,6 +231,7 @@ public class AdminServiceImpl implements AdminService {
         adminDAO.updateAdmin(admin);
     }
 
+    // 관리자 로그아웃
     @Override
     public void logoutAdmin(Long adminId, HttpServletRequest servletRequest) {
         // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
@@ -242,6 +248,7 @@ public class AdminServiceImpl implements AdminService {
         History history = History.builder()
                 .admin(admin)
                 .ipAddress(ipAddress)
+                .accessType(AccessType.LOGOUT)
                 .success(true)
                 .message("로그아웃 성공")
                 .build();

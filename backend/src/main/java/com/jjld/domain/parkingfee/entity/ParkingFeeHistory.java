@@ -1,5 +1,6 @@
 package com.jjld.domain.parkingfee.entity;
 
+import com.jjld.domain.cargate.entity.ParkingSession;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,31 +21,26 @@ public class ParkingFeeHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 차량 번호
-    @Column(nullable = false, length = 20)
-    private String carNumber;
+    /** 어떤 주차 세션의 요금인가 */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_session_id", nullable = false)
+    private ParkingSession parkingSession;
 
-    // 등록 차량 여부
-    @Column(nullable = false)
-    private Boolean isRegistered;
+    /** 어떤 요금 정책을 사용했는가 */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fee_setting_id", nullable = false)
+    private ParkingFeeSetting feeSetting;
 
-    // 요금 부과 금액
-    @Column(nullable = false)
-    private Integer chargeAmount;
+    /** 총 주차 시간 (분) */
+    private Integer totalMinutes;
 
-    // 입차 시각
-    @Column(nullable = false)
-    private LocalDateTime inTime;
+    /** 최종 요금 */
+    private Integer totalCharge;
 
-    // 출차 시각
-    @Column(nullable = false)
-    private LocalDateTime outTime;
+    /** 결제 여부 */
+    private Boolean paid;
 
-    // 정산 완료 여부
-    @Column(nullable = false)
-    private Boolean isPaid;
-
-    // 정산 일자 (통계 기준용)
-    @Column(nullable = false)
-    private LocalDateTime chargeDate;
+    /** 정산 시각 */
+    private LocalDateTime chargedAt;
 }
+
