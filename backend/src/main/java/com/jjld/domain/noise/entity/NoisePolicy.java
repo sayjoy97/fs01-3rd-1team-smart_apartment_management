@@ -32,22 +32,17 @@ public class NoisePolicy {
     @Column(nullable = false)
     private Integer soundLimit;
 
-    private Integer timeThreshold; // 반복 판단 시간 창 (초 또는 분 단위)
-
+    @Column(nullable = false)
     private Integer repeatLimit; // 허용 반복 횟수
 
-    /**
-     * 실제 카운트 값
-     * → 정책 테이블보다는 로그/이력 테이블로 분리하는 것이 일반적
-     */
-    private Integer repeatCount;
+    @Column(nullable = false)
+    private Integer timeThreshold; // 반복 판단 시간 창 (초 또는 분 단위)
 
+    // 현재 적용 중인 정책 여부
+    @Column(nullable = false)
     private Boolean isActive;
 
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

@@ -17,7 +17,8 @@ public class CarGate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long gateId; // 게이트 식별자
+    @Column(name = "cargate_id")
+    private Long cargateId; // 게이트 식별자
 
     private String gateName; // 게이트 이름
 
