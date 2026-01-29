@@ -52,4 +52,16 @@ public class AdminDAOImpl implements AdminDAO {
     public Page<Admin> getAdmins(Specification<Admin> spec, Pageable pageable) {
         return adminRepository.findAll(spec, pageable);
     }
+
+    // 관리자 권한 수정
+    @Override
+    public void updateAdminAuthority(Admin targetAdmin) {
+        adminRepository.save(targetAdmin);
+    }
+
+    // 관리자 정보 수정
+    @Override
+    public void updateAdmin(Admin admin) {
+        adminRepository.save(admin);
+    }
 }

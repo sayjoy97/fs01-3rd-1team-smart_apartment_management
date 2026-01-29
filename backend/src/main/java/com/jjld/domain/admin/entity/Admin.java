@@ -27,14 +27,17 @@ public class Admin {
     @Column(nullable = false)
     private String adminPass;  // 비밀번호
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String adminName;  // 이름
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String adminPhone;  // 전화번호
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String adminEmail;  // 이메일
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isFirstLogin = true;  // 최초 로그인 여부 (true=최초 로그인, false=최초 로그인 완료 후)
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean state = false;  // 로그인 상태 (true=로그인, false=로그아웃)
@@ -46,13 +49,4 @@ public class Admin {
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt;  // 생성일
-
-    public Admin(String adminLoginId, String adminPass, String adminName, String adminPhone, String adminEmail, AdminRole adminRole) {
-        this.adminLoginId = adminLoginId;
-        this.adminPass = adminPass;
-        this.adminName = adminName;
-        this.adminPhone = adminPhone;
-        this.adminEmail = adminEmail;
-        this.adminRole = adminRole;
-    }
 }
