@@ -1,5 +1,6 @@
 package com.jjld.domain.admin.entity;
 
+import com.jjld.domain.admin.entity.Enum.AccessType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="admin_login_history")
+@Table(name="admin_log_history")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +29,16 @@ public class History {
     @Column(nullable = false, length = 45)
     private String ipAddress;  // IPv4 + IPv6 고려해서 45 추천
 
+    @Column(nullable = false)
+    private AccessType accessType;  // 접근 타입
+
+    @Column(nullable = false)
+    private Boolean success;  // 성공 여부
+
+    @Column
+    private String message;  // 실패 시 이유
+
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createdAt;  // 로그인 시각
+    private LocalDateTime createdAt;  // 시각
 }

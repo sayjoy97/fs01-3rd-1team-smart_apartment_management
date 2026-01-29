@@ -1,6 +1,6 @@
 package com.jjld.domain.noise.entity.Enum;
 
-public enum NoisePattern {
+public enum NoisePattern1 {
     IMPACT,             // 충격음
     REPEAT_VIBRATION,   // 반복 진동
     SOUND_CHANGE,       // 음향 변화
