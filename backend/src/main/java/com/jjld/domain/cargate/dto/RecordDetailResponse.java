@@ -16,4 +16,5 @@ public class RecordDetailResponse {
     private String plateNumber;
     private String parkingStatus;
     private List<ParkingSessionResponse> parkingSessions;
+    private String imagePath;
 }

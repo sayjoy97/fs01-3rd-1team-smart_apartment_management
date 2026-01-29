@@ -1,5 +1,6 @@
 package com.jjld.domain.cargate.controller;
 
+import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
 import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
 import com.jjld.domain.cargate.dto.RecordDetailResponse;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,7 +23,8 @@ public class CargateController {
 
     @GetMapping("/lastweek")
     ResponseEntity<?> getLastWeekList() {
-        return ResponseEntity.ok(ApiResponse.success());
+        List<DailyVehicleTypeCountResponse> vehicleTypeCountList = cargateService.getDailyVehicleTypeCountList();
+        return ResponseEntity.ok(ApiResponse.success(vehicleTypeCountList));
     }
 
     // 차량관리 페이지 요금 간단조회

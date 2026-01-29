@@ -1,10 +1,13 @@
 package com.jjld.domain.cargate.service;
 
 import com.jjld.domain.cargate.dao.CargateDAO;
+import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
 import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
 import com.jjld.domain.cargate.dto.ParkingSessionResponse;
 import com.jjld.domain.cargate.dto.RecordDetailResponse;
 import com.jjld.domain.cargate.entity.CargateEventLog;
+import com.jjld.domain.cargate.entity.Enum.GateType;
+import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.Vehicle;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +18,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static com.jjld.domain.cargate.entity.Enum.GateType.ENTRY;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +34,24 @@ public class CargateServiceImpl implements CargateService {
     private final ModelMapper modelMapper;
 
     // 최근 7일 차량 출입현황 리스트 조회
+    @Override
+    public List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList() {
+        GateType gateType = ENTRY;
+        LocalDate today = LocalDate.now();
 
+        List<DailyVehicleTypeCountResponse> last7DaysCountByTypeList = new ArrayList<>();
+
+        for(int i=0; i<7; i++){
+            LocalDate selectedDay = today.minusDays(i);
+
+            Map<VehicleType, Long> countMap = cargateDAO.countByTypeList(gateType, selectedDay);
+            for (VehicleType type : VehicleType.values()) {
+                countMap.putIfAbsent(type, 0L);
+            }
+            last7DaysCountByTypeList.add(new DailyVehicleTypeCountResponse(selectedDay, countMap));
+        }
+        return last7DaysCountByTypeList;
+    }
 
     // 페이지&개수만큼의 리스트 호출
     @Override
@@ -43,7 +68,7 @@ public class CargateServiceImpl implements CargateService {
         );
     }
 
-    // 로그아이디 별 상세조회
+    // 로그아이디 별 출입기록 상세조회
     @Override
     public RecordDetailResponse getDetailInfo(Long cargate_event_log_id) {
         CargateEventLog cargateLogById = cargateDAO.findCargateLogById(cargate_event_log_id);
@@ -63,6 +88,7 @@ public class CargateServiceImpl implements CargateService {
                 .plateNumber(cargateLogById.getVehicle().getPlateNumber())
                 .parkingStatus(cargateLogById.getGateType().name())
                 .parkingSessions(parkingSessionResponses)
+                .imagePath(cargateLogById.getImagePath())
                 .build();
     }
 }
