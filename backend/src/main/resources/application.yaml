@@ -6,10 +6,10 @@ spring:
     name: fs01-3rd-1team-smart_apartment_management
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${URL_LINK}
-    username: ${USER_NAME}
-    password: ${PASSWORD}
+    driver-class-name: ${JJLD_DRIVER}
+    url: ${JJLD_URL}
+    username: ${JJLD_USER}
+    password: ${JJLD_PASS}
   sql:
     init:
       encoding: UTF-8
