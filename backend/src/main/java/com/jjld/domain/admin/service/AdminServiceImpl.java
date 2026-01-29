@@ -8,7 +8,6 @@ import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.AdminSpecification;
-import com.jjld.domain.admin.specification.HistorySpecification;
 import com.jjld.global.exception.admin.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
@@ -254,17 +253,5 @@ public class AdminServiceImpl implements AdminService {
                 .message("로그아웃 성공")
                 .build();
         historyDAO.createLog(history);
-    }
-
-    // 관리자 접속 기록 조회
-    @Override
-    public Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable) {
-        Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
-        Specification<History> spec = HistorySpecification.withCondition(admin, cond);
-        Page<History> histories = historyDAO.getAccessLogs(spec, pageable);
-        Page<HistoryRes> response = histories.map(history -> modelMapper.map(history, HistoryRes.class));
-
-        return response;
     }
 }
