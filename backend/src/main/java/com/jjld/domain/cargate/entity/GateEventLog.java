@@ -10,29 +10,51 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cargate_event_log")
+@Table(name = "parking_session")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CargateEventLog {
+public class ParkingSession {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cargateEventId; // 이벤트 로그 식별자
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cargate_id")
-    private CarGate carGate; // 발생 게이트 위치
+    private Long parkingSessionId; // 주차 세션 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id")
-    private Vehicle vehicle; // OCR결과 매핑된 차량, OCR실패시 null
+    private Vehicle vehicle; // 어떤 차량의 주차인지
 
-    @Enumerated(EnumType.STRING)
-    private GateType gateType; // 이벤트 성격(ENTRY/EXIT)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entry_cargate_id", referencedColumnName = "cargate_id")
+    private CarGate entryCarGate; // 입차한 게이트
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exit_cargate_id", referencedColumnName = "cargate_id")
+    private CarGate exitCarGate; // 출차한 게이트
 
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime eventAt; // 카메라 촬영시간
+    private LocalDateTime entryAt; // 입차시간
 
-    private String imagePath; // 촬영된 이미지 경로
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime exitAt; // 출차시간
+
+    @Enumerated(EnumType.STRING)
+    private ParkingStatus status;  // 현재 상태(IN/OUT)
+
+    //입차 시
+    public static ParkingSession entry(Vehicle vehicle, CarGate carGate, LocalDateTime time) {
+        ParkingSession ps = new ParkingSession();
+        ps.vehicle = vehicle;
+        ps.entryCarGate = carGate;
+        ps.entryAt = time;
+        ps.status = ParkingStatus.IN;
+        return ps;
+    }
+
+    // 출차시
+    public void exit(CarGate carGate, LocalDateTime time) {
+        this.exitCarGate = carGate;
+        this.exitAt = time;
+        this.status = ParkingStatus.OUT;
+    }
 }
