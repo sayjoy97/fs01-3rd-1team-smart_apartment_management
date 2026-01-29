@@ -4,7 +4,6 @@ import com.jjld.domain.admin.dto.*;
 
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -29,4 +28,6 @@ public interface AdminService {
     void initialSetupAdmin(Long adminId, SetupAdminReq setupAdminReq, HttpServletRequest servletRequest);
 
     void logoutAdmin(Long adminId, HttpServletRequest servletRequest);
+
+    Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable);
 }
