@@ -21,12 +21,15 @@ public class ParkingSession {
     private Long parkingSessionId; // 주차 세션 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle; // 어떤 차량의 주차인지
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entry_cargate_id", referencedColumnName = "cargate_id")
     private CarGate entryCarGate; // 입차한 게이트
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exit_cargate_id", referencedColumnName = "cargate_id")
     private CarGate exitCarGate; // 출차한 게이트
 
     @Column(columnDefinition = "DATETIME")
