@@ -4,6 +4,7 @@ import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.service.AdminService;
 import com.jjld.global.response.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -76,8 +77,12 @@ public class AdminController {
 
     // 관리자 로그인
     @PostMapping("/login")
-    public ResponseEntity<?> loginAdmin(@Valid @RequestBody LoginAdminReq loginAdminReq) {
-        LoginAdminRes response = adminService.loginAdmin(loginAdminReq);
+    public ResponseEntity<?> loginAdmin(
+            @Valid @RequestBody LoginAdminReq loginAdminReq,
+            HttpServletRequest servletRequest
+    ) {
+
+        LoginAdminRes response = adminService.loginAdmin(loginAdminReq, servletRequest);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

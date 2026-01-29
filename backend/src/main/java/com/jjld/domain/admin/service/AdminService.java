@@ -3,6 +3,7 @@ package com.jjld.domain.admin.service;
 import com.jjld.domain.admin.dto.*;
 
 import com.jjld.domain.admin.entity.Enum.AdminRole;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,5 @@ public interface AdminService {
 
     void updateAdmin(Long adminId, UpdateAdminReq updateAdminReq);
 
-    LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq);
+    LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest);
 }

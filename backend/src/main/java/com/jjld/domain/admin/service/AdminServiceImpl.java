@@ -1,12 +1,15 @@
 package com.jjld.domain.admin.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
+import com.jjld.domain.admin.dao.HistoryDAO;
 import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
+import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.admin.specification.AdminSpecification;
 import com.jjld.global.exception.admin.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +29,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdminServiceImpl implements AdminService {
     private final AdminDAO adminDAO;
+    private final HistoryDAO historyDAO;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
-    private final AdminRepository adminRepository;
 
     // adminId를 이용해 관리자 조회
     @Override
@@ -143,25 +146,41 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq) {
+    public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest) {
+        // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
+        String ipAddress = servletRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null) {
+            ipAddress = servletRequest.getRemoteAddr();
+        }
+
         Admin admin = adminDAO.findByAdminLoginId(loginAdminReq.getAdminLoginId()).orElse(null);
-        boolean isException = false;
+        History history = new History();
 
         if (admin == null) {
-            isException = true;
             log.info("아이디가 존재하지 않습니다.");
-        }
-
-        if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
-            isException = true;
-            log.info("비밀번호가 틀렸습니다.");
-        }
-
-        if (!isException) {
             throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        if (admin.getIsFirstLogin()) admin.setState(true);
+        if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
+            history = History.builder()
+                    .admin(admin)
+                    .ipAddress(ipAddress)
+                    .success(false)
+                    .message("아이디 또는 비밀번호 불일치")
+                    .build();
+            historyDAO.createLog(history);
+            log.info("비밀번호가 틀렸습니다.");
+            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        history = History.builder()
+                .admin(admin)
+                .ipAddress(ipAddress)
+                .success(true)
+                .build();
+        historyDAO.createLog(history);
+
+        admin.setState(true);
         adminDAO.updateAdmin(admin);
 
         LoginAdminRes response = modelMapper.map(admin, LoginAdminRes.class);
