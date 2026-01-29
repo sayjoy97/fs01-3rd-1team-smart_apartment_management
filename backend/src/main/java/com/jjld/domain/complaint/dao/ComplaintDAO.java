@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface ComplaintDAO {
 
-    // 관리자의 민원 전체 목록 조회
-    List<Complaint> complaintList();
-
     // 관리자의 민원 상세 조회
     Complaint findByComplaintId(Long complaintId);
+
+    // 입주민의 민원 상세 조회
+    Complaint findByHouseIdComplaintId(Long houseId, Long complaintId);
 }

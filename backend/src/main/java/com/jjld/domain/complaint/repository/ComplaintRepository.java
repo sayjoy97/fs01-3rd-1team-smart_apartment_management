@@ -1,6 +1,7 @@
 package com.jjld.domain.complaint.repository;
 
 import com.jjld.domain.complaint.entity.Complaint;
+import com.jjld.domain.house.entity.House;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,9 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
 
     // 로그인한 유저 기준의 민원 목록 조회
     List<Complaint> findByHouse_HouseId(Long houseId);
+
+    // 로그인한 유저 기준의 민원 상세 조회
+    Complaint findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId);
+
+
 }

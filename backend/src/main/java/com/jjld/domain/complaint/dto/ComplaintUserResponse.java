@@ -19,5 +19,4 @@ public class ComplaintUserResponse {
     private String status;
     private LocalDateTime createAt;
 
-
 }

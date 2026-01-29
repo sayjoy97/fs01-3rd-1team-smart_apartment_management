@@ -13,15 +13,16 @@ import java.util.List;
 public class ComplaintDAOImpl implements ComplaintDAO{
     private final ComplaintRepository complaintRepository;
 
-    // 관리자의 민원 조회
-    @Override
-    public List<Complaint> complaintList() {
-        return complaintRepository.findAll();
-    }
-
     // 관리자의 민원 상세 조회
     @Override
     public Complaint findByComplaintId(Long complaintId) {
         return complaintRepository.findByComplaintId(complaintId);
     }
+
+    @Override
+    public Complaint findByHouseIdComplaintId(Long houseId, Long complaintId) {
+        return complaintRepository.findByComplaintIdAndHouse_HouseId(houseId, complaintId);
+    }
+
+
 }

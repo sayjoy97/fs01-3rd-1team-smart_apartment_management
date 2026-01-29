@@ -2,6 +2,7 @@ package com.jjld.domain.complaint.service;
 
 import com.jjld.domain.complaint.dto.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.ComplaintUserDetailResponse;
 import com.jjld.domain.complaint.dto.ComplaintUserResponse;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
@@ -19,4 +20,7 @@ public interface ComplaintService {
 
     // 로그인한 유저 기준의 민원 목록 조회
     List<ComplaintUserResponse> findByHouse_HouseId(Long houseId);
+
+    // 로그인한 유저 기준의 민원 상세 조회
+    ComplaintUserDetailResponse  findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId);
 }

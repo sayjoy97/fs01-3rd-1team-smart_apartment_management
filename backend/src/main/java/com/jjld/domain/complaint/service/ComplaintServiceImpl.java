@@ -4,10 +4,12 @@ import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dao.ComplaintDAOImpl;
 import com.jjld.domain.complaint.dto.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.ComplaintUserDetailResponse;
 import com.jjld.domain.complaint.dto.ComplaintUserResponse;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
 import com.jjld.domain.complaint.entity.ComplaintReply;
+import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
 import com.jjld.global.exception.complaint.ComplaintNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -45,32 +47,32 @@ public class ComplaintServiceImpl implements ComplaintService {
 
     @Override
     public ComplaintAdminDetailResponse findByComplaintId(Long complaintId) {
-        Complaint entity = complaintDAO.findByComplaintId(complaintId);
-        if (entity == null){
+        Complaint complaint = complaintDAO.findByComplaintId(complaintId);
+        if (complaint == null){
             throw new ComplaintNotFoundException();
         }
 
-        String summary = Optional.ofNullable(entity.getComplaintAnalysis())
+        String summary = Optional.ofNullable(complaint.getComplaintAnalysis())
                 .map(ComplaintAnalysis::getSummary)
                 .orElse(null);
 
-        String answer = Optional.ofNullable(entity.getComplaintReply())
-                .map(r -> String.valueOf(r.getAnswer()))
+        String answer = Optional.ofNullable(complaint.getComplaintReply())
+                .map(r -> r.getAnswer())
                 .orElse(null);
 
-        String admin = Optional.ofNullable(entity.getComplaintReply())
-                .map(r -> String.valueOf(r.getAdmin().getAdminName()))
+        String admin = Optional.ofNullable(complaint.getComplaintReply())
+                .map(r -> r.getAdmin().getAdminName())
                 .orElse(null);
 
         ComplaintAdminDetailResponse adminDetailResponse = ComplaintAdminDetailResponse.builder()
-                .complaintId(entity.getComplaintId())
-                .houseDong(entity.getHouse().getHouseDong())
-                .houseHo(entity.getHouse().getHouseHo())
-                .category(entity.getCategory().name())
-                .createAt(entity.getCreatedAt())
-                .updateAt(entity.getUpdatedAt())
-                .title(entity.getTitle())
-                .content(entity.getContent())
+                .complaintId(complaint.getComplaintId())
+                .houseDong(complaint.getHouse().getHouseDong())
+                .houseHo(complaint.getHouse().getHouseHo())
+                .category(complaint.getCategory().name())
+                .createAt(complaint.getCreatedAt())
+                .updateAt(complaint.getUpdatedAt())
+                .title(complaint.getTitle())
+                .content(complaint.getContent())
                 .summary(summary)
                 .answer(answer)
                 .adminName(admin)
@@ -95,5 +97,31 @@ public class ComplaintServiceImpl implements ComplaintService {
                         .createAt(complaint.getCreatedAt())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ComplaintUserDetailResponse  findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId) {
+        Complaint complaint = complaintDAO.findByHouseIdComplaintId(houseId, complaintId);
+        if (complaint == null){
+            throw new ComplaintNotFoundException("상세 조회하려는 민원글이 없습니다");
+        }
+
+        String answer = Optional.ofNullable(complaint.getComplaintReply())
+                .map(r -> r.getAnswer())
+                .orElse(null);
+
+        ComplaintUserDetailResponse userDetailResponse = ComplaintUserDetailResponse.builder()
+                .complaintId(complaint.getComplaintId())
+                .category(complaint.getCategory().name())
+                .title(complaint.getTitle())
+                .createAt(complaint.getCreatedAt())
+                .updateAt(complaint.getUpdatedAt())
+                .content(complaint.getContent())
+                .answer(answer)
+                .canEdit(complaint.getStatus() == ComplaintStatus.WAITING)
+                .canDelete(complaint.getStatus() == ComplaintStatus.WAITING)
+                .build();
+
+        return userDetailResponse;
     }
 }
