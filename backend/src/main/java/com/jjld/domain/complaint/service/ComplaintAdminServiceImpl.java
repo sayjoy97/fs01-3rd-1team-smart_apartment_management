@@ -2,19 +2,18 @@ package com.jjld.domain.complaint.service;
 
 import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dao.ComplaintDAOImpl;
-import com.jjld.domain.complaint.dto.ComplaintAdminDetailResponse;
-import com.jjld.domain.complaint.dto.ComplaintAdminResponse;
-import com.jjld.domain.complaint.dto.ComplaintUserDetailResponse;
-import com.jjld.domain.complaint.dto.ComplaintUserResponse;
+import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
+import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.user.ComplaintReference;
+import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
+import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
+import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
-import com.jjld.domain.complaint.entity.ComplaintReply;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
 import com.jjld.global.exception.complaint.ComplaintNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +26,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ComplaintServiceImpl implements ComplaintService {
+public class ComplaintAdminServiceImpl implements ComplaintAdminService {
 
     private final ComplaintRepository complaintRepository;
-    private final ComplaintDAOImpl complaintDAO;
+    private final ComplaintDAO complaintDAO;
 
     // 관리자 민원 목록 페이징으로 조회
     public Page<ComplaintAdminResponse> findAll(int page, int size){
@@ -45,6 +44,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
 
+    // 관리자 민원 상세 조회
     @Override
     public ComplaintAdminDetailResponse findByComplaintId(Long complaintId) {
         Complaint complaint = complaintDAO.findByComplaintId(complaintId);
@@ -52,14 +52,17 @@ public class ComplaintServiceImpl implements ComplaintService {
             throw new ComplaintNotFoundException();
         }
 
+        // ai 요약이 없을 때 null
         String summary = Optional.ofNullable(complaint.getComplaintAnalysis())
                 .map(ComplaintAnalysis::getSummary)
                 .orElse(null);
 
+        // 관리자 답변이 없을 때 null
         String answer = Optional.ofNullable(complaint.getComplaintReply())
                 .map(r -> r.getAnswer())
                 .orElse(null);
 
+        // 관리자 답변이 없을 때 -> 답변 작성한 관리자 ID가 null
         String admin = Optional.ofNullable(complaint.getComplaintReply())
                 .map(r -> r.getAdmin().getAdminName())
                 .orElse(null);
@@ -81,47 +84,4 @@ public class ComplaintServiceImpl implements ComplaintService {
         return adminDetailResponse;
     }
 
-    @Override
-    public List<ComplaintUserResponse> findByHouse_HouseId(Long houseId) {
-        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseId(houseId);
-        if(userComplaint.isEmpty()){
-            throw new ComplaintNotFoundException("작성한 민원이 없습니다");
-        }
-
-        return userComplaint.stream()
-                .map(complaint -> ComplaintUserResponse.builder()
-                        .complaintId(complaint.getComplaintId())
-                        .title(complaint.getTitle())
-                        .category(String.valueOf(complaint.getCategory()))
-                        .status(String.valueOf(complaint.getStatus()))
-                        .createAt(complaint.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public ComplaintUserDetailResponse  findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId) {
-        Complaint complaint = complaintDAO.findByHouseIdComplaintId(houseId, complaintId);
-        if (complaint == null){
-            throw new ComplaintNotFoundException("상세 조회하려는 민원글이 없습니다");
-        }
-
-        String answer = Optional.ofNullable(complaint.getComplaintReply())
-                .map(r -> r.getAnswer())
-                .orElse(null);
-
-        ComplaintUserDetailResponse userDetailResponse = ComplaintUserDetailResponse.builder()
-                .complaintId(complaint.getComplaintId())
-                .category(complaint.getCategory().name())
-                .title(complaint.getTitle())
-                .createAt(complaint.getCreatedAt())
-                .updateAt(complaint.getUpdatedAt())
-                .content(complaint.getContent())
-                .answer(answer)
-                .canEdit(complaint.getStatus() == ComplaintStatus.WAITING)
-                .canDelete(complaint.getStatus() == ComplaintStatus.WAITING)
-                .build();
-
-        return userDetailResponse;
-    }
 }

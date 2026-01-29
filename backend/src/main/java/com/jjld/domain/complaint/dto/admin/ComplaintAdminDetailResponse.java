@@ -1,5 +1,4 @@
-package com.jjld.domain.complaint.dto;
-
+package com.jjld.domain.complaint.dto.admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,16 +11,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ComplaintUserDetailResponse {
+public class ComplaintAdminDetailResponse {
     private Long complaintId;
-    private String category;
     private String title;
+    private String category;
+    private Integer houseDong;
+    private Integer houseHo;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+
     private String content;
+    private String summary;
     private String answer;
-
-    private boolean canEdit;
-    private boolean canDelete;
-
+    private String adminName;
 }
