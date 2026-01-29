@@ -20,12 +20,14 @@ public class NoiseSensor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sensorId;
 
-    /**
-     * HOUSE (1) ── (N) NOISE_SENSOR
-     */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "house_id", nullable = false)
-    private House house;
+    // HOUSE (1) ── (N) NOISE_SENSOR
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "upper_house_id", nullable = false)
+    private House upperHouse;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lower_house_id", nullable = false)
+    private House lowerHouse;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

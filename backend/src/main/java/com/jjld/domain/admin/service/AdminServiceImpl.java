@@ -1,17 +1,19 @@
 package com.jjld.domain.admin.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
-import com.jjld.domain.admin.dto.AdminReq;
-import com.jjld.domain.admin.dto.AdminRes;
-import com.jjld.domain.admin.dto.AdminSearchCondition;
-import com.jjld.domain.admin.dto.UpdateAdminReq;
+import com.jjld.domain.admin.dao.HistoryDAO;
+import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
-import com.jjld.domain.admin.repository.AdminRepository;
+import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.AdminSpecification;
+import com.jjld.domain.admin.specification.HistorySpecification;
 import com.jjld.global.exception.admin.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,17 +22,17 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;
-
-import static com.jjld.global.exception.ErrorCode.PASSWORD_MISMATCH;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Builder
+@Slf4j
 public class AdminServiceImpl implements AdminService {
     private final AdminDAO adminDAO;
+    private final HistoryDAO historyDAO;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
-    private final AdminRepository adminRepository;
 
     // adminId를 이용해 관리자 조회
     @Override
@@ -57,6 +59,7 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = Admin.builder()
                 .adminLoginId(adminReq.getAdminLoginId())
                 .adminPass(encoder.encode(adminReq.getAdminPass()))
+                .isFirstLogin(true)
                 .state(false)
                 .adminRole(adminReq.getAdminRole())
                 .build();
@@ -77,8 +80,10 @@ public class AdminServiceImpl implements AdminService {
     // 관리자 목록을 조회
     @Override
     public List<AdminRes> getAdmins() {
-        List<Admin> admins = adminDAO.getAdmins();
-        List<AdminRes> response = modelMapper.map(admins, List.class);
+        List<AdminRes> response = adminDAO.getAdmins()
+                .stream()
+                .map(A -> modelMapper.map(A, AdminRes.class))
+                .collect(Collectors.toList());
 
         return response;
     }
@@ -93,6 +98,7 @@ public class AdminServiceImpl implements AdminService {
         return response;
     }
 
+    // 관리자 권한 수정
     @Override
     public void updateAdminAuthority(Long adminId, Long targetAdminId, AdminRole adminRole) {
         Admin superAdmin = adminDAO.getAdmin(adminId)
@@ -112,13 +118,14 @@ public class AdminServiceImpl implements AdminService {
         adminDAO.updateAdminAuthority(targetAdmin);
     }
 
+    // 관리자 정보 수정
     @Override
     public void updateAdmin(Long adminId, UpdateAdminReq updateAdminReq) {
-        Admin Admin = adminDAO.getAdmin(adminId)
+        Admin admin = adminDAO.getAdmin(adminId)
                 .orElseThrow(() -> new AdminNotFoundException());
 
         // 입력한 현재 비밀번호와 DB에 저장된 비밀번호 비교
-        if (!encoder.matches(updateAdminReq.getCurrentPassword(), Admin.getAdminPass())) {
+        if (!encoder.matches(updateAdminReq.getCurrentPassword(), admin.getAdminPass())) {
             throw new InvalidCurrentPassword();
         }
 
@@ -132,11 +139,132 @@ public class AdminServiceImpl implements AdminService {
             throw new PasswordMismatchException();
         }
 
-        Admin.setAdminName(updateAdminReq.getAdminName());
-        Admin.setAdminPass(encoder.encode(updateAdminReq.getNewPassword()));
-        Admin.setAdminPhone(updateAdminReq.getAdminPhone());
-        Admin.setAdminEmail(updateAdminReq.getAdminEmail());
+        admin.setAdminName(updateAdminReq.getAdminName());
+        admin.setAdminPass(encoder.encode(updateAdminReq.getNewPassword()));
+        admin.setAdminPhone(updateAdminReq.getAdminPhone());
+        admin.setAdminEmail(updateAdminReq.getAdminEmail());
 
-        adminDAO.updateAdmin(Admin);
+        adminDAO.updateAdmin(admin);
+    }
+
+    // 관리자 로그인
+    @Override
+    public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest) {
+        // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
+        String ipAddress = servletRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null) {
+            ipAddress = servletRequest.getRemoteAddr();
+        }
+
+        Admin admin = adminDAO.findByAdminLoginId(loginAdminReq.getAdminLoginId()).orElse(null);
+
+        if (admin == null) {
+            log.info("아이디가 존재하지 않습니다.");
+            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
+            History history = History.builder()
+                    .admin(admin)
+                    .ipAddress(ipAddress)
+                    .accessType(AccessType.LOGIN)
+                    .success(false)
+                    .message("아이디 또는 비밀번호 불일치")
+                    .build();
+            historyDAO.createLog(history);
+            log.info("비밀번호가 틀렸습니다.");
+            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+
+        History history = History.builder()
+                .admin(admin)
+                .ipAddress(ipAddress)
+                .accessType(AccessType.LOGIN)
+                .success(true)
+                .message("로그인 성공")
+                .build();
+        historyDAO.createLog(history);
+
+        admin.setState(true);
+        adminDAO.updateAdmin(admin);
+
+        LoginAdminRes response = modelMapper.map(admin, LoginAdminRes.class);
+
+        return response;
+    }
+
+    // 관리자 최초 로그인 처리
+    @Override
+    public void initialSetupAdmin(Long adminId, SetupAdminReq setupAdminReq, HttpServletRequest servletRequest) {
+        // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
+        String ipAddress = servletRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null) {
+            ipAddress = servletRequest.getRemoteAddr();
+        }
+        Admin admin = adminDAO.getAdmin(adminId)
+                .orElseThrow(() -> new AdminNotFoundException());
+
+        // 입력한 새 비밀번호와 DB에 저장된 비밀번호 비교
+        if (encoder.matches(setupAdminReq.getNewPassword(), admin.getAdminPass())) {
+            throw new SameAsOldPassword();
+        }
+
+        // 새 비밀번호와 새 비밀번호 확인 비교
+        if (!setupAdminReq.getNewPassword().equals(setupAdminReq.getConfirmNewPassword())) {
+            throw new PasswordMismatchException();
+        }
+
+        admin.setAdminName(setupAdminReq.getAdminName());
+        admin.setAdminPass(encoder.encode(setupAdminReq.getNewPassword()));
+        admin.setAdminPhone(setupAdminReq.getAdminPhone());
+        admin.setAdminEmail(setupAdminReq.getAdminEmail());
+        admin.setIsFirstLogin(false);
+
+        History history = History.builder()
+                .admin(admin)
+                .ipAddress(ipAddress)
+                .accessType(AccessType.INITIAL_SETUP)
+                .success(true)
+                .message("최초 설정 성공")
+                .build();
+        historyDAO.createLog(history);
+
+        adminDAO.updateAdmin(admin);
+    }
+
+    // 관리자 로그아웃
+    @Override
+    public void logoutAdmin(Long adminId, HttpServletRequest servletRequest) {
+        // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
+        String ipAddress = servletRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null) {
+            ipAddress = servletRequest.getRemoteAddr();
+        }
+        Admin admin = adminDAO.getAdmin(adminId)
+                .orElseThrow(() -> new AdminNotFoundException());
+
+        admin.setState(false);
+        adminDAO.updateAdmin(admin);
+
+        History history = History.builder()
+                .admin(admin)
+                .ipAddress(ipAddress)
+                .accessType(AccessType.LOGOUT)
+                .success(true)
+                .message("로그아웃 성공")
+                .build();
+        historyDAO.createLog(history);
+    }
+
+    // 관리자 접속 기록 조회
+    @Override
+    public Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable) {
+        Admin admin = adminDAO.getAdmin(adminId)
+                .orElseThrow(() -> new AdminNotFoundException());
+        Specification<History> spec = HistorySpecification.withCondition(admin, cond);
+        Page<History> histories = historyDAO.getAccessLogs(spec, pageable);
+        Page<HistoryRes> response = histories.map(history -> modelMapper.map(history, HistoryRes.class));
+
+        return response;
     }
 }
