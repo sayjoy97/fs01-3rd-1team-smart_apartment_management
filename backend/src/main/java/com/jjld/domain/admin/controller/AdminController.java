@@ -3,6 +3,7 @@ package com.jjld.domain.admin.controller;
 import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.service.AdminService;
+import com.jjld.domain.admin.service.HistoryService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final HistoryService historyService;
 
     // adminId를 이용해 관리자 조회
     @GetMapping("/{adminId}")
@@ -110,7 +112,7 @@ public class AdminController {
     // 관리자 접속 기록 조회
     @GetMapping("/{adminId}/access-logs")
     public ResponseEntity<?> getAccessLogs(@PathVariable("adminId") Long adminId, HistorySearchCondition cond, Pageable pageable) {
-        Page<HistoryRes> response = adminService.getAccessLogs(adminId, cond, pageable);
+        Page<HistoryRes> response = historyService.getAccessLogs(adminId, cond, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
