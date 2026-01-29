@@ -214,4 +214,13 @@ public class AdminServiceImpl implements AdminService {
 
         adminDAO.updateAdmin(admin);
     }
+
+    @Override
+    public void logoutAdmin(Long adminId) {
+        Admin admin = adminDAO.getAdmin(adminId)
+                .orElseThrow(() -> new AdminNotFoundException());
+
+        admin.setState(false);
+        adminDAO.updateAdmin(admin);
+    }
 }

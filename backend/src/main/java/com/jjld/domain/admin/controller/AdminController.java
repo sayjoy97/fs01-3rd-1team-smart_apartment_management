@@ -81,7 +81,6 @@ public class AdminController {
             @Valid @RequestBody LoginAdminReq loginAdminReq,
             HttpServletRequest servletRequest
     ) {
-
         LoginAdminRes response = adminService.loginAdmin(loginAdminReq, servletRequest);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
@@ -92,6 +91,12 @@ public class AdminController {
             @Valid @RequestBody SetupAdminReq setupAdminReq
     ) {
         adminService.initialSetupAdmin(adminId, setupAdminReq);
-        return ResponseEntity.ok(ApiResponse.success("로그인을 성공했습니다."));
+        return ResponseEntity.ok(ApiResponse.success("최초 설정을 성공했습니다."));
+    }
+
+    @PostMapping("logout/{adminId}")
+    public ResponseEntity<?> logoutAdmin(@PathVariable("adminId") Long adminId) {
+        adminService.logoutAdmin(adminId);
+        return ResponseEntity.ok(ApiResponse.success("로그아웃을 성공했습니다."));
     }
 }

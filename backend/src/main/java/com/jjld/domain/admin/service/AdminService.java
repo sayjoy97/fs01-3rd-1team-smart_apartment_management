@@ -27,4 +27,6 @@ public interface AdminService {
     LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest);
 
     void initialSetupAdmin(Long adminId, @Valid SetupAdminReq setupAdminReq);
+
+    void logoutAdmin(Long adminId);
 }
