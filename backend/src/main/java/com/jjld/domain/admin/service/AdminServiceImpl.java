@@ -8,7 +8,6 @@ import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.AdminSpecification;
-import com.jjld.domain.admin.specification.HistorySpecification;
 import com.jjld.global.exception.admin.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Builder;

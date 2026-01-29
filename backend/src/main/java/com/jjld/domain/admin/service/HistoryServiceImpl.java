@@ -8,14 +8,11 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.HistorySpecification;
 import com.jjld.global.exception.admin.AdminNotFoundException;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
