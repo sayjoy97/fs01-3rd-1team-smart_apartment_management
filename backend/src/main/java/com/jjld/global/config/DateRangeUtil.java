@@ -16,8 +16,8 @@ public class DateRangeUtil {
     }
 
     // 오늘 포함 최근 7일 (시간 포함, DB 조회용)
-    public static LocalDateTime getStartDateTime7Days() {
-        return LocalDate.now().minusDays(6).atStartOfDay();
+    public static LocalDateTime getStartDateTime7Days(int lastNday) {
+        return LocalDate.now().minusDays(lastNday).atStartOfDay();
     }
 
     public static LocalDateTime getEndDateTime7Days() {

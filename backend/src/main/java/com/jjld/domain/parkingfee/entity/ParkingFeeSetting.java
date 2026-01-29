@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "parking_fee_setting")
@@ -18,7 +19,8 @@ public class ParkingFeeSetting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "parking_fee_setting_id")
+    private Long parkingFeeSettingId;
 
     // 기본 무료 시간 (분)
     @Column(nullable = false)
@@ -28,27 +30,28 @@ public class ParkingFeeSetting {
     @Column(nullable = false)
     private Integer baseCharge;
 
-    // 피크 요금 사용 여부
-    @Column(nullable = false, length = 1)
-    private String useYN; // Y / N
-
-    // 피크 시작 시간
-    private LocalDateTime peakStartTime;
-
-    // 피크 종료 시간
-    private LocalDateTime peakEndTime;
-
-    // 피크 단위 시간
-    private Integer peakTime;
-
-    // 피크 요금
-    private Integer peakCharge;
-
-    // 현재 적용 여부
+    // 단위 시간 (분)
     @Column(nullable = false)
-    private Boolean isActive;
+    private Integer unitMinutes;
 
-    // 설정 생성/변경 시각
-    private LocalDateTime updatedAt;
+    // 단위 요금
+    @Column(nullable = false)
+    private Integer unitCharge;
+
+    // 피크 요금 사용 여부
+    @Column(nullable = false)
+    private Boolean peakEnabled;
+
+    // 피크 시간대 (시간만 쓰는 게 중요)
+    private LocalTime peakStartTime;
+    private LocalTime peakEndTime;
+
+    private Integer peakUnitMinutes;
+    private Integer peakUnitCharge;
+
+    @Column(nullable = false)
+    private Boolean active;
+
+    private LocalDateTime appliedAt;
 }
 

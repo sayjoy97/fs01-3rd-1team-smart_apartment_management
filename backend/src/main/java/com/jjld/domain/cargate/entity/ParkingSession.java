@@ -1,6 +1,7 @@
 package com.jjld.domain.cargate.entity;
 
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
+import com.jjld.domain.parkingfee.entity.ParkingFeeHistory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,14 +42,17 @@ public class ParkingSession {
     @Enumerated(EnumType.STRING)
     private ParkingStatus status;  // 현재 상태(IN/OUT)
 
+    @OneToOne(mappedBy = "parkingSession", fetch = FetchType.LAZY)
+    private ParkingFeeHistory parkingFeeHistory;
+
     //입차 시
     public static ParkingSession entry(Vehicle vehicle, CarGate carGate, LocalDateTime time) {
-        ParkingSession ps = new ParkingSession();
-        ps.vehicle = vehicle;
-        ps.entryCarGate = carGate;
-        ps.entryAt = time;
-        ps.status = ParkingStatus.IN;
-        return ps;
+        return ParkingSession.builder()
+                .vehicle(vehicle)
+                .entryCarGate(carGate)
+                .entryAt(time)
+                .status(ParkingStatus.IN)
+                .build();
     }
 
     // 출차시
