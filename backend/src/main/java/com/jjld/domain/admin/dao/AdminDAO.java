@@ -3,6 +3,7 @@ package com.jjld.domain.admin.dao;
 import com.jjld.domain.admin.dto.AdminRes;
 import com.jjld.domain.admin.dto.AdminSearchCondition;
 import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.entity.History;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
