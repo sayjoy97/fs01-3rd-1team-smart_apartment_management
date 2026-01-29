@@ -86,6 +86,7 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
+    // 관리자 최초 로그인 시 설정
     @PostMapping("/{adminId}/initial-setup")
     public ResponseEntity<?> initialSetupAdmin(
             @PathVariable("adminId") Long adminId,
@@ -96,6 +97,7 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("최초 설정을 성공했습니다."));
     }
 
+    // 관리자 로그아웃
     @PostMapping("/{adminId}/logout")
     public ResponseEntity<?> logoutAdmin(
             @PathVariable("adminId") Long adminId,
@@ -103,5 +105,12 @@ public class AdminController {
     ) {
         adminService.logoutAdmin(adminId, servletRequest);
         return ResponseEntity.ok(ApiResponse.success("로그아웃을 성공했습니다."));
+    }
+
+    // 관리자 접속 기록 조회
+    @GetMapping("/{adminId}/access-logs")
+    public ResponseEntity<?> getAccessLogs(@PathVariable("adminId") Long adminId, HistorySearchCondition cond, Pageable pageable) {
+        Page<HistoryRes> response = adminService.getAccessLogs(adminId, cond, pageable);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
