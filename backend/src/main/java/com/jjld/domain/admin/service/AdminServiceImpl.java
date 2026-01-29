@@ -255,16 +255,4 @@ public class AdminServiceImpl implements AdminService {
                 .build();
         historyDAO.createLog(history);
     }
-
-    // 관리자 접속 기록 조회
-    @Override
-    public Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable) {
-        Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
-        Specification<History> spec = HistorySpecification.withCondition(admin, cond);
-        Page<History> histories = historyDAO.getAccessLogs(spec, pageable);
-        Page<HistoryRes> response = histories.map(history -> modelMapper.map(history, HistoryRes.class));
-
-        return response;
-    }
 }

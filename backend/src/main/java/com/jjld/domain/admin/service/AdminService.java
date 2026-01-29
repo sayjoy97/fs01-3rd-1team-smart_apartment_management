@@ -29,5 +29,5 @@ public interface AdminService {
 
     void logoutAdmin(Long adminId, HttpServletRequest servletRequest);
 
-    Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable);
+
 }
