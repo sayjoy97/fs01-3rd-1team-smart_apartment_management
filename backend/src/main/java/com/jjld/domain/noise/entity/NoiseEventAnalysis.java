@@ -1,8 +1,13 @@
 package com.jjld.domain.noise.entity;
 
-import com.jjld.domain.noise.entity.Enum.NoisePattern;
+import com.jjld.domain.house.entity.House;
+import com.jjld.domain.noise.entity.Enum.NoisePattern1;
+import com.jjld.domain.noise.entity.Enum.NoisePattern2;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "noise_event_analysis")
@@ -16,22 +21,40 @@ public class NoiseEventAnalysis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long analysisId;
 
+    // NOISE_EVENT (1) ── (1) NOISE_EVENT_ANALYSIS
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "noise_event_id")
     private NoiseEvent noiseEvent;
 
+    // HOUSE (1) ── (N) NOISE_EVENT_ANALYSIS
+    // 추정 가해 세대
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "house_id", nullable = false)
+    private House house;
+
+    // 1차 분류 (시스템)
     @Enumerated(EnumType.STRING)
-    @Column(name = "noise_pattern", nullable = false)
-    private NoisePattern noisePattern;
+    @Column(name = "noise_pattern_1", nullable = false, length = 30)
+    private NoisePattern1 noisePattern1;
 
+    // 2차 분류 (추정)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "noise_pattern_2", nullable = false, length = 30)
+    private NoisePattern2 noisePattern2;
+
+    // 시간 창 내 반복 횟수
     @Column(nullable = false)
-    private Boolean impactDetected;
+    private Integer repeatCount;
 
+    // 정책 위반 의심 여부
     @Column(nullable = false)
-    private Boolean vibDetected;
+    private Boolean policyBreak;
 
-    @Column(nullable = false)
-    private Boolean soundChangeDetected;
-
+    // 분석 요약 설명
+    @Column(nullable = false, length = 255)
     private String analysisNote;
+
+    @CreationTimestamp
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime createdAt;
 }
