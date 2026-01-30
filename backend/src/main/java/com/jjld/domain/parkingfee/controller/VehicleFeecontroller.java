@@ -14,11 +14,11 @@ public class VehicleFeecontroller {
     private final VehicleFeeService vehicleFeeService;
 
      // 차량 출입관리 페이지 요금 간단조회 - 금일 누적금액&이번달 누적금액 조회
-    @GetMapping("/charge")
-    ResponseEntity<?> getSimpleCharge(){
-        SimpleRateResponse rateByType = vehicleFeeService.getRateByType();
-        return ResponseEntity.ok(ApiResponse.success(rateByType));
-    }
+//    @GetMapping("/charge")
+//    ResponseEntity<?> getSimpleCharge(){
+//        SimpleRateResponse rateByType = vehicleFeeService.getRateByType();
+//        return ResponseEntity.ok(ApiResponse.success(rateByType));
+//    }
 
     // 요금내역관리 페이지 요금 통합조회
 //    @GetMapping("/totalList")

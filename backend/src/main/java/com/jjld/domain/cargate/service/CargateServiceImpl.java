@@ -2,12 +2,10 @@ package com.jjld.domain.cargate.service;
 
 import com.jjld.domain.cargate.dao.CargateDAO;
 import com.jjld.domain.cargate.dto.*;
-import com.jjld.domain.cargate.entity.ApprovedCar;
-import com.jjld.domain.cargate.entity.CargateEventLog;
+import com.jjld.domain.cargate.entity.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
-import com.jjld.domain.cargate.entity.RegisteredCar;
-import com.jjld.domain.cargate.entity.Vehicle;
 import com.jjld.domain.cargate.repository.ApprovedCarRepository;
+import com.jjld.domain.cargate.repository.ParkingSessionRepository;
 import com.jjld.domain.cargate.repository.RegisteredCarRepository;
 import com.jjld.domain.cargate.repository.VehicleRepository;
 import com.jjld.domain.house.repository.HouseRepository;
@@ -31,10 +29,7 @@ import java.util.*;
 public class CargateServiceImpl implements CargateService {
     private final CargateDAO cargateDAO;
 
-    private final VehicleRepository vehicleRepository;
-    private final ApprovedCarRepository approvedCarRepository;
     private final HouseRepository houseRepository;
-    private final RegisteredCarRepository registeredCarRepository;
 
     private final ModelMapper modelMapper;
 
@@ -102,15 +97,17 @@ public class CargateServiceImpl implements CargateService {
 
     // 컨트롤러에서 직접 요청하는 작업내용
     @Override
-    public Long registerVehicle(VehicleRegisterRequest req) {
-        Vehicle vehicle = vehicleRepository.findByPlateNumber(req.getPlateNumber())
-                .orElseGet(() -> vehicleRepository.save(
-                        new Vehicle(req.getPlateNumber(), req.getVehicleType())
-                ));
+    public Long registerVehicle(VehicleRegisterRequest request) {
+        Vehicle vehicle = cargateDAO.findByPlateNumber(request.getPlateNumber())
+                .orElseGet(() -> cargateDAO.newVehicle(
+                        request.getPlateNumber(),
+                        request.getVehicleType()
+                        )
+                );
 
-        switch (req.getRegisterType()) {
-            case 1 -> registerHouseVehicle(vehicle, req);
-            case 2 -> registerApprovedVehicle(vehicle, req);
+        switch (request.getRegisterType()) {
+            case 1 -> registerHouseVehicle(vehicle, request);
+            case 2 -> registerApprovedVehicle(vehicle, request);
             default -> throw new IllegalArgumentException("잘못된 등록 유형");
         }
 
@@ -127,9 +124,10 @@ public class CargateServiceImpl implements CargateService {
         RegisteredCar registeredCar = RegisteredCar.builder()
                 .vehicle(vehicle)
                 .house(houseRepository.getReferenceById(req.getHouseId()))
+                .vehicleOwner(req.getVehicleOwner())
                 .build();
 
-        registeredCarRepository.save(registeredCar);
+        cargateDAO.createRegisteredCar(registeredCar);
     }
 
     // 관리자 승인차량 등록일 때 필요한 작업내용
@@ -149,41 +147,73 @@ public class CargateServiceImpl implements CargateService {
                 .endAt(req.getEndAt())
                 .build();
 
-        approvedCarRepository.save(approvedCar);
+        cargateDAO.createApprovedCar(approvedCar);
     }
 
-    // 세대 등록차량
+    // 세대 등록차량 조회
     @Override
     public List<RegisteredCarResponse> getRegisteredCars() {
         List<RegisteredCar> registeredList = cargateDAO.findRegisteredList();
-        List<ApprovedCar> approvedList = cargateDAO.findApprovedList();
 
         List<RegisteredCarResponse> result = new ArrayList<>();
         for (RegisteredCar car : registeredList) {
             result.add(RegisteredCarResponse.builder()
                     .id(car.getId())
                     .plateNumber(car.getVehicle().getPlateNumber())
+                    .vehicleOwner(car.getVehicleOwner())
+                    .houseDong(car.getHouse().getHouseDong())
+                    .houseHo(car.getHouse().getHouseHo())
                     .vehicleType(car.getVehicle().getVehicleType())
                     .createdAt(car.getCreatedAt())
                     .build()
             );
         }
 
+        // 최신순으로 정렬
         return result.stream()
-                .sorted(Comparator.comparing(RegisteredCarResponse::getCreatedAt))
+                .sorted(Comparator.comparing(RegisteredCarResponse::getCreatedAt).reversed())
                 .toList();
     }
 
-    // 차량정보 수정
+    // 세대 등록차량 상세정보 조회
     @Override
-    public VehicleRegisterRequest updateCar(Long cargateEventId, VehicleRegisterRequest request) {
+    public RegisCarDetailResponse getRegisCarDetail(Long vehicle_id) {
+        // 아이디로 등록차량 찾기
+        RegisteredCar registeredCarEntity = cargateDAO.findRegisteredCarById(vehicle_id);
 
-        return null;
+        // 아이디로 차량 출입기록 리스트 조회
+        List<ParkingSession> parkingSessionList = cargateDAO.findByVehicleIdList(vehicle_id);
+
+        // 변환작업
+        List<ParkingSessionResponse> sessions = parkingSessionList.stream()
+                .map(ps -> ParkingSessionResponse.builder()
+                        .parkingSessionId(ps.getParkingSessionId())
+                        .entryAt(ps.getEntryAt())
+                        .exitAt(ps.getExitAt())
+                        .build()
+                ).toList();
+
+        return RegisCarDetailResponse.builder()
+                .id(registeredCarEntity.getId())
+                .plateNumber(registeredCarEntity.getVehicle().getPlateNumber())
+                .vehicleType(registeredCarEntity.getVehicle().getVehicleType())
+                .parkingSessions(sessions)
+                .vehicleOwner(registeredCarEntity.getVehicleOwner())
+                .hounsDong(registeredCarEntity.getHouse().getHouseDong())
+                .houseHo(registeredCarEntity.getHouse().getHouseHo())
+                .createdAt(registeredCarEntity.getCreatedAt())
+                .build();
     }
 
-    // 차량정보 삭제
+    // 세대 등록차량 삭제
     @Override
-    public boolean deleteCar(Long cargateEventId) {
-        return false;
+    public boolean deleteRegisCar(Long vehicle_id) {
+        if(!cargateDAO.deleteByRegisteredCar(vehicle_id)){
+            return false;
+        }
+        cargateDAO.deleteByRegisteredCar(vehicle_id);
+        return true;
     }
+
+    // 관리자 승인차량 조회
 }

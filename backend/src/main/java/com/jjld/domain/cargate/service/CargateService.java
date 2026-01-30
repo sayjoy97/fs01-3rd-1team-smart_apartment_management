@@ -20,11 +20,8 @@ public interface CargateService {
     // 로그아이디 별 상세조회
     RecordDetailResponse getDetailInfo(Long cargate_event_log_id);
 
-    // 차량정보 등록
+    // 차량정보 등록(세대 차량등록과 관리자 승인차량 한번에 관리)
     Long registerVehicle(VehicleRegisterRequest req);
-
-    // 등록차량 조회
-    List<RegisteredCarResponse> getRegisteredCars();
 
     // 세대 차량등록 처리
     void registerHouseVehicle(Vehicle vehicle, VehicleRegisterRequest req);
@@ -32,9 +29,14 @@ public interface CargateService {
     // 관리자 승인차량 등록 처리
     void registerApprovedVehicle(Vehicle vehicle, VehicleRegisterRequest req);
 
-    // 차량정보 수정
-    VehicleRegisterRequest updateCar(Long cargateEventId, VehicleRegisterRequest request);
+    // 세대 등록차량 조회
+    List<RegisteredCarResponse> getRegisteredCars();
 
-    // 차량정보 삭제
-    boolean deleteCar(Long cargateEventId);
+    // 세대 등록차량 상세정보 조회
+    RegisCarDetailResponse getRegisCarDetail(Long vehicle_id);
+
+    // 세대 등록차량 정보수정 (필요할까?)
+
+    // 세대 등록차량 정보삭제
+    boolean deleteRegisCar(Long vehicle_id);
 }

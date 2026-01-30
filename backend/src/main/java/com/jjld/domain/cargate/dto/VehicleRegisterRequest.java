@@ -21,6 +21,7 @@ public class VehicleRegisterRequest {
 
     // 세대 등록용
     private Long houseId;
+    private String vehicleOwner;
 
     // 관리자 승인용
     private String approvalType;   // 택배, 방문, 업체 등

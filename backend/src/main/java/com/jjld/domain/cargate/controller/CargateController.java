@@ -1,9 +1,6 @@
 package com.jjld.domain.cargate.controller;
 
-import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
-import com.jjld.domain.cargate.dto.RecordDetailResponse;
-import com.jjld.domain.cargate.dto.RegisteredCarResponse;
-import com.jjld.domain.cargate.dto.VehicleRegisterRequest;
+import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.service.CargateService;
 import com.jjld.global.response.ApiResponse;
@@ -60,23 +57,34 @@ public class CargateController {
         return ResponseEntity.ok(ApiResponse.success(vehicleId));
     }
 
-    // 등록차량 조회
+    // 세대 등록차량 조회
     @GetMapping("/registeredCar/list")
-    @Operation(summary = "등록차량 조회")
+    @Operation(summary = "세대 등록차량 조회")
     public ResponseEntity<?> registeredCarList(){
         List<RegisteredCarResponse> registeredCars = cargateService.getRegisteredCars();
         return ResponseEntity.ok(ApiResponse.success(registeredCars));
     }
 
-    // 방문차량 상세정보 수정
-//    @PostMapping("/detail")
-//    ResponseEntity<?> updateVehicleInfo(@RequestParam(name = "vehicle_id") Long vehicle_id, @RequestBody updateVehicleInfoRequest request){
-//        return ResponseEntity.ok(ApiResponse.success());
-//    }
+    // 세대 등록차량 상세정보 조회
+    @GetMapping("/registeredCar/{vehicle_id}/detail")
+    @Operation(summary = "세대 등록차량 상세정보 조회")
+    public ResponseEntity<?> registeredCarDetail(@PathVariable("vehicle_id") Long vehicle_id){
+        RegisCarDetailResponse regisCarDetail = cargateService.getRegisCarDetail(vehicle_id);
+        return ResponseEntity.ok(ApiResponse.success(regisCarDetail));
+    }
 
-    // 차량정보 삭제
-//    @DeleteMapping("/delete")
-//    ResponseEntity<?> deleteVehicleInfo(@RequestParam(name = "vehicle_id") Long vehicle_id){
-//        return ResponseEntity.ok(ApiResponse.success());
-//    }
+    // 세대 등록차량 정보수정 (일단 보류
+    
+    // 세대 등록차량 정보삭제
+    @PutMapping("/registeredCar/delete")
+    @Operation(summary = "세대 등록차량 정보삭제")
+    public ResponseEntity<?> deleteByRegisteredCar(@RequestParam(name = "vehicle_id") Long vehicle_id) {
+        if(!cargateService.deleteRegisCar(vehicle_id)){
+            return ResponseEntity.badRequest().build();
+        }
+        cargateService.deleteRegisCar(vehicle_id);
+        return ResponseEntity.ok(ApiResponse.success(true));
+    }
+    
+
 }
