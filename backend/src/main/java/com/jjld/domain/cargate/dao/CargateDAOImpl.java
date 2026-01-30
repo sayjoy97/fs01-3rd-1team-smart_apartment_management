@@ -1,9 +1,11 @@
 package com.jjld.domain.cargate.dao;
 
+import com.jjld.domain.cargate.entity.ApprovedCar;
 import com.jjld.domain.cargate.entity.CargateEventLog;
 import com.jjld.domain.cargate.entity.Enum.GateType;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.RegisteredCar;
+import com.jjld.domain.cargate.repository.ApprovedCarRepository;
 import com.jjld.domain.cargate.repository.CargateRepository;
 import com.jjld.domain.cargate.repository.RegisteredCarRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class CargateDAOImpl implements CargateDAO {
 
     // 등록차량 관련 repogitory
     private final RegisteredCarRepository registeredCarRepository;
+    private final ApprovedCarRepository approvedCarRepository;
 
     // 기간내 유형별 출입기록 리스트
     @Override
@@ -59,6 +62,16 @@ public class CargateDAOImpl implements CargateDAO {
     @Override
     public RegisteredCar regisVehicle(RegisteredCar regisEntity) {
         return registeredCarRepository.save(regisEntity);
+    }
+
+    @Override
+    public List<RegisteredCar> findRegisteredList() {
+        return registeredCarRepository.findAll();
+    }
+
+    @Override
+    public List<ApprovedCar> findApprovedList() {
+        return approvedCarRepository.findAll();
     }
 
     // 차량정보 수정

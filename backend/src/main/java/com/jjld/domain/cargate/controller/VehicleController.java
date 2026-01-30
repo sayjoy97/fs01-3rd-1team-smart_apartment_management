@@ -57,6 +57,8 @@ public class VehicleController {
         return ResponseEntity.ok(ApiResponse.success(vehicleId));
     }
 
+    // 등록차량 조회
+
     // 방문차량 상세정보 수정
 //    @PostMapping("/detail")
 //    ResponseEntity<?> updateVehicleInfo(@RequestParam(name = "vehicle_id") Long vehicle_id, @RequestBody updateVehicleInfoRequest request){

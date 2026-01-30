@@ -26,6 +26,9 @@ public interface CargateService {
     // 차량정보 등록
     Long registerVehicle(VehicleRegisterRequest req);
 
+    // 등록차량 조회
+
+
     // 세대 차량등록 처리
     void registerHouseVehicle(Vehicle vehicle, VehicleRegisterRequest req);
 

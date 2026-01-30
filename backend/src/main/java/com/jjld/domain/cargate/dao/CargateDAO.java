@@ -1,5 +1,6 @@
 package com.jjld.domain.cargate.dao;
 
+import com.jjld.domain.cargate.entity.ApprovedCar;
 import com.jjld.domain.cargate.entity.CargateEventLog;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.RegisteredCar;
@@ -24,6 +25,11 @@ public interface CargateDAO {
 
     // 차량정보 등록
     RegisteredCar regisVehicle(RegisteredCar regisEntity);
+
+    // 등록차량 조회
+    List<RegisteredCar> findRegisteredList();
+
+    List<ApprovedCar> findApprovedList();
 
     // 차량정보 수정
     RegisteredCar updateVehicle(RegisteredCar regisEntity);
