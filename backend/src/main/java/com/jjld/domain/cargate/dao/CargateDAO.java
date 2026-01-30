@@ -26,9 +26,10 @@ public interface CargateDAO {
     // 차량정보 등록
     RegisteredCar regisVehicle(RegisteredCar regisEntity);
 
-    // 등록차량 조회
+    // 세대 등록차량 조회
     List<RegisteredCar> findRegisteredList();
 
+    // 승인차량 조회
     List<ApprovedCar> findApprovedList();
 
     // 차량정보 수정

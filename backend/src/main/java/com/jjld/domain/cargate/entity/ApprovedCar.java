@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "approved_car")
@@ -25,6 +27,10 @@ public class ApprovedCar {
     private Vehicle vehicle; // 승인 대상 차량
 
     private String approvalReason; // 승인 사유
+
+    @CreationTimestamp
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime createdAt; // 등록일
 
     @Column(columnDefinition = "DATETIME")
     private LocalDate startAt; // 승인 시작일

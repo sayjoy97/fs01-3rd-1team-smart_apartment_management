@@ -52,7 +52,7 @@ public class CargateDAOImpl implements CargateDAO {
         return cargateRepository.findAll(pageable);
     }
 
-    // 아이디별 상세조회
+    // 로그아이디별 상세조회
     @Override
     public CargateEventLog findCargateLogById(Long cargate_event_log_id) {
         return cargateRepository.findByCargateEventId(cargate_event_log_id);
@@ -64,15 +64,20 @@ public class CargateDAOImpl implements CargateDAO {
         return registeredCarRepository.save(regisEntity);
     }
 
+    // 세대 등록차량 조회
     @Override
     public List<RegisteredCar> findRegisteredList() {
         return registeredCarRepository.findAll();
     }
 
+    // 승인차량 조회
     @Override
     public List<ApprovedCar> findApprovedList() {
         return approvedCarRepository.findAll();
     }
+
+    // 등록차량 상세조회
+
 
     // 차량정보 수정
     @Override

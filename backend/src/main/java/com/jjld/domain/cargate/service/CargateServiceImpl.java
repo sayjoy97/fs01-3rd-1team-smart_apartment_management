@@ -152,6 +152,28 @@ public class CargateServiceImpl implements CargateService {
         approvedCarRepository.save(approvedCar);
     }
 
+    // 세대 등록차량
+    @Override
+    public List<RegisteredCarResponse> getRegisteredCars() {
+        List<RegisteredCar> registeredList = cargateDAO.findRegisteredList();
+        List<ApprovedCar> approvedList = cargateDAO.findApprovedList();
+
+        List<RegisteredCarResponse> result = new ArrayList<>();
+        for (RegisteredCar car : registeredList) {
+            result.add(RegisteredCarResponse.builder()
+                    .id(car.getId())
+                    .plateNumber(car.getVehicle().getPlateNumber())
+                    .vehicleType(car.getVehicle().getVehicleType())
+                    .createdAt(car.getCreatedAt())
+                    .build()
+            );
+        }
+
+        return result.stream()
+                .sorted(Comparator.comparing(RegisteredCarResponse::getCreatedAt))
+                .toList();
+    }
+
     // 차량정보 수정
     @Override
     public VehicleRegisterRequest updateCar(Long cargateEventId, VehicleRegisterRequest request) {

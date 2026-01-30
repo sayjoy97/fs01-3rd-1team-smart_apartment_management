@@ -1,9 +1,6 @@
 package com.jjld.domain.cargate.service;
 
-import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
-import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
-import com.jjld.domain.cargate.dto.RecordDetailResponse;
-import com.jjld.domain.cargate.dto.VehicleRegisterRequest;
+import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.Vehicle;
 import org.springframework.data.domain.Page;
@@ -27,7 +24,7 @@ public interface CargateService {
     Long registerVehicle(VehicleRegisterRequest req);
 
     // 등록차량 조회
-
+    List<RegisteredCarResponse> getRegisteredCars();
 
     // 세대 차량등록 처리
     void registerHouseVehicle(Vehicle vehicle, VehicleRegisterRequest req);
