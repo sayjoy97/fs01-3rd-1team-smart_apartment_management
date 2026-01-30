@@ -48,6 +48,8 @@ public class VehicleController {
         RecordDetailResponse detailResponse = cargateService.getDetailInfo(cargate_event_log_id);
         return ResponseEntity.ok(ApiResponse.success(detailResponse));
     }
+    
+    // 차량 유형별 등록
     @PostMapping("/register")
     public ResponseEntity<?> registerCar( @RequestBody @Valid VehicleRegisterRequest request) {
         Long vehicleId = cargateService.registerVehicle(request);
