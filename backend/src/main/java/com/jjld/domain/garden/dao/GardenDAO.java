@@ -13,4 +13,6 @@ public interface GardenDAO {
     Optional<Garden> getGarden(Long gardenId);
 
     void updateGarden(Garden garden);
+
+    void deleteGarden(Long gardenId);
 }

@@ -36,4 +36,10 @@ public class GardenDAOImpl implements GardenDAO {
     public void updateGarden(Garden garden) {
         gardenRepository.save(garden);
     }
+
+    // 정원 관리 구역 삭제
+    @Override
+    public void deleteGarden(Long gardenId) {
+        gardenRepository.deleteById(gardenId);
+    }
 }

@@ -1,5 +1,8 @@
 package com.jjld.domain.garden.service;
 
+import com.jjld.domain.admin.dao.AdminDAO;
+import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.garden.dao.DeviceDAO;
 import com.jjld.domain.garden.dao.GardenDAO;
 import com.jjld.domain.garden.dao.SensorLogDAO;
@@ -9,6 +12,7 @@ import com.jjld.domain.garden.entity.Device;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.SensorLog;
 import com.jjld.global.exception.admin.AdminNotFoundException;
+import com.jjld.global.exception.admin.SuperAdminOnlyException;
 import com.jjld.global.exception.garden.GardenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,6 +27,7 @@ public class GardenServiceImpl implements GardenService {
     private final GardenDAO gardenDAO;
     private final DeviceDAO deviceDAO;
     private final SensorLogDAO sensorLogDAO;
+    private final AdminDAO adminDAO;
     private final ModelMapper modelMapper;
 
     // 정원 관리 구역 생성
@@ -45,23 +50,25 @@ public class GardenServiceImpl implements GardenService {
                     GardenRes gardenRes = modelMapper.map(Garden, GardenRes.class);
                     List<Device> devices = deviceDAO.getDevices(Garden);
 
-                    if (devices.isEmpty()) {  // 설치된 센서가 없을 때
-                        gardenRes.setCurrentTemperature("센서 미설치");
-                        gardenRes.setCurrentHumidity("센서 미설치");
-                        gardenRes.setCurrentSoilMoisture("센서 미설치");
-                    }
+                    // 센서 미설치 시 값 처리
+                    gardenRes.setCurrentTemperature("센서 미설치");
+                    gardenRes.setCurrentHumidity("센서 미설치");
+                    gardenRes.setCurrentSoilMoisture("센서 미설치");
 
-                    for(Device device : devices) {
-                        switch (device.getDeviceType()) {
-                            case TEMP:
-                                gardenRes.setCurrentTemperature(setSensorLogValue(device));
-                                break;
-                            case HUMIDITY:
-                                gardenRes.setCurrentHumidity(setSensorLogValue(device));
-                                break;
-                            case SOIL_MOISTURE:
-                                gardenRes.setCurrentSoilMoisture(setSensorLogValue(device));
-                                break;
+                    // 설치된 센서는 값 처리
+                    if (!devices.isEmpty()) {
+                        for(Device device : devices) {
+                            switch (device.getDeviceType()) {
+                                case TEMP:
+                                    gardenRes.setCurrentTemperature(setSensorLogValue(device));
+                                    break;
+                                case HUMIDITY:
+                                    gardenRes.setCurrentHumidity(setSensorLogValue(device));
+                                    break;
+                                case SOIL_MOISTURE:
+                                    gardenRes.setCurrentSoilMoisture(setSensorLogValue(device));
+                                    break;
+                            }
                         }
                     }
 
@@ -85,8 +92,22 @@ public class GardenServiceImpl implements GardenService {
         gardenDAO.updateGarden(garden);
     }
 
+    @Override
+    public void deleteGarden(Long gardenId, Long adminId) {
+        Admin admin = adminDAO.getAdmin(adminId)
+                .orElseThrow(() -> new AdminNotFoundException());
 
-    // getGardens에서 센서값을 넣을 때 활용하는 메서드
+        if (admin.getAdminRole().equals(AdminRole.ADMIN)) {
+            throw new SuperAdminOnlyException();
+        }
+
+        gardenDAO.getGarden(gardenId)
+                .orElseThrow(() -> new GardenNotFoundException());
+
+        gardenDAO.deleteGarden(gardenId);
+    }
+
+    // getGardens에서 센서값을 처리할 때 활용하는 메서드
     String setSensorLogValue (Device device) {
         switch (device.getState()) {
             case ERROR:

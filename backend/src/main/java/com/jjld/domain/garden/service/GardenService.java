@@ -12,4 +12,6 @@ public interface GardenService {
     List<GardenRes> getGardens();
 
     void updateGarden(Long gardenId, GardenReq gardenReq);
+
+    void deleteGarden(Long gardenId, Long adminId);
 }

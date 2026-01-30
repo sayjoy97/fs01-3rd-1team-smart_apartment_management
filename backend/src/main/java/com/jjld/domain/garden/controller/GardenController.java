@@ -41,4 +41,11 @@ public class GardenController {
         gardenService.updateGarden(gardenId, gardenReq);
         return ResponseEntity.ok(ApiResponse.success("구역 수정을 성공했습니다."));
     }
+
+    // 정원 관리 구역 삭제
+    @DeleteMapping("/{gardenId}/admin/{adminId}")
+    public ResponseEntity<?> deleteGarden(@PathVariable Long gardenId, @PathVariable Long adminId) {
+        gardenService.deleteGarden(gardenId, adminId);
+        return ResponseEntity.ok(ApiResponse.success("구역 삭제를 성공했습니다."));
+    }
 }
