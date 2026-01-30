@@ -16,4 +16,7 @@ public class GardenRes {
     private Float areaSize;
     private Boolean isWatering;
     private LocalDateTime createdAt;
+    private String currentHumidity;
+    private String currentTemperature;
+    private String currentSoilMoisture;
 }

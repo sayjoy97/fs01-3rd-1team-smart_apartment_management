@@ -5,6 +5,8 @@ import com.jjld.domain.garden.repository.GardenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class GardenDAOImpl implements GardenDAO {
@@ -14,5 +16,11 @@ public class GardenDAOImpl implements GardenDAO {
     @Override
     public void createGarden(Garden garden) {
         gardenRepository.save(garden);
+    }
+
+    // 정원 관리 구역 목록 조회
+    @Override
+    public List<Garden> getGardens() {
+        return gardenRepository.findAll();
     }
 }
