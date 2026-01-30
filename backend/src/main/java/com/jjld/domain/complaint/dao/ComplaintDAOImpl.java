@@ -30,5 +30,16 @@ public class ComplaintDAOImpl implements ComplaintDAO{
         return complaintRepository.save(complaint).getComplaintId();
     }
 
+    // 입주민 민원 삭제
+    @Override
+    public void deleteComplaint(Long complaintId) {
+        complaintRepository.deleteByComplaintId(complaintId);
+    }
+
+    @Override
+    public void update(Complaint complaint) {
+        complaintRepository.save(complaint);
+    }
+
 
 }

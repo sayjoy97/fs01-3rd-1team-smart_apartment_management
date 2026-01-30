@@ -49,7 +49,7 @@ public class ComplaintAdminServiceImpl implements ComplaintAdminService {
     public ComplaintAdminDetailResponse findByComplaintId(Long complaintId) {
         Complaint complaint = complaintDAO.findByComplaintId(complaintId);
         if (complaint == null){
-            throw new ComplaintNotFoundException();
+            throw new ComplaintNotFoundException("상세하려는 민원글이 없습니다");
         }
 
         // ai 요약이 없을 때 null

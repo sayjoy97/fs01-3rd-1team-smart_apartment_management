@@ -14,4 +14,9 @@ public interface ComplaintDAO {
     // 입주민 민원 작성
     Long save(Complaint complaint);
 
+    // 입주민 민원 삭제
+    void deleteComplaint(Long complaintId);
+
+    // 입주민 민원 수정
+    void update(Complaint complaint);
 }
