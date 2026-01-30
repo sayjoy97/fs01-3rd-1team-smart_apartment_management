@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,27 +29,18 @@ public class CargateDAOImpl implements CargateDAO {
 
     // 기간내 유형별 출입기록 리스트
     @Override
-    public Map<VehicleType, Long> countByTypeList(LocalDate selectedDay) {
-        return cargateRepository.getCargateEventLogs(
-                        GateType.ENTRY,
-                        selectedDay.atStartOfDay(),
-                        selectedDay.plusDays(1).atStartOfDay()
-        ).stream() // 리스트를 Stream<Object>로
-                // Stream의 요소를 Map<>에 적어둔 타입(VehicleType, Long)별로 key와 value에 저장
-                .collect(Collectors.toMap(
-                o -> (VehicleType) o[0], // jpql에서 첫번째 SELECT값으로 지정하겠다
-                o -> (Long) o[1] // jpql에서 두번째 SELECT값으로 지정하겠다
-        ));
-    }
+    public Map<VehicleType, Long> getEntryCountByVehicleType(LocalDateTime start, LocalDateTime end) {
+        List<Object[]> results = cargateRepository.countEntryByVehicleType(GateType.ENTRY, start, end);
 
-    // 한번에 n일치를 보내기용 - 테스트
-    @Override
-    public List<Object[]> countByTypeList_test(LocalDate startDate, LocalDate endDate) {
-        return cargateRepository.getLast7DaysEntryCount(
-                GateType.ENTRY,
-                startDate.atStartOfDay(),
-                endDate.plusDays(1).atStartOfDay()
-        );
+        Map<VehicleType, Long> map = new EnumMap<>(VehicleType.class);
+        for (Object[] row : results) {
+            map.put(
+                    (VehicleType) row[0], // JPQL로 설정한 SELECT문 첫번째 컬럼
+                    (Long) row[1] // JPQL로 설정한 SELECT문 두번째 컬럼
+            );
+        }
+
+        return map;
     }
 
     // 페이지&개수만큼의 리스트 호출

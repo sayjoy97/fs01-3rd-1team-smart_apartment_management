@@ -4,6 +4,7 @@ import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
 import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
 import com.jjld.domain.cargate.dto.RecordDetailResponse;
 import com.jjld.domain.cargate.dto.VehicleRegisterRequest;
+import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.service.CargateService;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/cargate/api")
@@ -25,16 +28,8 @@ public class VehicleController {
     @GetMapping("/lastweek")
     @Operation(summary = "최근 7일 유형별 카운트 조회")
     ResponseEntity<?> getLastWeekList() {
-        List<DailyVehicleTypeCountResponse> vehicleTypeCountList = cargateService.getDailyVehicleTypeCountList();
-        return ResponseEntity.ok(ApiResponse.success(vehicleTypeCountList));
-    }
-
-    // 최근 7일 유형별 카운트 - 테스트
-    @GetMapping("/lastweek/test")
-    @Operation(summary = "최근 7일 유형별 카운트 조회")
-    ResponseEntity<?> getLastWeekList_test() {
-        List<DailyVehicleTypeCountResponse> test = cargateService.getDailyVehicleTypeCountList_test();
-        return ResponseEntity.ok(ApiResponse.success(test));
+        Map<LocalDate, Map<VehicleType, Long>> last7DaysEntryStats = cargateService.getLast7DaysEntryStats();
+        return ResponseEntity.ok(ApiResponse.success(last7DaysEntryStats));
     }
 
     // 백엔드 페이지네이션을 이용한 차량출입기록 전체기록 조회

@@ -15,32 +15,15 @@ public interface CargateRepository extends JpaRepository<CargateEventLog, Long> 
 
     // 기간내 일자 + 차량유형별 출입 카운트
     @Query("""
-        SELECT log.vehicle.vehicleType, count(log.cargateEventId)
-        FROM CargateEventLog log
-        WHERE log.gateType = :gateType
-        AND log.eventAt >= :start
-        AND log.eventAt < :end
-        GROUP BY log.vehicle.vehicleType
+        SELECT v.vehicleType, COUNT(e)
+        FROM CargateEventLog e
+        JOIN e.vehicle v
+        WHERE e.gateType = :gateType
+          AND e.eventAt >= :start
+          AND e.eventAt < :end
+        GROUP BY v.vehicleType
     """)
-    List<Object[]> getCargateEventLogs(
-            @Param("gateType") GateType gateType,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
-    );
-
-    // 한번에 n일치를 다 보내는 쿼리
-    @Query("""
-        SELECT 
-            DATE(log.eventAt),
-            log.vehicle.vehicleType,
-            COUNT(log.cargateEventId)
-        FROM CargateEventLog log
-        WHERE log.gateType = :gateType
-        AND log.eventAt >= :start
-        AND log.eventAt < :end
-        GROUP BY DATE(log.eventAt), log.vehicle.vehicleType
-    """)
-    List<Object[]> getLast7DaysEntryCount(
+    List<Object[]> countEntryByVehicleType(
             @Param("gateType") GateType gateType,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end

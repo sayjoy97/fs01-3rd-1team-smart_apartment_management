@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -39,59 +40,34 @@ public class CargateServiceImpl implements CargateService {
 
     // 최근 7일 차량 출입현황 리스트 조회
     @Override
-    public List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList() {
+    public Map<LocalDate, Map<VehicleType, Long>> getLast7DaysEntryStats() {
+
         LocalDate today = LocalDate.now();
 
-        List<DailyVehicleTypeCountResponse> last7DaysCountByTypeList = new ArrayList<>();
+        Map<LocalDate, Map<VehicleType, Long>> result = new LinkedHashMap<>();
 
-        for(int i=0; i<7; i++){
-            LocalDate selectedDay = today.minusDays(i);
+        // 최근 7일 (오늘 포함, 오래된 날짜부터)
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
 
-            Map<VehicleType, Long> countMap = cargateDAO.countByTypeList(selectedDay);
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = date.plusDays(1).atStartOfDay();
+
+            Map<VehicleType, Long> raw =
+                    cargateDAO.getEntryCountByVehicleType(start, end);
+
+            // 모든 VehicleType 0 보장
+            Map<VehicleType, Long> dailyStats = new EnumMap<>(VehicleType.class);
             for (VehicleType type : VehicleType.values()) {
-                countMap.putIfAbsent(type, 0L);
-            }
-            last7DaysCountByTypeList.add(new DailyVehicleTypeCountResponse(selectedDay, countMap));
-        }
-        return last7DaysCountByTypeList;
-    }
-
-    // 최근 7일 차량 출입현황 리스트 조회 - repo단에서 한번에 호출하는 방식(테스트)
-    @Override
-    public List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList_test() {
-        LocalDate today = LocalDate.now();
-        LocalDate startDate = today.minusDays(6);
-
-        List<Object[]> rows = cargateDAO.countByTypeList_test(startDate, today);
-
-        Map<LocalDate, Map<VehicleType, Long>> groupMap = new HashMap<>();
-
-        for (Object[] row : rows) {
-            LocalDate date = ((Date) row[0]).toLocalDate();
-            VehicleType vehicleType = (VehicleType) row[1];
-            Long count = (Long) row[2];
-
-            groupMap
-                    .computeIfAbsent(date, k -> new EnumMap<>(VehicleType.class))
-                    .put(vehicleType, count);
-
-        }
-        List<DailyVehicleTypeCountResponse> last7DaysCountByTypeList = new ArrayList<>();
-
-        for(int i=0; i<7; i++){
-            LocalDate selectedDay = today.minusDays(i);
-
-            Map<VehicleType, Long> countMap = groupMap.getOrDefault(selectedDay, new EnumMap<>(VehicleType.class));
-
-            for (VehicleType type : VehicleType.values()) {
-                countMap.putIfAbsent(type, 0L);
+                dailyStats.put(type, raw.getOrDefault(type, 0L));
             }
 
-            last7DaysCountByTypeList.add(new DailyVehicleTypeCountResponse(selectedDay, countMap));
+            result.put(date, dailyStats);
         }
 
-        return last7DaysCountByTypeList;
+        return result;
     }
+
 
     // 페이지&개수만큼의 리스트 호출
     @Override

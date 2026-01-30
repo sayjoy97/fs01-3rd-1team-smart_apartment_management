@@ -4,18 +4,18 @@ import com.jjld.domain.cargate.dto.DailyVehicleTypeCountResponse;
 import com.jjld.domain.cargate.dto.EntryExitRecordResponse;
 import com.jjld.domain.cargate.dto.RecordDetailResponse;
 import com.jjld.domain.cargate.dto.VehicleRegisterRequest;
+import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.Vehicle;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface CargateService {
 
     // 최근 7일 차량 출입현황 리스트 조회
-    List<DailyVehicleTypeCountResponse> getDailyVehicleTypeCountList();
-
-    // 최근 7일 차량 출입현황 리스트 조회 - repo단에서 한번에 호출하는 방식(테스트)
-    List<DailyVehicleTypeCountResponse>  getDailyVehicleTypeCountList_test();
+    Map<LocalDate, Map<VehicleType, Long>> getLast7DaysEntryStats();
 
     // 페이지&개수만큼의 리스트 호출
     Page<EntryExitRecordResponse> getRecordList(int size, int page);
