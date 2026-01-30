@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,5 +23,17 @@ public class GardenDAOImpl implements GardenDAO {
     @Override
     public List<Garden> getGardens() {
         return gardenRepository.findAll();
+    }
+
+    // gardenId를 활용해 조회
+    @Override
+    public Optional<Garden> getGarden(Long gardenId) {
+        return gardenRepository.findById(gardenId);
+    }
+
+    // 정원 관리 구역 수정
+    @Override
+    public void updateGarden(Garden garden) {
+        gardenRepository.save(garden);
     }
 }

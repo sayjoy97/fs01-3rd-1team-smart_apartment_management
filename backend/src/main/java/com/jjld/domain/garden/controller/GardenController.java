@@ -31,4 +31,14 @@ public class GardenController {
         List<GardenRes> response = gardenService.getGardens();
         return ResponseEntity.ok(ApiResponse.success(response));
     }
+
+    // 정원 관리 구역 수정
+    @PutMapping("/{gardenId}")
+    public ResponseEntity<?> updateGarden(
+            @PathVariable Long gardenId,
+            @Valid @RequestBody GardenReq gardenReq
+    ) {
+        gardenService.updateGarden(gardenId, gardenReq);
+        return ResponseEntity.ok(ApiResponse.success("구역 수정을 성공했습니다."));
+    }
 }

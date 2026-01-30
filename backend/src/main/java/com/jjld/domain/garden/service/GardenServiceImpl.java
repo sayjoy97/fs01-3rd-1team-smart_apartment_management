@@ -6,10 +6,10 @@ import com.jjld.domain.garden.dao.SensorLogDAO;
 import com.jjld.domain.garden.dto.GardenReq;
 import com.jjld.domain.garden.dto.GardenRes;
 import com.jjld.domain.garden.entity.Device;
-import com.jjld.domain.garden.entity.Enum.DeviceState;
-import com.jjld.domain.garden.entity.Enum.DeviceType;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.SensorLog;
+import com.jjld.global.exception.admin.AdminNotFoundException;
+import com.jjld.global.exception.garden.GardenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -70,6 +70,19 @@ public class GardenServiceImpl implements GardenService {
                 .collect(Collectors.toList());
 
         return response;
+    }
+
+    // 정원 관리 구역 수정
+    @Override
+    public void updateGarden(Long gardenId, GardenReq gardenReq) {
+        Garden garden = gardenDAO.getGarden(gardenId)
+                .orElseThrow(() -> new GardenNotFoundException());
+
+        garden.setName(gardenReq.getName());
+        garden.setLocation(gardenReq.getLocation());
+        garden.setAreaSize(gardenReq.getAreaSize());
+
+        gardenDAO.updateGarden(garden);
     }
 
 
