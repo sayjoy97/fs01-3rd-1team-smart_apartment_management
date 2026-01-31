@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface CargateEventLogRepository extends JpaRepository<CargateEventLog, Long> {
 
@@ -31,6 +32,16 @@ public interface CargateEventLogRepository extends JpaRepository<CargateEventLog
 
     // 페이지&개수만큼의 데이터 호출
     Page<CargateEventLog> findAll(Pageable pageable);
+
+    // 유형별 로그아이디별 상세조회
+    @Query("""
+        select log
+        from CargateEventLog log
+        join fetch log.vehicle v
+        join fetch log.parkingSession ps
+        where log.cargateEventId = :id
+    """)
+    Optional<CargateEventLog> findDetailById(@Param("id") Long id);
 
     // 로그아이디별 상세조회
     CargateEventLog findByCargateEventId(Long cargate_event_log_id);

@@ -17,17 +17,20 @@ public interface CargateService {
     // 페이지&개수만큼의 리스트 호출
     Page<EntryExitRecordResponse> getRecordList(int size, int page);
 
-    // 로그아이디 별 상세조회
-    RecordDetailResponse getDetailInfo(Long cargate_event_log_id);
+    // 로그기록별 상세조회
+    LogDetailBaseResponse getLogDetail(Long logId);
+
+    // 로그기록 내 정보수정
+    void updateVehicleByLog( Long cargateEventId, VehicleRelatedRequest req);
 
     // 차량정보 등록(세대 차량등록과 관리자 승인차량 한번에 관리)
-    Long registerVehicle(VehicleRegisterRequest req);
+    Long registerVehicle(VehicleRelatedRequest req);
 
     // 세대 차량등록 처리
-    void registerHouseVehicle(Vehicle vehicle, VehicleRegisterRequest req);
+    void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest req);
 
     // 관리자 승인차량 등록 처리
-    void registerApprovedVehicle(Vehicle vehicle, VehicleRegisterRequest req);
+    void registerApprovedVehicle(Vehicle vehicle, VehicleRelatedRequest req);
 
     // 세대 등록차량 조회
     List<RegisCarResponse> getRegisteredCars();

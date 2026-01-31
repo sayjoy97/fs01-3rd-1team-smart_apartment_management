@@ -8,16 +8,13 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class VehicleRegisterRequest {
+public class VehicleRelatedRequest {
 
     @NotBlank
     private String plateNumber;
 
     @NotNull
     private VehicleType vehicleType;
-
-    @NotNull
-    private int registerType; // 1: 세대 등록, 2: 관리자 승인
 
     // 세대 등록용
     private Long houseId;

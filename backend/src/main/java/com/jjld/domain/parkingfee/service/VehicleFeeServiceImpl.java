@@ -1,8 +1,7 @@
 package com.jjld.domain.parkingfee.service;
 
-import com.jjld.domain.parkingfee.dao.VehicleFeeDAO;
+import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
 import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,7 @@ import java.time.LocalTime;
 @Service
 @RequiredArgsConstructor
 public class VehicleFeeServiceImpl implements VehicleFeeService {
-    private final VehicleFeeDAO vehicleFeeDAO;
+    private final ParkingFeeDAO vehicleFeeDAO;
 
     // 차량 출입관리 페이지 출력용 금일+이번달 요금누적 조회
     @Override

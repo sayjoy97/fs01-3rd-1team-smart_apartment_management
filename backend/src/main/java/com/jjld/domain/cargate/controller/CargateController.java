@@ -40,18 +40,28 @@ public class CargateController {
         return ResponseEntity.ok(ApiResponse.success(recordList));
     }
 
-    // 방문차량 상세정보 조회
-    @GetMapping("/detail")
-    @Operation(summary = "방문차량 상세정보 조회")
-    ResponseEntity<?> detailResponse(@RequestParam(name = "cargate_event_log_id") Long cargate_event_log_id) {
-        RecordDetailResponse detailResponse = cargateService.getDetailInfo(cargate_event_log_id);
-        return ResponseEntity.ok(ApiResponse.success(detailResponse));
+    // 차량 출입기록 상세정보 조회
+    @GetMapping("/{cargate_event_log_id}/detail")
+    @Operation(summary = "출입기록 로그별 상세조회")
+    ResponseEntity<?> getDetail(@PathVariable("cargate_event_log_id") Long cargate_event_log_id) {
+        LogDetailBaseResponse logDetail = cargateService.getLogDetail(cargate_event_log_id);
+        return ResponseEntity.ok(ApiResponse.success(logDetail));
+    }
+
+    // 출입기록 로그별 정보수정
+    @PutMapping("/{cargate_event_log_id}/update")
+    @Operation(summary = "출입기록 로그별 정보수정")
+    ResponseEntity<?> updateDetailByLogId(
+            @PathVariable("cargate_event_log_id") Long cargateEventLogId,
+            @RequestBody VehicleRelatedRequest request) {
+        cargateService.updateVehicleByLog(cargateEventLogId, request);
+        return ResponseEntity.ok(ApiResponse.success("success"));
     }
     
     // 차량 유형별 등록
     @PostMapping("/register")
     @Operation(summary = "차량 유형별 등록")
-    public ResponseEntity<?> registerCar( @RequestBody @Valid VehicleRegisterRequest request) {
+    public ResponseEntity<?> registerCar( @RequestBody @Valid VehicleRelatedRequest request) {
         Long vehicleId = cargateService.registerVehicle(request);
 
         return ResponseEntity.ok(ApiResponse.success(vehicleId));
