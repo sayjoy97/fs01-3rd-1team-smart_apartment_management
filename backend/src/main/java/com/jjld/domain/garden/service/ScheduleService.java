@@ -1,9 +1,6 @@
 package com.jjld.domain.garden.service;
 
-import com.jjld.domain.garden.dto.GardenRes;
-import com.jjld.domain.garden.dto.ScheduleReq;
-import com.jjld.domain.garden.dto.ScheduleFilterRes;
-import com.jjld.domain.garden.dto.ScheduleSearchCondition;
+import com.jjld.domain.garden.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,5 +9,7 @@ public interface ScheduleService {
 
     Page<ScheduleFilterRes> getSchedules(ScheduleSearchCondition cond, Pageable pageable);
 
-    GardenRes getSchedule(Long scheduleId);
+    ScheduleRes getSchedule(Long scheduleId);
+
+    void updateSchedule(Long scheduleId, UpdateScheduleReq updateScheduleReq);
 }

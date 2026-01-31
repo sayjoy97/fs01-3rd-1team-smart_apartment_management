@@ -72,9 +72,19 @@ public class GardenController {
     }
 
     // 정원 관리 일정 조회
-    @GetMapping("/{scheduleId}")
+    @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<?> getSchedule(@PathVariable Long scheduleId) {
-        GardenRes response = scheduleService.getSchedule(scheduleId);
+        ScheduleRes response = scheduleService.getSchedule(scheduleId);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // 정원 관리 일정 수정
+    @PutMapping("/schedule/{scheduleId}")
+    public ResponseEntity<?> updateSchedule(
+            @PathVariable Long scheduleId,
+            @Valid @RequestBody UpdateScheduleReq updateScheduleReq
+    ) {
+        scheduleService.updateSchedule(scheduleId, updateScheduleReq);
+        return ResponseEntity.ok(ApiResponse.success("일정 수정을 성공했습니다."));
     }
 }
