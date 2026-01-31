@@ -1,6 +1,7 @@
 package com.jjld.domain.garden.controller;
 
 import com.jjld.domain.garden.dto.*;
+import com.jjld.domain.garden.service.DeviceService;
 import com.jjld.domain.garden.service.GardenService;
 import com.jjld.domain.garden.service.ScheduleService;
 import com.jjld.global.response.ApiResponse;
@@ -19,6 +20,7 @@ import java.util.List;
 public class GardenController {
     private final GardenService gardenService;
     private final ScheduleService scheduleService;
+    private final DeviceService deviceService;
 
     // 정원 관리 구역 생성
     @PostMapping
@@ -103,5 +105,15 @@ public class GardenController {
     public ResponseEntity<?> toggleWatering(@PathVariable Long gardenId) {
         gardenService.toggleWatering(gardenId);
         return ResponseEntity.ok(ApiResponse.success("자동 급수 상태 변경을 성공했습니다."));
+    }
+
+    // 정원 관리 기능 디바이스 등록
+    @PostMapping("/{gardenId}/device")
+    public ResponseEntity<?> createDevices(
+            @PathVariable Long gardenId,
+            @Valid @RequestBody List<DeviceReq> deviceReqs
+    ) {
+        deviceService.createDevices(gardenId, deviceReqs);
+        return ResponseEntity.ok(ApiResponse.success("디바이스 등록을 성공했습니다."));
     }
 }

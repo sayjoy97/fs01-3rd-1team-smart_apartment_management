@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface DeviceDAO {
     List<Device> getDevices(Garden garden);
+
+    void createDevice(Device device);
 }

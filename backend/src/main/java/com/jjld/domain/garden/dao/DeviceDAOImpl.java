@@ -18,4 +18,9 @@ public class DeviceDAOImpl implements DeviceDAO {
     public List<Device> getDevices(Garden garden) {
         return deviceRepository.findAllByGarden(garden);
     }
+
+    @Override
+    public void createDevice(Device device) {
+        deviceRepository.save(device);
+    }
 }

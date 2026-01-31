@@ -92,6 +92,7 @@ public class GardenServiceImpl implements GardenService {
         gardenDAO.updateGarden(garden);
     }
 
+    // 정원 관리 구역 삭제
     @Override
     public void deleteGarden(Long gardenId, Long adminId) {
         Admin admin = adminDAO.getAdmin(adminId)
