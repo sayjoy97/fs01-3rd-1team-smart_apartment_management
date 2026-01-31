@@ -15,27 +15,19 @@ public class AdminSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (cond.getAdminLoginId() != null && !cond.getAdminLoginId().isBlank()) {
-                predicates.add(
-                        cb.like(root.<String>get("adminLoginId"), "%" + cond.getAdminLoginId() + "%")
-                );
+                predicates.add(cb.like(root.<String>get("adminLoginId"), "%" + cond.getAdminLoginId() + "%"));
             }
 
             if (cond.getAdminName() != null && !cond.getAdminName().isBlank()) {
-                predicates.add(
-                        cb.like(root.<String>get("adminName"), "%" + cond.getAdminName() + "%")
-                );
+                predicates.add(cb.like(root.<String>get("adminName"), "%" + cond.getAdminName() + "%"));
             }
 
             if (cond.getState() != null) {
-                predicates.add(
-                        cb.equal(root.get("state"), cond.getState())
-                );
+                predicates.add(cb.equal(root.get("state"), cond.getState()));
             }
 
             if (cond.getAdminRole() != null) {
-                predicates.add(
-                        cb.equal(root.get("adminRole"), cond.getAdminRole())
-                );
+                predicates.add(cb.equal(root.get("adminRole"), cond.getAdminRole()));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

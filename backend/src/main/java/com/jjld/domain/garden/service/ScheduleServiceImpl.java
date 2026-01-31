@@ -52,10 +52,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     // 정원 관리 일정 필터 목록 조회
     @Override
     public Page<ScheduleRes> getSchedules(ScheduleSearchCondition cond, Pageable pageable) {
-        // 여기에서 정원이름, 관리자이름을 포함하는 각 엔티티를 찾아온다? 그럼 리스트잖아
-        // ScheduleSearchSpecification 여기에서 리스트도 조건으로 삼을 수 있나?
-
-
         Specification<Schedule> spec = ScheduleSearchSpecification.withCondition(cond);
         Page<Schedule> Schedules = scheduleDAO.getSchedules(spec, pageable);
         Page<ScheduleRes> response = Schedules
