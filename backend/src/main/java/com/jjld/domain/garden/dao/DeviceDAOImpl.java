@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +20,15 @@ public class DeviceDAOImpl implements DeviceDAO {
         return deviceRepository.findAllByGarden(garden);
     }
 
+    // 디바이스 등록 / 수정
     @Override
-    public void createDevice(Device device) {
+    public void saveDevice(Device device) {
         deviceRepository.save(device);
+    }
+
+    // 디바이스 조회
+    @Override
+    public Optional<Device> getDevice(Long deviceId) {
+        return deviceRepository.findById(deviceId);
     }
 }

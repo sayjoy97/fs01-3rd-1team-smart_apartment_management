@@ -19,4 +19,5 @@ public class GardenRes {
     private String currentTemperature;
     private String currentHumidity;
     private String currentSoilMoisture;
+    private String currentLight;
 }

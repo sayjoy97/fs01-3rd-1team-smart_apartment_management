@@ -1,6 +1,7 @@
 package com.jjld.domain.garden.controller;
 
 import com.jjld.domain.garden.dto.*;
+import com.jjld.domain.garden.entity.Enum.DeviceState;
 import com.jjld.domain.garden.service.DeviceService;
 import com.jjld.domain.garden.service.GardenService;
 import com.jjld.domain.garden.service.ScheduleService;
@@ -115,5 +116,15 @@ public class GardenController {
     ) {
         deviceService.createDevices(gardenId, deviceReqs);
         return ResponseEntity.ok(ApiResponse.success("디바이스 등록을 성공했습니다."));
+    }
+
+    // 정원 관리 기능 디바이스 상태 수정
+    @PutMapping("/device/{deviceId}")
+    public ResponseEntity<?> updateDevice(
+            @PathVariable Long deviceId,
+            @RequestParam DeviceState deviceState
+            ) {
+        deviceService.updateDevice(deviceId, deviceState);
+        return ResponseEntity.ok(ApiResponse.success("디바이스 수정을 성공했습니다."));
     }
 }

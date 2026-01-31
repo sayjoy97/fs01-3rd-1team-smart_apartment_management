@@ -4,6 +4,8 @@ import com.jjld.domain.garden.dao.DeviceDAO;
 import com.jjld.domain.garden.dao.GardenDAO;
 import com.jjld.domain.garden.dto.DeviceReq;
 import com.jjld.domain.garden.entity.Device;
+import com.jjld.domain.garden.entity.Enum.DeviceState;
+import com.jjld.domain.garden.entity.Enum.DeviceType;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,17 @@ public class DeviceServiceImpl implements DeviceService {
                     .state(deviceReq.getState())
                     .build();
 
-            deviceDAO.createDevice(device);
+            deviceDAO.saveDevice(device);
         });
+    }
+
+    @Override
+    public void updateDevice(Long deviceId, DeviceState deviceState) {
+        Device device = deviceDAO.getDevice(deviceId)
+                .orElseThrow(() -> new NotFoundException("디바이스를 찾을 수 없습니다."));
+
+        device.setState(deviceState);
+
+        deviceDAO.saveDevice(device);
     }
 }

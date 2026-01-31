@@ -68,6 +68,9 @@ public class GardenServiceImpl implements GardenService {
                                 case SOIL_MOISTURE:
                                     gardenRes.setCurrentSoilMoisture(setSensorLogValue(device));
                                     break;
+                                case LIGHT:
+                                    gardenRes.setCurrentLight(setSensorLogValue(device));
+                                default:
                             }
                         }
                     }
