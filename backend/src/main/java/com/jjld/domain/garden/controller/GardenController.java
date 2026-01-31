@@ -2,12 +2,14 @@ package com.jjld.domain.garden.controller;
 
 import com.jjld.domain.garden.dto.GardenReq;
 import com.jjld.domain.garden.dto.GardenRes;
-import com.jjld.domain.garden.entity.Garden;
+import com.jjld.domain.garden.dto.ScheduleReq;
 import com.jjld.domain.garden.service.GardenService;
+import com.jjld.domain.garden.service.ScheduleService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GardenController {
     private final GardenService gardenService;
+    private final ScheduleService scheduleService;
 
     // 정원 관리 구역 생성
     @PostMapping
@@ -44,8 +47,21 @@ public class GardenController {
 
     // 정원 관리 구역 삭제
     @DeleteMapping("/{gardenId}/admin/{adminId}")
-    public ResponseEntity<?> deleteGarden(@PathVariable Long gardenId, @PathVariable Long adminId) {
+    public ResponseEntity<?> deleteGarden(
+            @PathVariable Long gardenId,
+            @PathVariable Long adminId
+    ) {
         gardenService.deleteGarden(gardenId, adminId);
         return ResponseEntity.ok(ApiResponse.success("구역 삭제를 성공했습니다."));
+    }
+
+    // 정원 관리 일정 생성
+    @PostMapping("/{gardenId}/schedule")
+    public ResponseEntity<?> createSchedule(
+            @PathVariable Long gardenId,
+            @Valid @RequestBody ScheduleReq scheduleReq
+    ) {
+        scheduleService.createSchedule(gardenId, scheduleReq);
+        return ResponseEntity.ok(ApiResponse.success("일정 생성을 성공했습니다."));
     }
 }

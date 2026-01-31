@@ -2,7 +2,6 @@ package com.jjld.domain.garden.service;
 
 import com.jjld.domain.garden.dto.GardenReq;
 import com.jjld.domain.garden.dto.GardenRes;
-import jakarta.validation.Valid;
 
 import java.util.List;
 

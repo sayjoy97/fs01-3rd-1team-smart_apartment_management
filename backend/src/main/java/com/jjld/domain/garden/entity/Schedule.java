@@ -40,7 +40,7 @@ public class Schedule {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ScheduleState state;  // 진행 상태
+    private ScheduleState state = ScheduleState.SCHEDULED;  // 진행 상태
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
