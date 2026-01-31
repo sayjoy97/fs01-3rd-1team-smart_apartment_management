@@ -23,7 +23,7 @@ public class NoiseEventAnalysis {
 
     // NOISE_EVENT (1) ── (1) NOISE_EVENT_ANALYSIS
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "noise_event_id")
+    @JoinColumn(name = "noise_event_id", unique = true, nullable = false)
     private NoiseEvent noiseEvent;
 
     // HOUSE (1) ── (N) NOISE_EVENT_ANALYSIS
