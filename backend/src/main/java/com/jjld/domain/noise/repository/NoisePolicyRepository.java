@@ -8,6 +8,5 @@ import java.util.Optional;
 public interface NoisePolicyRepository extends JpaRepository<NoisePolicy, Long> {
     // 현재 활성중인 정책이 뭔지 조회
     // isActive = true 는 항상 1개만 존재!!
-    //
     Optional<NoisePolicy> findByIsActiveTrue();
 }
