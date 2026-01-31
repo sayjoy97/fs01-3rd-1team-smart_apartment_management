@@ -97,4 +97,11 @@ public class GardenController {
         scheduleService.deleteSchedule(scheduleId, adminId);
         return ResponseEntity.ok(ApiResponse.success("일정 삭제를 성공했습니다."));
     }
+
+    // 정원 관리 기능 자동 급수 토글 버튼
+    @PutMapping("/{gardenId}/toggle-auto-watering")
+    public ResponseEntity<?> toggleWatering(@PathVariable Long gardenId) {
+        gardenService.toggleWatering(gardenId);
+        return ResponseEntity.ok(ApiResponse.success("자동 급수 상태 변경을 성공했습니다."));
+    }
 }

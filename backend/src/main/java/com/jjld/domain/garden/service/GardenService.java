@@ -13,4 +13,6 @@ public interface GardenService {
     void updateGarden(Long gardenId, GardenReq gardenReq);
 
     void deleteGarden(Long gardenId, Long adminId);
+
+    void toggleWatering(Long gardenId);
 }

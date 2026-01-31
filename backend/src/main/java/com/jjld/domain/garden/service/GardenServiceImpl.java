@@ -107,6 +107,15 @@ public class GardenServiceImpl implements GardenService {
         gardenDAO.deleteGarden(gardenId);
     }
 
+    @Override
+    public void toggleWatering(Long gardenId) {
+        Garden garden = gardenDAO.getGarden(gardenId)
+            .orElseThrow(() -> new GardenNotFoundException());
+
+        garden.setIsWatering(!garden.getIsWatering());
+        gardenDAO.updateGarden(garden);
+    }
+
     // getGardens에서 센서값을 처리할 때 활용하는 메서드
     String setSensorLogValue (Device device) {
         switch (device.getState()) {
