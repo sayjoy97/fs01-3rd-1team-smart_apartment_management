@@ -4,10 +4,6 @@ import com.jjld.domain.cargate.dao.CargateDAO;
 import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
-import com.jjld.domain.cargate.repository.ApprovedCarRepository;
-import com.jjld.domain.cargate.repository.ParkingSessionRepository;
-import com.jjld.domain.cargate.repository.RegisteredCarRepository;
-import com.jjld.domain.cargate.repository.VehicleRepository;
 import com.jjld.domain.house.repository.HouseRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -152,12 +147,12 @@ public class CargateServiceImpl implements CargateService {
 
     // 세대 등록차량 조회
     @Override
-    public List<RegisteredCarResponse> getRegisteredCars() {
+    public List<RegisCarResponse> getRegisteredCars() {
         List<RegisteredCar> registeredList = cargateDAO.findRegisteredList();
 
-        List<RegisteredCarResponse> result = new ArrayList<>();
+        List<RegisCarResponse> result = new ArrayList<>();
         for (RegisteredCar car : registeredList) {
-            result.add(RegisteredCarResponse.builder()
+            result.add(RegisCarResponse.builder()
                     .id(car.getId())
                     .plateNumber(car.getVehicle().getPlateNumber())
                     .vehicleOwner(car.getVehicleOwner())
@@ -171,7 +166,7 @@ public class CargateServiceImpl implements CargateService {
 
         // 최신순으로 정렬
         return result.stream()
-                .sorted(Comparator.comparing(RegisteredCarResponse::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(RegisCarResponse::getCreatedAt).reversed())
                 .toList();
     }
 
@@ -215,5 +210,69 @@ public class CargateServiceImpl implements CargateService {
         return true;
     }
 
-    // 관리자 승인차량 조회
+    // 관리자 승인차량 조회 리스트
+    @Override
+    public List<ApprovedCarResponse> ApprovedCarList() {
+
+        return cargateDAO.ApprovedCarList().stream()
+                .map(car -> ApprovedCarResponse.builder()
+                        .id(car.getId())
+                        .plateNumber(car.getVehicle().getPlateNumber())
+                        .currentStatus(car.getCurrentStatus())
+                        .craetedAt(car.getCreatedAt())
+                        .build())
+                .toList();
+    }
+
+    // 관리자 승인차량 상세정보 조회
+    @Override
+    public ApprovedCarDetailResponse getApprovedCarDetail(Long vehicle_id) {
+        ApprovedCar approvedCarById = cargateDAO.findApprovedCarById(vehicle_id);
+
+        // 아이디로 차량 출입기록 리스트 조회
+        List<ParkingSession> parkingSessionList = cargateDAO.findByVehicleIdList(vehicle_id);
+
+        // 변환작업
+        List<ParkingSessionResponse> sessions = parkingSessionList.stream()
+                .map(ps -> ParkingSessionResponse.builder()
+                        .parkingSessionId(ps.getParkingSessionId())
+                        .entryAt(ps.getEntryAt())
+                        .exitAt(ps.getExitAt())
+                        .build()
+                ).toList();
+
+        return ApprovedCarDetailResponse.builder()
+                .id(approvedCarById.getId())
+                .plateNumber(approvedCarById.getVehicle().getPlateNumber())
+                .vehicleType(approvedCarById.getVehicle().getVehicleType())
+                .currentStatus(approvedCarById.getCurrentStatus())
+                .parkingSessions(sessions)
+                .approvalReason(approvedCarById.getApprovalReason())
+                .createdAt(approvedCarById.getCreatedAt())
+                .startAt(approvedCarById.getStartAt())
+                .endAt(approvedCarById.getEndAt())
+                .build();
+    }
+
+    // 관리자 승인차량 수정
+    @Override
+    public void updateApprovedCar(Long vehicle_id, ApprovedCarRequest request) {
+        ApprovedCar approvedCarById = cargateDAO.findApprovedCarById(vehicle_id);
+
+        approvedCarById.setApprovalReason(request.getApprovalReason());
+        approvedCarById.setStartAt(request.getStartAt());
+        approvedCarById.setEndAt(request.getEndAt());
+
+        cargateDAO.updateApprovedCar(approvedCarById);
+    }
+
+    // 관리자 승인차량 삭제
+    @Override
+    public Boolean deleteApprovedCar(Long vehicle_id) {
+        if(!cargateDAO.deleteByApprovedCar(vehicle_id)){
+            return false;
+        }
+        cargateDAO.deleteByApprovedCar(vehicle_id);
+        return true;
+    }
 }

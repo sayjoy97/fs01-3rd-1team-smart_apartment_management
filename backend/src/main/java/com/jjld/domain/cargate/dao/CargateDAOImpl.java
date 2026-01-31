@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.EnumMap;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CargateDAOImpl implements CargateDAO {
     // 차량 출입기록 로그 테이블 관련 repogitory
-    private final CargateRepository cargateRepository;
+    private final CargateEventLogRepository cargateRepository;
 
     // 등록차량 관련 repogitory
     private final RegisteredCarRepository registeredCarRepository;
@@ -93,8 +94,8 @@ public class CargateDAOImpl implements CargateDAO {
 
     // 세대 등록차량 상세조회
     @Override
-    public RegisteredCar findRegisteredCarById(Long id) {
-        return registeredCarRepository.findByVehicle_VehicleId(id);
+    public RegisteredCar findRegisteredCarById(Long vehicle_id) {
+        return registeredCarRepository.findByVehicle_VehicleId(vehicle_id);
     }
 
     // 세대 등록차량 정보수정(만들어놨는데, 필요없으면 지울듯?)
@@ -114,9 +115,42 @@ public class CargateDAOImpl implements CargateDAO {
     }
 
     // 관리자 승인차량 조회
+    @Transactional
     @Override
-    public List<ApprovedCar> findApprovedList() {
-        return approvedCarRepository.findAll();
+    public List<ApprovedCar> ApprovedCarList() {
+        List<ApprovedCar> approvedList = approvedCarRepository.findAll();
+
+        approvedList.forEach(ApprovedCar::refreshCurrentStatus);
+
+        return approvedList;
+    }
+
+    // 관리자 승인차량 상세정보 조회
+    @Transactional
+    @Override
+    public ApprovedCar findApprovedCarById(Long vehicle_id) {
+
+        ApprovedCar findByApprovedId = approvedCarRepository.findByVehicle_VehicleId(vehicle_id);
+
+        findByApprovedId.refreshCurrentStatus();
+
+        return findByApprovedId;
+    }
+
+    // 관리자 승인차량 수정
+    @Override
+    public ApprovedCar updateApprovedCar(ApprovedCar approvedCar) {
+        return approvedCarRepository.save(approvedCar);
+    }
+
+    // 관리자 승인차량 삭제
+    @Override
+    public boolean deleteByApprovedCar(Long vehicle_id) {
+        if(!approvedCarRepository.existsById(vehicle_id)) {
+            return false;
+        }
+        approvedCarRepository.deleteById(vehicle_id);
+        return true;
     }
 
 

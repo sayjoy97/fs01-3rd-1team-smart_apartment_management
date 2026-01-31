@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class RegisteredCarResponse {
+public class RegisCarResponse {
     private Long id;
     private String plateNumber;
     private String vehicleOwner;

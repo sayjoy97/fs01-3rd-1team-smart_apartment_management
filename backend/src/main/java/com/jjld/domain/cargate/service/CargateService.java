@@ -30,7 +30,7 @@ public interface CargateService {
     void registerApprovedVehicle(Vehicle vehicle, VehicleRegisterRequest req);
 
     // 세대 등록차량 조회
-    List<RegisteredCarResponse> getRegisteredCars();
+    List<RegisCarResponse> getRegisteredCars();
 
     // 세대 등록차량 상세정보 조회
     RegisCarDetailResponse getRegisCarDetail(Long vehicle_id);
@@ -39,4 +39,16 @@ public interface CargateService {
 
     // 세대 등록차량 정보삭제
     boolean deleteRegisCar(Long vehicle_id);
+
+    // 관리자 승인차량 조회 리스트
+    List<ApprovedCarResponse> ApprovedCarList();
+
+    // 관리자 승인차량 상세정보 조회
+    ApprovedCarDetailResponse getApprovedCarDetail(Long vehicle_id);
+
+    // 관리자 승인차량 수정
+    void updateApprovedCar(Long vehicle_id, ApprovedCarRequest req);
+
+    // 관리자 승인차량 삭제
+    Boolean deleteApprovedCar(Long vehicle_id);
 }

@@ -1,5 +1,6 @@
 package com.jjld.domain.cargate.entity;
 
+import com.jjld.domain.cargate.entity.Enum.CurrentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,9 @@ public class ApprovedCar {
 
     private String approvalReason; // 승인 사유
 
+    @Enumerated(EnumType.STRING)
+    private CurrentStatus currentStatus;
+
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime createdAt; // 등록일
@@ -37,4 +41,19 @@ public class ApprovedCar {
 
     @Column(columnDefinition = "DATETIME")
     private LocalDate endAt; // 승인 종료일
+
+    public void refreshCurrentStatus() {
+        LocalDate today = LocalDate.now();
+
+        this.currentStatus =
+                today.isBefore(startAt) ? CurrentStatus.BEFORE :
+                        today.isAfter(endAt)    ? CurrentStatus.END :
+                                CurrentStatus.IN_PROGRESS;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void updateCurrentStatus() {
+        refreshCurrentStatus();
+    }
 }

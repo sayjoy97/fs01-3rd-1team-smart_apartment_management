@@ -61,7 +61,7 @@ public class CargateController {
     @GetMapping("/registeredCar/list")
     @Operation(summary = "세대 등록차량 조회")
     public ResponseEntity<?> registeredCarList(){
-        List<RegisteredCarResponse> registeredCars = cargateService.getRegisteredCars();
+        List<RegisCarResponse> registeredCars = cargateService.getRegisteredCars();
         return ResponseEntity.ok(ApiResponse.success(registeredCars));
     }
 
@@ -85,6 +85,39 @@ public class CargateController {
         cargateService.deleteRegisCar(vehicle_id);
         return ResponseEntity.ok(ApiResponse.success(true));
     }
+
+    // 관리자 승인차량 조회
+    @GetMapping("/ApprovedCar/list")
+    @Operation(summary = "관리자 승인차량 조회")
+    public ResponseEntity<?> getApprovedCarList(){
+        List<ApprovedCarResponse> approvededCarList = cargateService.ApprovedCarList();
+        
+        return ResponseEntity.ok(ApiResponse.success(approvededCarList));
+    }
     
+
+    // 관리자 승인차량 상세정보 조회
+    @GetMapping("/ApprovedCar/{vehicle_id}/detail")
+    @Operation(summary = "관리자 승인차량 상세정보 조회")
+    public ResponseEntity<?> getApprovedCarDetail(@PathVariable("vehicle_id") Long vehicle_id){
+        ApprovedCarDetailResponse approvedCarDetail = cargateService.getApprovedCarDetail(vehicle_id);
+        return ResponseEntity.ok(ApiResponse.success(approvedCarDetail));
+    }
+
+    // 관리자 승인차량 수정
+    @PutMapping("/ApprovedCar/{vehicle_id}/update")
+    @Operation(summary = "관리자 승인차량 수정")
+    public ResponseEntity<?> updateApprovedCar(@PathVariable("vehicle_id") Long vehicle_id, @RequestBody ApprovedCarRequest request) {
+        cargateService.updateApprovedCar(vehicle_id, request);
+        return ResponseEntity.ok(ApiResponse.success("수정완료"));
+    }
+
+    // 관리자 승인차량 삭제
+    @DeleteMapping("/ApprovedCar/delete")
+    @Operation(summary = "관리자 승인차량 삭제")
+    public ResponseEntity<?> deleteByApprovedCar(@RequestParam(name = "vehicle_id") Long vehicle_id) {
+        cargateService.deleteApprovedCar(vehicle_id);
+        return ResponseEntity.ok(ApiResponse.success(true));
+    }
 
 }

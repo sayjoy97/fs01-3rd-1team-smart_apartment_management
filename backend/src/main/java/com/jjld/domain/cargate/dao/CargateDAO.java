@@ -40,21 +40,25 @@ public interface CargateDAO {
     List<RegisteredCar> findRegisteredList();
 
     // 세대 등록차량 상세조회
-    RegisteredCar findRegisteredCarById(Long car_id);
+    RegisteredCar findRegisteredCarById(Long vehicle_id);
 
-    // 세대 등록차량 정보수정
+    // 세대 등록차량 정보수정(현재 미사용중)
     RegisteredCar updateRegisteredCar(RegisteredCar regisEntity);
 
     // 세대 등록차량 정보삭제
     boolean deleteByRegisteredCar(Long vehicle_id);
 
     // 관리자 승인차량 조회
-    List<ApprovedCar> findApprovedList();
+    List<ApprovedCar> ApprovedCarList();
 
-    // 관리자 승인차량 상세조회
+    // 관리자 승인차량 상세정보 조회
+    ApprovedCar findApprovedCarById(Long vehicle_id);
 
-    // 관리자 승인차량 정보수정
+    // 관리자 승인차량 수정
+    ApprovedCar updateApprovedCar(ApprovedCar approvedCar);
 
-    // 관리자 승인차량 정보삭제
+    // 관리자 승인차량 삭제
+    boolean deleteByApprovedCar(Long vehicle_id);
+
 
 }
