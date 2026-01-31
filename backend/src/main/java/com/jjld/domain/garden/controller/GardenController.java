@@ -1,7 +1,5 @@
 package com.jjld.domain.garden.controller;
 
-import com.jjld.domain.admin.dto.AdminRes;
-import com.jjld.domain.admin.dto.AdminSearchCondition;
 import com.jjld.domain.garden.dto.*;
 import com.jjld.domain.garden.service.GardenService;
 import com.jjld.domain.garden.service.ScheduleService;
@@ -11,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,7 +67,14 @@ public class GardenController {
     // 정원 관리 일정 필터 목록 조회
     @GetMapping("/schedule/filter")
     public ResponseEntity<?> getSchedules(ScheduleSearchCondition cond, Pageable pageable) {
-        Page<ScheduleRes> response = scheduleService.getSchedules(cond, pageable);
+        Page<ScheduleFilterRes> response = scheduleService.getSchedules(cond, pageable);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // 정원 관리 일정 조회
+    @GetMapping("/{scheduleId}")
+    public ResponseEntity<?> getSchedule(@PathVariable Long scheduleId) {
+        GardenRes response = scheduleService.getSchedule(scheduleId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

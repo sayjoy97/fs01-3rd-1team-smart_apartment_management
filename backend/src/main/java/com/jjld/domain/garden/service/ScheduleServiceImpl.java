@@ -2,12 +2,11 @@ package com.jjld.domain.garden.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
 import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.admin.entity.History;
-import com.jjld.domain.admin.specification.HistorySpecification;
 import com.jjld.domain.garden.dao.GardenDAO;
 import com.jjld.domain.garden.dao.ScheduleDAO;
+import com.jjld.domain.garden.dto.GardenRes;
 import com.jjld.domain.garden.dto.ScheduleReq;
-import com.jjld.domain.garden.dto.ScheduleRes;
+import com.jjld.domain.garden.dto.ScheduleFilterRes;
 import com.jjld.domain.garden.dto.ScheduleSearchCondition;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.Schedule;
@@ -51,17 +50,27 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     // 정원 관리 일정 필터 목록 조회
     @Override
-    public Page<ScheduleRes> getSchedules(ScheduleSearchCondition cond, Pageable pageable) {
+    public Page<ScheduleFilterRes> getSchedules(ScheduleSearchCondition cond, Pageable pageable) {
         Specification<Schedule> spec = ScheduleSearchSpecification.withCondition(cond);
         Page<Schedule> Schedules = scheduleDAO.getSchedules(spec, pageable);
-        Page<ScheduleRes> response = Schedules
+        Page<ScheduleFilterRes> response = Schedules
                 .map(schedule -> {
-                    ScheduleRes scheduleRes = modelMapper.map(schedule, ScheduleRes.class);
-                    scheduleRes.setName(schedule.getGarden().getName());
-                    scheduleRes.setAdminName(schedule.getAdmin().getAdminName());
+                    ScheduleFilterRes scheduleFilterRes = modelMapper.map(schedule, ScheduleFilterRes.class);
+                    scheduleFilterRes.setName(schedule.getGarden().getName());
+                    scheduleFilterRes.setAdminName(schedule.getAdmin().getAdminName());
 
-                    return scheduleRes;
+                    return scheduleFilterRes;
                 });
+
+        return response;
+    }
+
+    @Override
+    public GardenRes getSchedule(Long scheduleId) {
+        Garden garden = gardenDAO.getGarden(scheduleId)
+                .orElseThrow(() -> new GardenNotFoundException());
+
+        GardenRes response = modelMapper.map(garden, GardenRes.class);
 
         return response;
     }
