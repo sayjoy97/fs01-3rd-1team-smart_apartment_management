@@ -42,8 +42,10 @@ public class CargateServiceImpl implements CargateService {
     @Override
     public Map<LocalDate, Map<VehicleType, Long>> getLast7DaysEntryStats() {
 
+        // 오늘날짜
         LocalDate today = LocalDate.now();
 
+        // 유형별 카운트를 최근 7일동안의 데이터를 가져오기 위한 Map 선언
         Map<LocalDate, Map<VehicleType, Long>> result = new LinkedHashMap<>();
 
         // 최근 7일 (오늘 포함, 오래된 날짜부터)
@@ -53,13 +55,14 @@ public class CargateServiceImpl implements CargateService {
             LocalDateTime start = date.atStartOfDay();
             LocalDateTime end = date.plusDays(1).atStartOfDay();
 
-            Map<VehicleType, Long> raw =
-                    vehicleDAO.getEntryCountByVehicleType(start, end);
+            // dao에서 설정날짜 내 카운트 추출
+            Map<VehicleType, Long> raw = vehicleDAO.getEntryCountByVehicleType(start, end);
 
-            // 모든 VehicleType 0 보장
+            // VehicleType으로 map세팅
             Map<VehicleType, Long> dailyStats = new EnumMap<>(VehicleType.class);
+
             for (VehicleType type : VehicleType.values()) {
-                dailyStats.put(type, raw.getOrDefault(type, 0L));
+                dailyStats.put(type, raw.getOrDefault(type, 0L)); // 모든 VehicleType 0 보장
             }
 
             result.put(date, dailyStats);
@@ -72,6 +75,7 @@ public class CargateServiceImpl implements CargateService {
     @Override
     public Page<EntryExitRecordResponse> getRecordList(int size, int page) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("eventAt").descending());
+
         return cargateEventLogDAO.findAllCargateEventLogs(pageable).map(
                 entity -> EntryExitRecordResponse.builder()
                         .cargateEventId(entity.getCargateEventId())
@@ -83,6 +87,7 @@ public class CargateServiceImpl implements CargateService {
         );
     }
 
+    // 로그기록별 상세조회
     @Transactional(readOnly = true)
     @Override
     public LogDetailBaseResponse getLogDetail(Long cargateEventId) {
@@ -111,11 +116,10 @@ public class CargateServiceImpl implements CargateService {
     }
 
     // REGISTERED 응답 생성
-    private LogDetailByRegisResponse buildRegistered(
-            CargateEventLog log, long stayMinutes) {
+    private LogDetailByRegisResponse buildRegistered(CargateEventLog log, long stayMinutes) {
 
-        Vehicle vehicle = log.getVehicle();
-        ParkingSession ps = log.getParkingSession();
+        Vehicle vehicle = log.getVehicle(); // cargateEventLog테이블에서 vehicle정보 가져오기
+        ParkingSession ps = log.getParkingSession(); // cargateEventLog테이블에서 parkingSession정보 가져오기
 
         RegisteredCar rc = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
 
@@ -444,8 +448,6 @@ public class CargateServiceImpl implements CargateService {
         if(!registeredDAO.deleteByRegisteredCar(vehicle_id)){
             return false;
         }
-
-        registeredDAO.deleteByRegisteredCar(vehicle_id);
         return true;
     }
 

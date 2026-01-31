@@ -32,7 +32,7 @@ public class CargateController {
     // 백엔드 페이지네이션을 이용한 차량출입기록 전체기록 조회
     @GetMapping("/gateRecord/list")
     @Operation(summary = "백엔드 페이지네이션을 이용한 차량출입기록 전체기록 조회")
-    ResponseEntity<?> getNoticelist(
+    ResponseEntity<?> getGateRecordlist(
             @RequestParam(name = "size", defaultValue = "10")int size,
             @RequestParam(name = "page", defaultValue = "1") int page
     ){
@@ -86,18 +86,18 @@ public class CargateController {
     // 세대 등록차량 정보수정 (일단 보류
     
     // 세대 등록차량 정보삭제
-    @PutMapping("/registeredCar/delete")
+    @DeleteMapping("/registeredCar/delete")
     @Operation(summary = "세대 등록차량 정보삭제")
     public ResponseEntity<?> deleteByRegisteredCar(@RequestParam(name = "vehicle_id") Long vehicle_id) {
         if(!cargateService.deleteRegisCar(vehicle_id)){
             return ResponseEntity.badRequest().build();
         }
-        cargateService.deleteRegisCar(vehicle_id);
+
         return ResponseEntity.ok(ApiResponse.success(true));
     }
 
     // 관리자 승인차량 조회
-    @GetMapping("/ApprovedCar/list")
+    @GetMapping("/approvedCar/list")
     @Operation(summary = "관리자 승인차량 조회")
     public ResponseEntity<?> getApprovedCarList(){
         List<ApprovedCarResponse> approvededCarList = cargateService.ApprovedCarList();
@@ -107,7 +107,7 @@ public class CargateController {
     
 
     // 관리자 승인차량 상세정보 조회
-    @GetMapping("/ApprovedCar/{vehicle_id}/detail")
+    @GetMapping("/approvedCar/{vehicle_id}/detail")
     @Operation(summary = "관리자 승인차량 상세정보 조회")
     public ResponseEntity<?> getApprovedCarDetail(@PathVariable("vehicle_id") Long vehicle_id){
         ApprovedCarDetailResponse approvedCarDetail = cargateService.getApprovedCarDetail(vehicle_id);
@@ -115,7 +115,7 @@ public class CargateController {
     }
 
     // 관리자 승인차량 수정
-    @PutMapping("/ApprovedCar/{vehicle_id}/update")
+    @PutMapping("/approvedCar/{vehicle_id}/update")
     @Operation(summary = "관리자 승인차량 수정")
     public ResponseEntity<?> updateApprovedCar(@PathVariable("vehicle_id") Long vehicle_id, @RequestBody ApprovedCarRequest request) {
         cargateService.updateApprovedCar(vehicle_id, request);
@@ -123,7 +123,7 @@ public class CargateController {
     }
 
     // 관리자 승인차량 삭제
-    @DeleteMapping("/ApprovedCar/delete")
+    @DeleteMapping("/approvedCar/delete")
     @Operation(summary = "관리자 승인차량 삭제")
     public ResponseEntity<?> deleteByApprovedCar(@RequestParam(name = "vehicle_id") Long vehicle_id) {
         cargateService.deleteApprovedCar(vehicle_id);
