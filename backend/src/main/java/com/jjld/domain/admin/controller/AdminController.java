@@ -111,7 +111,10 @@ public class AdminController {
 
     // 관리자 접속 기록 조회
     @GetMapping("/{adminId}/access-logs")
-    public ResponseEntity<?> getAccessLogs(@PathVariable("adminId") Long adminId, HistorySearchCondition cond, Pageable pageable) {
+    public ResponseEntity<?> getAccessLogs(
+            @PathVariable("adminId") Long adminId,
+            HistorySearchCondition cond,
+            Pageable pageable) {
         Page<HistoryRes> response = historyService.getAccessLogs(adminId, cond, pageable);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
