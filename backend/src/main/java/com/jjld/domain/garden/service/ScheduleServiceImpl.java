@@ -95,7 +95,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Schedule schedule = scheduleDAO.getSchedule(scheduleId)
                 .orElseThrow(() -> new NotFoundException("관리 일정을 찾을 수 없습니다."));
 
-        if (!updateScheduleReq.getAdminId().equals(schedule.getAdmin().getAdminId())) {
+        if (updateScheduleReq.getAdminId() != schedule.getAdmin().getAdminId()) {
             throw new ForbiddenException("일정을 생성한 관리자만 수정할 수 있습니다.");
         }
 
@@ -107,5 +107,17 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setPriority(updateScheduleReq.getPriority());
 
         scheduleDAO.updateSchedule(schedule);
+    }
+
+    @Override
+    public void deleteSchedule(Long scheduleId, Long adminId) {
+        Schedule schedule = scheduleDAO.getSchedule(scheduleId)
+                .orElseThrow(() -> new NotFoundException("관리 일정을 찾을 수 없습니다."));
+
+        if (adminId != schedule.getAdmin().getAdminId()) {
+            throw new ForbiddenException("일정을 생성한 관리자만 삭제할 수 있습니다.");
+        }
+
+        scheduleDAO.deleteSchedule(schedule);
     }
 }

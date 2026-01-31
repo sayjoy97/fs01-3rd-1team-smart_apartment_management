@@ -12,4 +12,6 @@ public interface ScheduleService {
     ScheduleRes getSchedule(Long scheduleId);
 
     void updateSchedule(Long scheduleId, UpdateScheduleReq updateScheduleReq);
+
+    void deleteSchedule(Long scheduleId, Long adminId);
 }

@@ -15,4 +15,6 @@ public interface ScheduleDAO {
     Optional<Schedule> getSchedule(Long scheduleId);
 
     void updateSchedule(Schedule schedule);
+
+    void deleteSchedule(Schedule schedule);
 }

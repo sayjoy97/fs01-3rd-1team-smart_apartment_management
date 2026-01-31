@@ -38,4 +38,9 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     public void updateSchedule(Schedule schedule) {
         scheduleRepository.save(schedule);
     }
+
+    @Override
+    public void deleteSchedule(Schedule schedule) {
+        scheduleRepository.delete(schedule);
+    }
 }

@@ -87,4 +87,14 @@ public class GardenController {
         scheduleService.updateSchedule(scheduleId, updateScheduleReq);
         return ResponseEntity.ok(ApiResponse.success("일정 수정을 성공했습니다."));
     }
+
+    // 정원 관리 일정 삭제
+    @DeleteMapping("/schedule/{scheduleId}/admin/{adminId}")
+    public ResponseEntity<?> deleteSchedule(
+            @PathVariable Long scheduleId,
+            @PathVariable Long adminId
+    ) {
+        scheduleService.deleteSchedule(scheduleId, adminId);
+        return ResponseEntity.ok(ApiResponse.success("일정 삭제를 성공했습니다."));
+    }
 }
