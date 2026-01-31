@@ -6,7 +6,6 @@ import com.jjld.domain.notice.dto.NoticeListResponse;
 import com.jjld.domain.notice.service.NoticeService;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,7 @@ public class NoticeController {
             @RequestParam(name = "page", defaultValue = "1") int page
     ){
         Page<NoticeListResponse> noticeList = noticeService.getNoticeList(size, page-1);
-        return ResponseEntity.ok(noticeList);
+        return ResponseEntity.ok(ApiResponse.success(noticeList));
     }
 
     // 고정 게시글 리스트
@@ -73,7 +72,7 @@ public class NoticeController {
     @Operation( summary = "공지사항 수정")
     public ResponseEntity<?> noticeUpdate(@RequestBody NoticeDetailRequest updateRequest){
         noticeService.updateNotice(updateRequest);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("true"));
     }
 
     // 아이디로 공지사항 삭제
@@ -81,7 +80,7 @@ public class NoticeController {
     @Operation( summary = "공지사항 삭제")
     public ResponseEntity<?> noticeDelete(@RequestParam(name = "notice_id") Long notice_id){
         noticeService.deleteNotice(notice_id);
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("true"));
     }
 
     // 게시글 고정으로 바꾸기
@@ -90,6 +89,6 @@ public class NoticeController {
     public ResponseEntity<?> noticeChangeFixStatus(@PathVariable Long notice_id ){
         noticeService.fixStatusChange(notice_id);
 
-        return ResponseEntity.ok(ApiResponse.success());
+        return ResponseEntity.ok(ApiResponse.success("true"));
     }
 }

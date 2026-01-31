@@ -28,6 +28,10 @@ public class CargateEventLog {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle; // OCR결과 매핑된 차량, OCR실패시 null
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parking_session_id")
+    private ParkingSession parkingSession;
+
     @Enumerated(EnumType.STRING)
     private GateType gateType; // 이벤트 성격(ENTRY/EXIT)
 
