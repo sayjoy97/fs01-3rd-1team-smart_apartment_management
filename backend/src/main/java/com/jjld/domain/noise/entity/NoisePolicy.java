@@ -23,10 +23,10 @@ public class NoisePolicy {
     @Column(nullable = false, unique = true, length = 100)
     private String policyName;
 
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(nullable = false, columnDefinition = "TIME")
     private LocalTime dayStartTime;
 
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(nullable = false, columnDefinition = "TIME")
     private LocalTime nightStartTime;
 
     @Column(nullable = false)
