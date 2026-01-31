@@ -21,7 +21,7 @@ public class NoiseEventProcess {
     private Long processId;
 
     // NOISE_EVENT (1) ── (1) NOISE_EVENT_PROCESS
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "noise_event_id", nullable = false)
     private NoiseEvent noiseEvent;
 
