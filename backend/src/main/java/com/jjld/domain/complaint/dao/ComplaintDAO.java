@@ -8,11 +8,11 @@ public interface ComplaintDAO {
     // 관리자의 민원 상세 조회
     Complaint findByComplaintId(Long complaintId);
 
+    // 관리자의 민원 답변 작성
+    void updateAnswer(Complaint complaint);
+
     // 입주민의 민원 상세 조회
     Complaint findByHouseIdComplaintId(Long houseId, Long complaintId);
-
-    // 입주민 민원 작성
-    Long save(Complaint complaint);
 
     // 입주민 민원 삭제
     void deleteComplaint(Long complaintId);

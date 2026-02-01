@@ -59,6 +59,11 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
             throw new ComplaintNotFoundException("상세 조회하려는 민원글이 없습니다");
         }
 
+        // 관리자 답변이 없을 때 -> 답변 작성한 관리자 ID가 null
+        String admin = Optional.ofNullable(complaint.getComplaintReply())
+                .map(r -> r.getAdmin().getAdminName())
+                .orElse(null);
+
         String answer = Optional.ofNullable(complaint.getComplaintReply())
                 .map(r -> r.getAnswer())
                 .orElse(null);
@@ -68,9 +73,10 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .category(complaint.getCategory().name())
                 .title(complaint.getTitle())
                 .createAt(complaint.getCreatedAt())
-                .updateAt(complaint.getUpdatedAt())
+                .replyAt(complaint.getUpdatedAt())
                 .content(complaint.getContent())
                 .answer(answer)
+                .adminName(admin)
                 .canEdit(complaint.getStatus() == ComplaintStatus.WAITING)
                 .canDelete(complaint.getStatus() == ComplaintStatus.WAITING)
                 .build();
@@ -125,6 +131,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
 
     }
 
+    // 민원 삭제
     @Override
     public void deleteComplaint(Long houseId, Long complaintId) {
 
@@ -147,6 +154,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
         complaintRepository.deleteByComplaintId(complaintId);
     }
 
+    // 민원 수정
     @Override
     public void updateComplaint(Long houseId, Long complaintId, ComplaintUserUpdate complaintUserUpdate) {
     Complaint complaint = complaintRepository

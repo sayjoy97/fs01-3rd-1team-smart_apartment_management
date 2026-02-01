@@ -17,9 +17,10 @@ public class ComplaintUserDetailResponse {
     private String category;
     private String title;
     private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime replyAt;
     private String content;
     private String answer;
+    private String adminName;
 
     private boolean canEdit;
     private boolean canDelete;

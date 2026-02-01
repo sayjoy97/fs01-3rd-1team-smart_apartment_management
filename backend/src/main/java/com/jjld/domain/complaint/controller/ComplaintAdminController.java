@@ -1,5 +1,6 @@
 package com.jjld.domain.complaint.controller;
 
+import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
 import com.jjld.domain.complaint.dto.user.ComplaintReference;
@@ -10,6 +11,7 @@ import com.jjld.domain.complaint.service.ComplaintAdminServiceImpl;
 import com.jjld.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,20 @@ public class ComplaintAdminController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(complaint)
+        );
+    }
+
+    // 관리자 민원 답변
+    @PostMapping("/write")
+    public ResponseEntity<?> writeComplaint(
+            @RequestParam Long complaintId,
+            @RequestParam Long adminId,
+            @RequestBody ComplaintAdminAnswerResponse answerResponse
+            ){
+        service.answerWrite(complaintId, adminId, answerResponse);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK)
         );
     }
 

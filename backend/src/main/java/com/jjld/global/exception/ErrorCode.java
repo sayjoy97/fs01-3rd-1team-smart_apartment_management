@@ -46,6 +46,7 @@ public enum ErrorCode {
 
     // -------- Complaint --------
     COMPLAINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPLAINT_NOT_FOUND", "민원을 찾을 수 없습니다."),
+    COMPLAINT_ALREADY_ANSWER(HttpStatus.BAD_REQUEST, "COMPLAINT_ALREADY_ANSWER", "이미 답변이 있는 민원입니다"),
 
     // -------- DoorGate --------
     DOOR_GATE_NOT_FOUND(HttpStatus.NOT_FOUND, "DOOR_GATE_NOT_FOUND", "공동 현관을 찾을 수 없습니다."),

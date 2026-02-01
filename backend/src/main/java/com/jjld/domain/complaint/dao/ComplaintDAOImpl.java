@@ -18,16 +18,16 @@ public class ComplaintDAOImpl implements ComplaintDAO{
         return complaintRepository.findByComplaintId(complaintId);
     }
 
+    // 관리자의 민원 답변 작성
+    @Override
+    public void updateAnswer(Complaint complaint) {
+            complaintRepository.save(complaint);
+    }
+
     // 입주민 자신이 작성한 민원 상세 조회
     @Override
     public Complaint findByHouseIdComplaintId(Long houseId, Long complaintId) {
         return complaintRepository.findByComplaintIdAndHouse_HouseId(houseId, complaintId);
-    }
-
-    // 입주민 민원 작성
-    @Override
-    public Long save(Complaint complaint) {
-        return complaintRepository.save(complaint).getComplaintId();
     }
 
     // 입주민 민원 삭제
@@ -36,6 +36,7 @@ public class ComplaintDAOImpl implements ComplaintDAO{
         complaintRepository.deleteByComplaintId(complaintId);
     }
 
+    // 입주민 민원 수정
     @Override
     public void update(Complaint complaint) {
         complaintRepository.save(complaint);

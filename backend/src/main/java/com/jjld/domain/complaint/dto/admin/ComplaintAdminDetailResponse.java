@@ -18,8 +18,7 @@ public class ComplaintAdminDetailResponse {
     private Integer houseDong;
     private Integer houseHo;
     private LocalDateTime createAt;
-    private LocalDateTime updateAt;
-
+    private LocalDateTime replyAt;
     private String content;
     private String summary;
     private String answer;
