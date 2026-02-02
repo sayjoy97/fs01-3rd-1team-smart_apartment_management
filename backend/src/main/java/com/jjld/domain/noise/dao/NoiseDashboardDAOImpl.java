@@ -25,7 +25,7 @@ public class NoiseDashboardDAOImpl implements NoiseDashboardDAO {
 
     // 오늘 발생한 소음 이벤트
     @Override
-    public long findNoiseEvnetToday(LocalDate today) {
+    public long findNoiseEventToday(LocalDate today) {
         // 오늘 00:00:00
         LocalDateTime start = today.atStartOfDay();
         // 내일 00:00:00 (between 조회용)
@@ -34,7 +34,7 @@ public class NoiseDashboardDAOImpl implements NoiseDashboardDAO {
     }
     // 오늘 정책 위반의심 소음 이벤트
     @Override
-    public long findPolicyBreakEvnetToday(LocalDate today) {
+    public long findPolicyBreakEventToday(LocalDate today) {
         LocalDateTime start = today.atStartOfDay();
         LocalDateTime end = today.plusDays(1).atStartOfDay();
         return noiseEventAnalysisRepository
