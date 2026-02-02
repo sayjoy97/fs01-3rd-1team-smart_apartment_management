@@ -1,26 +1,21 @@
 package com.jjld.domain.noise.controller;
 
-import com.jjld.domain.noise.entity.NoiseEvent;
-import com.jjld.domain.noise.entity.NoiseSensor;
-import com.jjld.domain.noise.repository.NoiseEventRepository;
-import com.jjld.domain.noise.repository.NoiseSensorRepository;
+import com.jjld.domain.noise.dto.NoiseDashboardResponse;
+import com.jjld.domain.noise.service.NoiseDashboardService;
 import com.jjld.domain.noise.service.NoiseFlowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 @Tag(name = "noise-controller", description = "층간소음 이벤트 관리 API")
 @RestController
 @RequestMapping("/noise/api")
 @RequiredArgsConstructor
 public class NoiseController {
     private final NoiseFlowService noiseFlowService;
-    private final NoiseEventRepository noiseEventRepository;
-    private final NoiseSensorRepository noiseSensorRepository;
+    private final NoiseDashboardService noiseDashboardService;
 
     // 소음 이벤트 수신 API - 센서에서 소음발생시 호출
     @PostMapping("/event")
@@ -28,18 +23,16 @@ public class NoiseController {
     public ResponseEntity<String> receiveNoiseEvent(
             @RequestParam Long sensorId,
             @RequestParam int soundLevel) {
-        // 1. 센서조회
-        NoiseSensor noiseSensor = noiseSensorRepository.findById(sensorId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 센서(" + sensorId + ")입니다."));
-        // 2. 소음이벤트 생성
-        NoiseEvent noiseEvent = NoiseEvent.builder()
-                .noiseSensor(noiseSensor)
-                .soundLevel(soundLevel).build();
-        // 3.  이벤트저장
-        noiseEventRepository.save(noiseEvent);
-        // 4. 소음이벤트 처리흐름 호출
-        noiseFlowService.handleNoiseEvent(noiseEvent);
+        noiseFlowService.receiveNoiseEvent(sensorId, soundLevel);
         return ResponseEntity.ok("소음 이벤트가 정상적으로 처리되었습니다.");
+    }
+
+    @GetMapping("/dashboard")
+    @Operation(
+            summary = "대시보드 상단 요약 카드 조회",
+            description = "오늘 발생 이벤트 수, 정책 위반 의심 수, 승인 대기 수, 현재 시간대(주/야)를 조회한다."
+    )
+    public ResponseEntity<NoiseDashboardResponse> getDashboardSummary() {
+        return ResponseEntity.ok(noiseDashboardService.getDashboard());
     }
 }

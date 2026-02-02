@@ -19,7 +19,7 @@ public class Alarm {
     private Long alarmId;  // PK
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, columnDefinition = "ENUM('ELEVATOR','GARDEN')")
     private AlarmType alarmType;  // 알람 타입
 
     @Column(nullable = false)
