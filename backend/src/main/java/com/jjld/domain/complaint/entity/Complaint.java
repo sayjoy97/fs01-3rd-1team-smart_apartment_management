@@ -1,5 +1,6 @@
 package com.jjld.domain.complaint.entity;
 
+import com.jjld.domain.complaint.dto.user.ComplaintUserUpdate;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.house.entity.House;
@@ -12,6 +13,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "complaint")
@@ -38,11 +41,11 @@ public class Complaint {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    private ComplaintStatus status;
+    private ComplaintStatus status = ComplaintStatus.WAITING;
 
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @UpdateTimestamp
     @Column(columnDefinition = "DATETIME")
@@ -60,5 +63,12 @@ public class Complaint {
             fetch = FetchType.LAZY)
     private ComplaintReply complaintReply;
 
+    @ManyToMany
+    @JoinTable(
+            name = "complaint_reference",
+            joinColumns = @JoinColumn(name = "complaint_id"),
+            inverseJoinColumns = @JoinColumn(name = "reference_id")
+    )
+    private List<Complaint> referenceComplaints = new ArrayList<>();
 
 }

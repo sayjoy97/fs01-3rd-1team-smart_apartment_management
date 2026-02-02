@@ -1,7 +1,8 @@
-package com.jjld.domain.doorgate.entity;
+package com.jjld.domain.entrancedoor.entity;
 
 import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.doorgate.entity.Enum.FailReason;
+import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
+import com.jjld.domain.entrancedoor.entity.Enum.FailReason;
 import com.jjld.domain.house.entity.EntranceCard;
 import com.jjld.domain.house.entity.House;
 import jakarta.persistence.*;
@@ -14,12 +15,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "door_gate_log")
+@Table(name = "entrance_gate_log")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DoorGateLog {
+public class EntranceGateLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accessLogId;

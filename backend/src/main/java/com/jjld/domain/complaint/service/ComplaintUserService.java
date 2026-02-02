@@ -1,9 +1,6 @@
 package com.jjld.domain.complaint.service;
 
-import com.jjld.domain.complaint.dto.user.ComplaintReference;
-import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
+import com.jjld.domain.complaint.dto.user.*;
 
 import java.util.List;
 
@@ -20,4 +17,10 @@ public interface ComplaintUserService {
 
     // 입주민 민원 작성
     Long write(Long houseId, ComplaintUserWrite userWrite);
+
+    // 입주민 민원 삭제
+    void deleteComplaint(Long houseId, Long complaint);
+
+    // 입주민 민원 수정
+    void updateComplaint(Long houseId, Long complaint, ComplaintUserUpdate complaintUserUpdate);
 }

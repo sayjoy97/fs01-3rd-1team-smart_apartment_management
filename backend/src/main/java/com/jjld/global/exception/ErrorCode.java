@@ -48,6 +48,7 @@ public enum ErrorCode {
 
     // -------- Complaint --------
     COMPLAINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPLAINT_NOT_FOUND", "민원을 찾을 수 없습니다."),
+    COMPLAINT_ALREADY_ANSWER(HttpStatus.BAD_REQUEST, "COMPLAINT_ALREADY_ANSWER", "이미 답변이 있는 민원입니다"),
 
     // -------- Complex --------
     APARTMENT_COMPLEX_ALREADY_EXISTS(HttpStatus.CONFLICT, "APARTMENT_COMPLEX_ALREADY_EXISTS", "이미 아파트 단지 정보가 존재합니다."),
