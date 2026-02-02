@@ -7,4 +7,8 @@ public interface NoiseFlowService {
     // 소음 이벤트 발생 처리
     // 반복횟수 계산 >> 소음위반 판단 Service 호출 >> 분석결과저장 >> 처리(Process)객체 생성
     void handleNoiseEvent(NoiseEvent noiseEvent);
+
+    // 컨트롤러에서 호출하는 진입점
+    void receiveNoiseEvent(Long sensorId, int soundLevel);
+
 }
