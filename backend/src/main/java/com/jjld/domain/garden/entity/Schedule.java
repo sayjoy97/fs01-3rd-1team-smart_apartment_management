@@ -5,7 +5,8 @@ import com.jjld.domain.garden.entity.Enum.Priority;
 import com.jjld.domain.garden.entity.Enum.ScheduleState;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "garden_work_schedule")
@@ -33,14 +34,14 @@ public class Schedule {
     private String workContent;  // 작업 내용
 
     @Column(nullable = false)
-    private LocalDateTime workStartDate;  // 시작일
+    private LocalDate workStartDate;  // 시작일
 
     @Column(nullable = false)
-    private LocalDateTime workEndDate;  // 종료일
+    private LocalDate workEndDate;  // 종료일
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ScheduleState state;  // 진행 상태
+    private ScheduleState state = ScheduleState.SCHEDULED;  // 진행 상태
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

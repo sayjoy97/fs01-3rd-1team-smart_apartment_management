@@ -29,6 +29,8 @@ public enum ErrorCode {
     // -------- 공통 --------
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다."),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "요청한 데이터를 찾을 수 없습니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN", "접근 권한이 없습니다."),
 
     // -------- Admin --------
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND, "ADMIN_NOT_FOUND", "관리자를 찾을 수 없습니다."),
@@ -46,6 +48,10 @@ public enum ErrorCode {
 
     // -------- Complaint --------
     COMPLAINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPLAINT_NOT_FOUND", "민원을 찾을 수 없습니다."),
+
+    // -------- Complex --------
+    APARTMENT_COMPLEX_ALREADY_EXISTS(HttpStatus.CONFLICT, "APARTMENT_COMPLEX_ALREADY_EXISTS", "이미 아파트 단지 정보가 존재합니다."),
+    APARTMENT_COMPLEX_NOT_FOUND(HttpStatus.NOT_FOUND, "APARTMENT_COMPLEX_NOT_FOUND", "아파트 단지 정보를 찾을 수 없습니다."),
 
     // -------- DoorGate --------
     DOOR_GATE_NOT_FOUND(HttpStatus.NOT_FOUND, "DOOR_GATE_NOT_FOUND", "공동 현관을 찾을 수 없습니다."),

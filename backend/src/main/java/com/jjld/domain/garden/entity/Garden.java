@@ -26,7 +26,7 @@ public class Garden {
     private Float areaSize;  // 면적 (㎡)
 
     @Column(nullable = false)
-    private Boolean isWatering;  // 자동 급수 여부
+    private Boolean isWatering = false;  // 자동 급수 여부 (초기값 false)
 
     @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
