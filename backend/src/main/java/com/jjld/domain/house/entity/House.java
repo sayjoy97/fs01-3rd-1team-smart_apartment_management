@@ -1,7 +1,6 @@
 package com.jjld.domain.house.entity;
 
 import com.jjld.domain.cargate.entity.RegisteredCar;
-import com.jjld.domain.noise.entity.NoiseSensor;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

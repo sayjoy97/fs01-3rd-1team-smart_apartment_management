@@ -34,4 +34,10 @@ public class Vehicle {
 
     @OneToMany(mappedBy = "vehicle")
     private List<ParkingSession> parkingSessions = new ArrayList<>(); // 과거~현재 주차이력
+
+    // 과거~현재 들어온 차량이 아닌 차량 미리등록
+    public Vehicle(String plateNumber, VehicleType vehicleType) {
+        this.plateNumber = plateNumber;
+        this.vehicleType = vehicleType;
+    }
 }

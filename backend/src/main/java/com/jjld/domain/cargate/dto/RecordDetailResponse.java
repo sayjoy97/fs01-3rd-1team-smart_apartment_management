@@ -1,20 +1,19 @@
 package com.jjld.domain.cargate.dto;
 
-import lombok.AllArgsConstructor;
+import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class RecordDetailResponse {
     private Long cargateEventId;
     private String plateNumber;
     private String parkingStatus;
-    private List<ParkingSessionResponse> parkingSessions;
+    private LocalDateTime entryAt;
+    private LocalDateTime exitAt;
+    private ParkingStatus status;
     private String imagePath;
 }
