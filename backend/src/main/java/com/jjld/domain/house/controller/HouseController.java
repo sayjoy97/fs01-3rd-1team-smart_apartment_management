@@ -1,8 +1,10 @@
 package com.jjld.domain.house.controller;
 
 
+import com.jjld.domain.house.dto.EntranceCardResponse;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
+import com.jjld.domain.house.service.EntranceCardService;
 import com.jjld.domain.house.service.HouseService;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HouseController {
     private final HouseService service;
+    private final EntranceCardService cardService;
 
     // 세대 목록 조회
     @GetMapping("/list")
@@ -30,9 +33,9 @@ public class HouseController {
         );
     }
 
-    // 세대 등록
+    // 세대 관리 (등록/수정/초기화)
     @PutMapping("/insert")
-    @Operation(summary = "세대 등록")
+    @Operation(summary = "세대 관리 (등록/수정/초기화)")
     public ResponseEntity<?> insertHouse(
             @RequestParam Long houseId,
             @RequestBody HouseManagementResponse houseInsert
@@ -41,6 +44,17 @@ public class HouseController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)
+        );
+    }
+
+    // 세대 카드 목록 조회
+    @GetMapping("/card/list")
+    @Operation(summary = "세대 카드 조회")
+    public ResponseEntity<?> entranceCardList(){
+        List<EntranceCardResponse> getCardList = cardService.findAll();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(getCardList)
         );
     }
 
