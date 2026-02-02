@@ -10,7 +10,6 @@ import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.AdminSpecification;
 import com.jjld.global.exception.admin.*;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Builder
 @Slf4j
 public class AdminServiceImpl implements AdminService {
     private final AdminDAO adminDAO;
@@ -103,10 +101,7 @@ public class AdminServiceImpl implements AdminService {
         Admin superAdmin = adminDAO.getAdmin(adminId)
                 .orElseThrow(() -> new AdminNotFoundException());
 
-        if (
-                !(superAdmin.getAdminRole().equals(AdminRole.SUPER_ADMIN) ||
-                superAdmin.getAdminRole().equals(AdminRole.ACTING_ADMIN))
-        ) {
+        if (superAdmin.getAdminRole().equals(AdminRole.ADMIN)) {
             throw new SuperAdminOnlyException();
         }
 

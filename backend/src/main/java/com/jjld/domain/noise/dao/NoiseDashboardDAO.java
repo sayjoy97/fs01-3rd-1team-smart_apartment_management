@@ -5,10 +5,10 @@ import java.time.LocalDate;
 // 상단 요약 카드 관련 DAO -> 숫자 요약!!
 public interface NoiseDashboardDAO {
     // 오늘 발생한 소음 이벤트 조회
-    long findNoiseEvnetToday(LocalDate today);
+    long findNoiseEventToday(LocalDate today);
 
     // 오늘 정책 위반 의심 소음 이벤트 조회
-    long findPolicyBreakEvnetToday(LocalDate today);
+    long findPolicyBreakEventToday(LocalDate today);
 
     // 현재 승인 대기 중인 소음 이벤트 조회
     long countWaitingNoiseEvent();

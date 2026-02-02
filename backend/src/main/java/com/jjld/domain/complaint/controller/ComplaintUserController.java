@@ -1,9 +1,6 @@
 package com.jjld.domain.complaint.controller;
 
-import com.jjld.domain.complaint.dto.user.ComplaintReference;
-import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
+import com.jjld.domain.complaint.dto.user.*;
 import com.jjld.domain.complaint.service.ComplaintAdminService;
 import com.jjld.domain.complaint.service.ComplaintAdminServiceImpl;
 import com.jjld.domain.complaint.service.ComplaintUserService;
@@ -61,6 +58,31 @@ public class ComplaintUserController {
             @RequestParam Long houseId,
             @RequestBody ComplaintUserWrite userWrite){
         service.write(houseId, userWrite);
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK)
+        );
+    }
+
+    // 입주민 민원 삭제
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteComplaint(
+            @RequestParam Long houseId,
+            @RequestParam Long complaintId){
+        service.deleteComplaint(houseId, complaintId);
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK)
+        );
+    }
+
+    // 입주민 민원 수정
+    @PutMapping("/update")
+    public ResponseEntity<?> updateComplaint(
+            @RequestParam Long houseId,
+            @RequestParam Long complaintId,
+            @RequestBody ComplaintUserUpdate complaintUserUpdate
+    ){
+        service.updateComplaint(houseId, complaintId, complaintUserUpdate);
+
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)
         );

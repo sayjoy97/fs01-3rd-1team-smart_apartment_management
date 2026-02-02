@@ -5,5 +5,6 @@ public enum ComplaintCategory {
     PARKING,
     NOISE,
     ELEVATOR,
-    OTHER
+    OTHER;
+
 }

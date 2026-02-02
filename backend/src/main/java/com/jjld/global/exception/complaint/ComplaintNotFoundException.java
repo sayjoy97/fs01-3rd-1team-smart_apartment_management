@@ -12,4 +12,10 @@ public class ComplaintNotFoundException extends BusinessException {
         super(ErrorCode.COMPLAINT_NOT_FOUND, message);
 
     }
+
+    public ComplaintNotFoundException(ErrorCode errorCode, String message) {
+        super(ErrorCode.INVALID_REQUEST, message);
+    }
+
+
 }

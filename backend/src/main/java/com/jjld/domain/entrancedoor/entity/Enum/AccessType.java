@@ -1,4 +1,4 @@
-package com.jjld.domain.doorgate.entity.Enum;
+package com.jjld.domain.entrancedoor.entity.Enum;
 
 public enum AccessType {
     RESIDENT_CARD,
