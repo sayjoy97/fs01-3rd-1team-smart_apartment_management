@@ -49,6 +49,8 @@ public class House {
 
     private String appLoginPass;
 
+    private int HouseholdSize;
+
     @OneToMany( mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegisteredCar> registeredCars = new ArrayList<>();
 
