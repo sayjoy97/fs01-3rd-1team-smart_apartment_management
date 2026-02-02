@@ -1,6 +1,7 @@
 package com.jjld.domain.entrancedoor.controller;
 
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
+import com.jjld.domain.entrancedoor.dto.EntranceGateLogSearchCond;
 import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
 import com.jjld.domain.entrancedoor.service.EntranceDoorService;
 import com.jjld.global.response.ApiResponse;
@@ -35,10 +36,11 @@ public class EntranceController {
     // 공동현관 출입 로그 페이징
     @GetMapping("/log")
     @Operation(summary = "공동현관 출입 로그 페이징")
-    public Page<EntranceGateLogResponse> getLogPage(
+    public Page<EntranceGateLogResponse> search(
+            EntranceGateLogSearchCond cond,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return service.findAll(page, size);
+        return service.search(cond, page, size);
     }
 }

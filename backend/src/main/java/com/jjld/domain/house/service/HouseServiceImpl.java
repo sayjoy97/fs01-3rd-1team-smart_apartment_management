@@ -3,11 +3,13 @@ package com.jjld.domain.house.service;
 import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
+import com.jjld.domain.house.dto.HouseSearchCond;
 import com.jjld.domain.house.entity.EntranceCard;
 import com.jjld.domain.house.entity.Enum.CardStatus;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.house.repository.EntranceCardRepository;
 import com.jjld.domain.house.repository.HouseRepository;
+import com.jjld.domain.house.specification.HouseSpecification;
 import com.jjld.global.exception.house.HouseCardNotFoundException;
 import com.jjld.global.exception.house.HouseNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,8 +35,15 @@ public class HouseServiceImpl implements HouseService{
 
     // 세대 목록 조회
     @Override
-    public List<HouseResponse> findAll() {
-        List<House> houseList = houseRepository.findAll();
+    public List<HouseResponse> search(HouseSearchCond cond) {
+
+        Specification<House> spec = Specification.allOf(
+                HouseSpecification.equalHouseDong(cond.getHouseDong()),
+                HouseSpecification.equalHouseHo(cond.getHouseHo()),
+                HouseSpecification.equalHouseholderName(cond.getHouseholderName())
+        );
+
+        List<House> houseList = houseRepository.findAll(spec);
 
         return houseList.stream()
                 .map(h -> new HouseResponse(

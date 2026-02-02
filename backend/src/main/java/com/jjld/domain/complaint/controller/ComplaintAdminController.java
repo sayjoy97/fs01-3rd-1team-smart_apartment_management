@@ -3,6 +3,7 @@ package com.jjld.domain.complaint.controller;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.admin.ComplaintSearchCond;
 import com.jjld.domain.complaint.dto.user.ComplaintReference;
 import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
 import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
@@ -28,11 +29,12 @@ public class ComplaintAdminController {
     // 관리자 민원 목록 출력
     @GetMapping("/list")
     @Operation(summary = "관리자 민원 목록 조회")
-    public Page<ComplaintAdminResponse> getComplaintList(
+    public Page<ComplaintAdminResponse> search(
+            ComplaintSearchCond cond,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return service.findAll(page, size);
+        return service.search(cond, page, size);
     }
 
     // 관리자 민원 상세 조회

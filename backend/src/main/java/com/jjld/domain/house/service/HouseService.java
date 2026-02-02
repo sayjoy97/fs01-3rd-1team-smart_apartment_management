@@ -1,14 +1,16 @@
 package com.jjld.domain.house.service;
 
+import com.jjld.domain.complaint.specification.ComplaintSpecification;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
+import com.jjld.domain.house.dto.HouseSearchCond;
 import com.jjld.domain.house.entity.EntranceCard;
 
 import java.util.List;
 
 public interface HouseService {
     // 세대 목록조회
-    List<HouseResponse> findAll();
+    List<HouseResponse> search(HouseSearchCond cond);
 
     // 세대 목록 상세조회
     HouseResponse findByIdHouseId(Long houseId);

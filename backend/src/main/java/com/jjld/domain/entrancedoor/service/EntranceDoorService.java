@@ -1,6 +1,7 @@
 package com.jjld.domain.entrancedoor.service;
 
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
+import com.jjld.domain.entrancedoor.dto.EntranceGateLogSearchCond;
 import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
 import org.springframework.data.domain.Page;
 
@@ -11,6 +12,6 @@ public interface EntranceDoorService {
     List<EntranceGateResponse> findAll();
 
     // 공동현관 출입 로그 페이징 조회
-    Page<EntranceGateLogResponse> findAll(int page, int size);
+    Page<EntranceGateLogResponse> search(EntranceGateLogSearchCond cond, int page, int size);
     
 }

@@ -4,6 +4,7 @@ package com.jjld.domain.house.controller;
 import com.jjld.domain.house.dto.EntranceCardResponse;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
+import com.jjld.domain.house.dto.HouseSearchCond;
 import com.jjld.domain.house.service.EntranceCardService;
 import com.jjld.domain.house.service.HouseService;
 import com.jjld.global.response.ApiResponse;
@@ -25,8 +26,8 @@ public class HouseController {
     // 세대 목록 조회
     @GetMapping("/list")
     @Operation(summary = "세대 목록 조회")
-    public ResponseEntity<?> getHouseList(){
-        List<HouseResponse> houseList = service.findAll();
+    public ResponseEntity<?> search(HouseSearchCond cond){
+        List<HouseResponse> houseList = service.search(cond);
 
         return ResponseEntity.ok(
                 ApiResponse.success(houseList)
