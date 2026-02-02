@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class House {
     private String householderPhone;
     private String householderEmail;
 
+    @UpdateTimestamp
     @Column(nullable = true, columnDefinition = "DATETIME")
     private LocalDate moveInAt;
 
@@ -49,7 +51,10 @@ public class House {
 
     private String appLoginPass;
 
-    private int HouseholdSize;
+    private int householdSize;
+
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
+    private List<EntranceCard> cardList = new ArrayList<>();
 
     @OneToMany( mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegisteredCar> registeredCars = new ArrayList<>();
