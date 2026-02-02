@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "parking_session")
@@ -44,6 +46,9 @@ public class ParkingSession {
 
     @OneToOne(mappedBy = "parkingSession", fetch = FetchType.LAZY)
     private ParkingFeeHistory parkingFeeHistory;
+
+    @OneToMany(mappedBy = "parkingSession", fetch = FetchType.LAZY)
+    private List<CargateEventLog> cargateEventLogs = new ArrayList<>();
 
     //입차 시
     public static ParkingSession entry(Vehicle vehicle, CarGate carGate, LocalDateTime time) {

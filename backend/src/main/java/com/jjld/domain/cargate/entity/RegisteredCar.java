@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "registered_car")
@@ -23,7 +26,14 @@ public class RegisteredCar {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle; // 차량 엔티티
 
+    @Column(nullable = false)
+    private String vehicleOwner;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id", nullable = false)
+    @JoinColumn(name = "house_id")
     private House house;
+
+    @CreationTimestamp
+    @Column(columnDefinition = "DATETIME")
+    private LocalDateTime createdAt;
 }

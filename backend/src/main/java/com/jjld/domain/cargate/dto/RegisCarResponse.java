@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class EntryExitRecordResponse {
-    private Long cargateEventId;
+public class RegisCarResponse {
+    private Long id;
     private String plateNumber;
-    private String parkingStatus;
+    private String vehicleOwner;
+    private int houseDong;
+    private int houseHo;
     private VehicleType vehicleType;
-    private LocalDateTime eventAt;
+    private LocalDateTime createdAt;
 }
