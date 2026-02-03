@@ -4,18 +4,21 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.entrancedoor.dao.EntranceDoorDAO;
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
+import com.jjld.domain.entrancedoor.dto.EntranceGateLogSearchCond;
 import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
 import com.jjld.domain.entrancedoor.entity.EntranceDoor;
 import com.jjld.domain.entrancedoor.entity.EntranceGateLog;
 import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
 import com.jjld.domain.entrancedoor.repository.EntranceDoorRepository;
 import com.jjld.domain.entrancedoor.repository.EntranceGateLogRepository;
+import com.jjld.domain.entrancedoor.specification.EntranceGateLogSpecification;
 import com.jjld.global.exception.doorgate.DoorGateNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -53,10 +56,15 @@ public class EntranceDoorServiceImpl implements EntranceDoorService{
 
     // 공동현관 출입 로그 페이징 조회
     @Override
-    public Page<EntranceGateLogResponse> findAll(int page, int size) {
+    public Page<EntranceGateLogResponse> search(EntranceGateLogSearchCond cond, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("accessedAt").descending());
 
-        Page<EntranceGateLog> gateLogPage = gateLogRepository.findAll(pageable);
+        Specification<EntranceGateLog> spec = Specification.allOf(
+                EntranceGateLogSpecification.equalHouseDong(cond.getHouseDong()),
+                EntranceGateLogSpecification.equalAccessType(cond.getAccessType())
+        );
+
+        Page<EntranceGateLog> gateLogPage = gateLogRepository.findAll(spec, pageable);
         if(gateLogPage == null){
             throw new DoorGateNotFoundException("해당 페이지를 찾을 수 없습니다.");
         }

@@ -1,9 +1,11 @@
 package com.jjld.domain.entrancedoor.controller;
 
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
+import com.jjld.domain.entrancedoor.dto.EntranceGateLogSearchCond;
 import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
 import com.jjld.domain.entrancedoor.service.EntranceDoorService;
 import com.jjld.global.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class EntranceController {
 
     // 세대 동 조회
     @GetMapping("/dong/list")
+    @Operation(summary = "세대별 동 현관 상태 조회")
     public ResponseEntity<?> getDongList(){
         List<EntranceGateResponse> dongList = service.findAll();
 
@@ -32,10 +35,12 @@ public class EntranceController {
 
     // 공동현관 출입 로그 페이징
     @GetMapping("/log")
-    public Page<EntranceGateLogResponse> getLogPage(
+    @Operation(summary = "공동현관 출입 로그 페이징")
+    public Page<EntranceGateLogResponse> search(
+            EntranceGateLogSearchCond cond,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return service.findAll(page, size);
+        return service.search(cond, page, size);
     }
 }
