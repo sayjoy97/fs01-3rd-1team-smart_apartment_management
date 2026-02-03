@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,7 +31,7 @@ public class ParkingFeeSetting {
     @Column(nullable = false)
     private Integer baseCharge;
 
-    // 단위 시간 (분)
+    // 단위 시간(분)
     @Column(nullable = false)
     private Integer unitMinutes;
 
@@ -42,16 +43,27 @@ public class ParkingFeeSetting {
     @Column(nullable = false)
     private Boolean peakEnabled;
 
-    // 피크 시간대 (시간만 쓰는 게 중요)
+    // 피크 시작시간
+    @Column(columnDefinition = "TIME")
     private LocalTime peakStartTime;
+
+    // 피크 종료시간
+    @Column(columnDefinition = "TIME")
     private LocalTime peakEndTime;
 
+    // 피크 단위 시간(분)
     private Integer peakUnitMinutes;
+
+    // 피크시간 요금
     private Integer peakUnitCharge;
 
+    // 피크 활성화
     @Column(nullable = false)
     private Boolean active;
 
+    // 적용 날짜
+    @CreationTimestamp
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime appliedAt;
 }
 
