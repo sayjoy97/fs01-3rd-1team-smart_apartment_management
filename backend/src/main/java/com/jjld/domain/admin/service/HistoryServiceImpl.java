@@ -7,7 +7,8 @@ import com.jjld.domain.admin.dto.HistorySearchCondition;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.HistorySpecification;
-import com.jjld.global.exception.admin.AdminNotFoundException;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public Page<HistoryRes> getAccessLogs(Long adminId, HistorySearchCondition cond, Pageable pageable) {
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "기록을 조회할 관리자를 찾을 수 없습니다."));
         Specification<History> spec = HistorySpecification.withCondition(admin, cond);
         Page<History> histories = historyDAO.getAccessLogs(spec, pageable);
         Page<HistoryRes> response = histories

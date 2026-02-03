@@ -9,17 +9,15 @@ import com.jjld.domain.garden.dto.*;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.Schedule;
 import com.jjld.domain.garden.specification.ScheduleSearchSpecification;
-import com.jjld.global.exception.ForbiddenException;
-import com.jjld.global.exception.NotFoundException;
-import com.jjld.global.exception.admin.AdminNotFoundException;
-import com.jjld.global.exception.garden.GardenNotFoundException;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.ForbiddenException;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +31,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void createSchedule(Long gardenId, ScheduleReq scheduleReq) {
         Garden garden = gardenDAO.getGarden(gardenId)
-                .orElseThrow(() -> new GardenNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GARDEN_NOT_FOUND, "관리 일정을 생성할 정원을 찾을 수 없습니다."));
 
         Admin admin = adminDAO.getAdmin(scheduleReq.getAdminId())
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "관리 일정을 생성할 관리자를 찾을 수 없습니다."));
 
         Schedule schedule = modelMapper.map(scheduleReq, Schedule.class);
         schedule.setGarden(garden);
@@ -70,7 +68,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleRes getSchedule(Long scheduleId) {
         Schedule schedule = scheduleDAO.getSchedule(scheduleId)
-                .orElseThrow(() -> new NotFoundException("관리 일정을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND, "조회할 관리 일정을 찾을 수 없습니다."));
 
 //        ScheduleRes response = modelMapper.map(schedule, ScheduleRes.class);
         ScheduleRes response = ScheduleRes.builder()
@@ -93,10 +91,10 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public void updateSchedule(Long scheduleId, UpdateScheduleReq updateScheduleReq) {
         Schedule schedule = scheduleDAO.getSchedule(scheduleId)
-                .orElseThrow(() -> new NotFoundException("관리 일정을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND, "수정할 관리 일정을 찾을 수 없습니다."));
 
         if (!updateScheduleReq.getAdminId().equals(schedule.getAdmin().getAdminId())) {
-            throw new ForbiddenException("일정을 생성한 관리자만 수정할 수 있습니다.");
+            throw new ForbiddenException(ErrorCode.ADMIN_NOT_SCHEDULE_OWNER, "일정을 생성한 관리자만 수정할 수 있습니다.");
         }
 
         schedule.setWorkTitle(updateScheduleReq.getWorkTitle());
@@ -109,13 +107,14 @@ public class ScheduleServiceImpl implements ScheduleService {
         scheduleDAO.updateSchedule(schedule);
     }
 
+    // 정원 관리 일정 삭제
     @Override
     public void deleteSchedule(Long scheduleId, Long adminId) {
         Schedule schedule = scheduleDAO.getSchedule(scheduleId)
-                .orElseThrow(() -> new NotFoundException("관리 일정을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND, "삭제할 관리 일정을 찾을 수 없습니다."));
 
         if (!adminId.equals(schedule.getAdmin().getAdminId())) {
-            throw new ForbiddenException("일정을 생성한 관리자만 삭제할 수 있습니다.");
+            throw new ForbiddenException(ErrorCode.ADMIN_NOT_SCHEDULE_OWNER, "일정을 생성한 관리자만 삭제할 수 있습니다.");
         }
 
         scheduleDAO.deleteSchedule(schedule);

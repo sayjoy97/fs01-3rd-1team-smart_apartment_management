@@ -134,4 +134,11 @@ public class GardenController {
         deviceService.manualWatering(gardenId);
         return ResponseEntity.ok(ApiResponse.success("수동 물주기를 성공했습니다."));
     }
+
+    // 정원 관리 상세 조회
+    @GetMapping("/{gardenId}")
+    public ResponseEntity<?> getGardenDetail(@PathVariable Long gardenId) {
+        Page<ScheduleFilterRes> response = gardenService.getGardenDetail(gardenId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 }

@@ -4,12 +4,9 @@ import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.dto.HouseResponse;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.house.repository.HouseRepository;
-import com.jjld.global.exception.house.HouseNotFoundException;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +39,7 @@ public class HouseServiceImpl implements HouseService{
     public HouseResponse findByIdHouseId(Long houseId) {
         House house = houseDAO.findHouseId(houseId);
         if(houseId == null){
-            throw new HouseNotFoundException("없는 세대 번호입니다");
+            throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "없는 세대 번호입니다");
         }
 
         HouseResponse houseResponse = HouseResponse.builder()
