@@ -116,7 +116,6 @@ public class HouseServiceImpl implements HouseService{
         house.setHouseholderEmail(houseManagementResponse.getHouseholderEmail());
         house.setHouseholdSize(houseManagementResponse.getHouseholdSize());
         house.setEntrancePass(houseManagementResponse.getEntrancePass());
-        house.setAppLoginPass(houseManagementResponse.getEntrancePass());
         house.setHouseStatus(houseManagementResponse.getHouseholderName() != null
                     && !houseManagementResponse.getHouseholderName().isBlank());
 

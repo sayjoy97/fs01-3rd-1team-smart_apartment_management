@@ -39,6 +39,8 @@ public class House {
 
     private String householderName;
     private String householderPhone;
+
+    @Column(unique = true)
     private String householderEmail;
 
     @UpdateTimestamp
@@ -48,8 +50,6 @@ public class House {
     @Column(nullable = false)
     private String entrancePass;
 
-    private String appLoginPass;
-
     private int householdSize;
 
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL)
@@ -57,5 +57,11 @@ public class House {
 
     @OneToMany( mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RegisteredCar> registeredCars = new ArrayList<>();
+
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Profile> profiles = new ArrayList<>();
+
+    @OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Account account;
 
 }
