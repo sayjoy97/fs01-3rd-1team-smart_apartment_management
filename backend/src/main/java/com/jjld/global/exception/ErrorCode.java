@@ -76,6 +76,7 @@ public enum ErrorCode {
     // -------- Garden --------
     GARDEN_NOT_FOUND(HttpStatus.NOT_FOUND, "GARDEN_NOT_FOUND", "정원을 찾을 수 없습니다."),
     DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "DEVICE_NOT_FOUND", "디바이스를 찾을 수 없습니다."),
+    DEVICE_UNAVAILABLE(HttpStatus.CONFLICT, "DEVICE_UNAVAILABLE", "디바이스를 사용할 수 없습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE_NOT_FOUND", "관리 일정을 찾을 수 없습니다."),
 
     // -------- House --------
