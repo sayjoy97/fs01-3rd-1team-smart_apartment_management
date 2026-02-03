@@ -13,7 +13,6 @@ import com.jjld.domain.entrancedoor.repository.EntranceGateLogRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
 import com.jjld.domain.entrancedoor.specification.EntranceGateLogSpecification;
-import com.jjld.global.exception.doorgate.DoorGateNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
