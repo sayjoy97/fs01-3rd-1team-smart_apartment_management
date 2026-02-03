@@ -79,7 +79,7 @@ public class HouseServiceImpl implements HouseService{
         House house = houseRepository.findByHouseId(houseId);
 
         if(house == null){
-            throw new HouseNotFoundException("존재하지 않는 세대 입니다.");
+            throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "존재하지 않는 세대 입니다.");
         }
 
         // 등록하는 세대 카드가 없으면 빈 리스트 처리
