@@ -9,6 +9,9 @@ import java.util.Optional;
 
 public interface VehicleDAO {
 
+    // vehicle_id로 상세정보 조회
+    Vehicle findByVehicleId(Long vehicleId);
+
     // 기간내 유형별 출입기록 리스트
     Map<VehicleType, Long> getEntryCountByVehicleType(LocalDateTime start, LocalDateTime end);
 

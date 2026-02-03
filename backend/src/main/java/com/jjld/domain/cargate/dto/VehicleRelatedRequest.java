@@ -21,8 +21,7 @@ public class VehicleRelatedRequest {
     private String vehicleOwner;
 
     // 관리자 승인용
-    private String approvalType;   // 택배, 방문, 업체 등
-    private String approvalReason;
+    private String approvalReason; // 택배, 방문, 업체 등
     private LocalDate startAt;      // null → 오늘
     private LocalDate endAt;        // null → 무기한
 }

@@ -20,6 +20,13 @@ public class VehicleDAOImpl implements VehicleDAO {
     private final VehicleRepository vehicleRepository;
     private final CargateEventLogRepository cargateEventLogRepository;
 
+    // vehicle_id로 상세정보 조회
+    @Override
+    public Vehicle findByVehicleId(Long vehicleId) {
+        return vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이디 정보 없음"));
+    }
+    
     // 기간내 유형별 출입기록 리스트
     @Override
     public Map<VehicleType, Long> getEntryCountByVehicleType(LocalDateTime start, LocalDateTime end) {
@@ -41,6 +48,7 @@ public class VehicleDAOImpl implements VehicleDAO {
     public Optional<Vehicle> findByPlateNumber(String plateNumber) {
         return vehicleRepository.findByPlateNumber(plateNumber);
     }
+
 
     // 차량 번호 수정 (중복 체크 권장)
     @Override

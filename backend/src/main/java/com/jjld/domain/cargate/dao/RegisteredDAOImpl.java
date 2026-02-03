@@ -35,7 +35,7 @@ public class RegisteredDAOImpl implements RegisteredDAO {
                 .orElseThrow(() -> new IllegalArgumentException("해당정보 없음."));
     }
 
-    // 세대 등록차량 정보수정(만들어놨는데, 필요없으면 지울듯?)
+    // 세대 등록차량 정보수정
     @Override
     public RegisteredCar updateRegisteredCar(RegisteredCar regisEntity) {
         return registeredCarRepository.save(regisEntity);
@@ -48,9 +48,6 @@ public class RegisteredDAOImpl implements RegisteredDAO {
         if (!registeredCarRepository.existsById(vehicle_id)) {
             return false;
         }
-
-        // vehicle테이블에서는 없애지 않고 미등록차량으로 변경
-        vehicleRepository.updateVehicleType(vehicle_id, VehicleType.UNREGISTERED);
 
         registeredCarRepository.deleteById(vehicle_id);
         return true;
