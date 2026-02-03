@@ -60,9 +60,6 @@ public class ApprovedDAOImpl implements ApprovedDAO {
             return false;
         }
 
-        // vehicle테이블에서는 없애지 않고 미등록차량으로 변경
-        vehicleRepository.updateVehicleType(vehicle_id, VehicleType.UNREGISTERED);
-
         approvedCarRepository.deleteById(vehicle_id);
         return true;
     }

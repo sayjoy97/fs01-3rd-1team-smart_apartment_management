@@ -47,7 +47,7 @@ public class ApprovedCar {
 
         this.currentStatus =
                 today.isBefore(startAt) ? CurrentStatus.BEFORE :
-                        today.isAfter(endAt)    ? CurrentStatus.END :
+                        today.isAfter(endAt) ? CurrentStatus.END :
                                 CurrentStatus.IN_PROGRESS;
     }
 
