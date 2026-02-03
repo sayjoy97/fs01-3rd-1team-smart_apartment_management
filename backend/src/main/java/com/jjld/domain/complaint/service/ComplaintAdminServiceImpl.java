@@ -6,6 +6,11 @@ import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
+import com.jjld.domain.complaint.dto.admin.ComplaintSearchCond;
+import com.jjld.domain.complaint.dto.user.ComplaintReference;
+import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
+import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
+import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
 import com.jjld.domain.complaint.entity.ComplaintReply;
@@ -14,11 +19,13 @@ import com.jjld.domain.complaint.repository.ComplaintRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.BadRequestException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.domain.complaint.specification.ComplaintSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,15 +39,17 @@ public class ComplaintAdminServiceImpl implements ComplaintAdminService {
     private final AdminDAO adminDAO;
 
     // 관리자 민원 목록 페이징으로 조회
-    public Page<ComplaintAdminResponse> findAll(int page, int size){
+    public Page<ComplaintAdminResponse> search(ComplaintSearchCond cond, int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("complaintId").descending());
 
-        Page<Complaint> complaintPage = complaintRepository.findAll(pageable);
-        if(complaintPage == null){
-            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "해당 페이지의 민원이 없습니다");
-        }
+        Specification<Complaint> spec = Specification.allOf(
+                ComplaintSpecification.equalCategory(cond.getCategory()),
+                ComplaintSpecification.equalStatus(cond.getStatus())
+        );
 
-        return complaintPage.map(ComplaintAdminResponse::new);
+        return complaintRepository
+                .findAll(spec, pageable)
+                .map(ComplaintAdminResponse::new);
     }
 
 
