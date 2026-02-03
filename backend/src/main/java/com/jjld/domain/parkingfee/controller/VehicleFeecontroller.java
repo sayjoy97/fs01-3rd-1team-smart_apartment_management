@@ -1,5 +1,6 @@
 package com.jjld.domain.parkingfee.controller;
 
+import com.jjld.domain.parkingfee.dto.AllInOneChargeViewResponse;
 import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
 import com.jjld.domain.parkingfee.service.VehicleFeeService;
 import com.jjld.global.response.ApiResponse;
@@ -21,10 +22,11 @@ public class VehicleFeecontroller {
     }
 
     // 요금내역관리 페이지 요금 통합조회
-//    @GetMapping("/totalList")
-//    ResponseEntity<?> getTotalList(){
-//        return null;
-//    }
+    @GetMapping("/totalList")
+    ResponseEntity<?> getTotalList(){
+        AllInOneChargeViewResponse allInOneChargeView = vehicleFeeService.getAllInOneChargeView();
+        return ResponseEntity.ok(ApiResponse.success(allInOneChargeView));
+    }
 
     // 타입별 누적금액 조회
 //    @GetMapping("/charge")

@@ -1,5 +1,6 @@
 package com.jjld.domain.parkingfee.dao;
 
+import com.jjld.domain.cargate.dao.ParkingSessionDAO;
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.domain.parkingfee.repository.ParkingFeeHistoryRepository;
@@ -7,6 +8,7 @@ import com.jjld.domain.parkingfee.repository.ParkingFeeSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Repository
@@ -27,5 +29,17 @@ public class ParkingFeeDAOImpl implements ParkingFeeDAO {
     public long getCountByType(LocalDateTime start, LocalDateTime end) {
         ParkingStatus out = ParkingStatus.OUT;
         return feeHistoryRepository.getCountBySettingDay(out, start, end);
+    }
+
+    // 월평균 금액 조회
+    @Override
+    public BigDecimal getMonthAverageCount() {
+        return feeHistoryRepository.findAverageBy12Month();
+    }
+
+    // 일일 최고금액 조회
+    @Override
+    public long getDayTopCount() {
+        return feeHistoryRepository.findMaxCharge();
     }
 }
