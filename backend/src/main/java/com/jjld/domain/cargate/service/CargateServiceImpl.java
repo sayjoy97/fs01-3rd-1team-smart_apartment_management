@@ -233,8 +233,7 @@ public class CargateServiceImpl implements CargateService {
             updateToRegistered(vehicle, request);
 
         } else if (request.getVehicleType() == VehicleType.ADMIN_APPROVED) {
-//            System.out.println("-----------------------------------");
-//            System.out.println(request.getVehicleType());
+
             updateToApproved(vehicle, request);
         }
     }
@@ -307,7 +306,7 @@ public class CargateServiceImpl implements CargateService {
                                 request.getVehicleType()
                         )
                 );
-        System.out.println(vehicle);
+
         switch (vehicleEntity.getVehicleType()) {
             case UNREGISTERED:
                 vehicle.setVehicleType(VehicleType.ADMIN_APPROVED);
