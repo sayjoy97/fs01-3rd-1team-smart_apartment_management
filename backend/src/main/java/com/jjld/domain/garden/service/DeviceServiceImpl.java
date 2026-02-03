@@ -5,7 +5,6 @@ import com.jjld.domain.garden.dao.GardenDAO;
 import com.jjld.domain.garden.dto.DeviceReq;
 import com.jjld.domain.garden.entity.Device;
 import com.jjld.domain.garden.entity.Enum.DeviceState;
-import com.jjld.domain.garden.entity.Enum.DeviceType;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.global.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ public class DeviceServiceImpl implements DeviceService {
     private final DeviceDAO deviceDAO;
     private final GardenDAO gardenDAO;
 
+    // 정원 관리 기능 디바이스 등록
     @Override
     public void createDevices(Long gardenId, List<DeviceReq> deviceReqs) {
         Garden garden = gardenDAO.getGarden(gardenId)
@@ -35,6 +35,7 @@ public class DeviceServiceImpl implements DeviceService {
         });
     }
 
+    // 정원 관리 기능 디바이스 상태 수정
     @Override
     public void updateDevice(Long deviceId, DeviceState deviceState) {
         Device device = deviceDAO.getDevice(deviceId)
@@ -43,5 +44,16 @@ public class DeviceServiceImpl implements DeviceService {
         device.setState(deviceState);
 
         deviceDAO.saveDevice(device);
+    }
+
+    // 정원 관리 기능 수동 물주기
+    @Override
+    public void manualWatering(Long gardenId) {
+        gardenDAO.getGarden(gardenId)
+                .orElseThrow(() -> new NotFoundException("정원을 찾을 수 없습니다."));
+
+        // mqtt 통신을 통해 워터 펌프를 작동 시키는 메서드 호출
+        // 통신 실패 시, 물주기 실패 시 등의 오류 처리 예정
+
     }
 }

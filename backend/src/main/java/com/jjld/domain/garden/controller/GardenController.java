@@ -127,4 +127,11 @@ public class GardenController {
         deviceService.updateDevice(deviceId, deviceState);
         return ResponseEntity.ok(ApiResponse.success("디바이스 수정을 성공했습니다."));
     }
+
+    // 정원 관리 기능 수동 물주기
+    @PostMapping("/{gardenId}/manual-watering")
+    public ResponseEntity<?> manualWatering(@PathVariable Long gardenId) {
+        deviceService.manualWatering(gardenId);
+        return ResponseEntity.ok(ApiResponse.success("수동 물주기를 성공했습니다."));
+    }
 }
