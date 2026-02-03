@@ -2,10 +2,7 @@ package com.jjld.domain.cargate.entity;
 
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +30,7 @@ public class Vehicle {
     private VehicleType vehicleType; // 차량 유형
 
     @OneToMany(mappedBy = "vehicle")
+    @ToString.Exclude
     private List<ParkingSession> parkingSessions = new ArrayList<>(); // 과거~현재 주차이력
 
     // 과거~현재 들어온 차량이 아닌 차량 미리등록
