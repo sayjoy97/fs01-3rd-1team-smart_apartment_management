@@ -11,26 +11,36 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
-    // HttpStatus 뒤에 쓸 값들 예시 --------------------------------------------------
-    //
-    // 400번대 - 클라이언트 측 실수
-    // 400 BAD_REQUEST ------------ 요청 형식/값이 잘못됨 (JSON 형식 오류, 필수값 누락)
-    // 401 UNAUTHORIZED ----------- 인증 안 됨 (로그인 안 한 사용자가 접근)
-    // 403 FORBIDDEN -------------- 인증은 됐지만 권한 없음 (일반 사용자가 관리자 API 호출)
-    // 404 NOT_FOUND -------------- 리소스 없음 (존재하지 않는 사용자 조회)
-    // 409 CONFLICT --------------- 데이터 충돌 (중복 아이디 회원가입)
-    // 422 UNPROCESSABLE_ENTITY --- 값은 있지만 규칙 위반 (비밀번호 길이 부족)
-    //
-    // 500번대 - 서버 측 실수
-    // 500 INTERNAL_SERVER ------- 서버 내부 오류 (NullPointer, DB 장애)
-    // 503 SERVICE_UNAVAILABLE --- 서버 일시적 장애 (서버 점검 중)
-    // -----------------------------------------------------------------------------
+
 
     // -------- 공통 --------
-    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "잘못된 요청입니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "서버 오류가 발생했습니다."),
-    NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "요청한 데이터를 찾을 수 없습니다."),
+
+    // 400번대 - 클라이언트 측 실수 -----------------------------------------------------------------------------
+    // 400 BAD_REQUEST ------------ 요청 형식/값이 잘못됨 (JSON 형식 오류, 필수값 누락)
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "BAD_REQUEST", "잘못된 요청입니다."),
+
+    // 401 UNAUTHORIZED ----------- 인증 안 됨 (로그인 안 한 사용자가 접근)
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "인증이 필요합니다."),
+
+    // 403 FORBIDDEN -------------- 인증은 됐지만 권한 없음 (일반 사용자가 관리자 API 호출)
     FORBIDDEN(HttpStatus.FORBIDDEN, "FORBIDDEN", "접근 권한이 없습니다."),
+
+    // 404 NOT_FOUND -------------- 리소스 없음 (존재하지 않는 사용자 조회)
+    NOT_FOUND(HttpStatus.NOT_FOUND, "NOT_FOUND", "요청한 데이터를 찾을 수 없습니다."),
+
+    // 409 CONFLICT --------------- 데이터 충돌 (중복 아이디 회원가입)
+    CONFLICT(HttpStatus.CONFLICT, "CONFLICT", "요청이 현재 서버 상태와 충돌합니다."),
+
+    // 422 UNPROCESSABLE_ENTITY --- 값은 있지만 규칙 위반 (비밀번호 길이 부족)
+    UNPROCESSABLE_ENTITY(HttpStatus.UNPROCESSABLE_ENTITY, "UNPROCESSABLE_ENTITY", "요청 형식은 올바르지만 데이터 유효성 검증에 실패했습니다."),
+
+    // 500번대 - 서버 측 실수 ----------------------------------------------------------------------------------
+    // 500 INTERNAL_SERVER ------- 서버 내부 오류 (NullPointer, DB 장애)
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다."),
+
+    // 503 SERVICE_UNAVAILABLE --- 서버 일시적 장애 (서버 점검 중)
+    SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", "서버가 일시적으로 요청을 처리할 수 없습니다."),
+
 
     // -------- Admin --------
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND, "ADMIN_NOT_FOUND", "관리자를 찾을 수 없습니다."),
@@ -39,6 +49,9 @@ public enum ErrorCode {
     SUPER_ADMIN_ONLY(HttpStatus.FORBIDDEN, "SUPER_ADMIN_ONLY", "총 관리자만 접근할 수 있는 기능입니다."),
     INVALID_CURRENT_PASSWORD(HttpStatus.UNAUTHORIZED, "INVALID_CURRENT_PASSWORD", "현재 비밀번호가 올바르지 않습니다."),
     SAME_AS_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "SAME_AS_OLD_PASSWORD", "새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다."),
+    CURRENT_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "CURRENT_PASSWORD_MISMATCH", "현재 비밀번호와 입력한 비밀번호가 일치하지 않습니다."),
+    ADMIN_NOT_SCHEDULE_OWNER(HttpStatus.FORBIDDEN, "ADMIN_NOT_SCHEDULE_OWNER", "일정을 생성한 관리자만 수정할 수 있습니다."),
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "아이디 또는 비밀번호가 일치하지 않습니다."),
 
     // -------- Alarm --------
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM_NOT_FOUND", "알람을 찾을 수 없습니다."),
@@ -48,7 +61,7 @@ public enum ErrorCode {
 
     // -------- Complaint --------
     COMPLAINT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMPLAINT_NOT_FOUND", "민원을 찾을 수 없습니다."),
-    COMPLAINT_ALREADY_ANSWER(HttpStatus.BAD_REQUEST, "COMPLAINT_ALREADY_ANSWER", "이미 답변이 있는 민원입니다"),
+    COMPLAINT_ALREADY_ANSWER(HttpStatus.BAD_REQUEST, "COMPLAINT_ALREADY_ANSWER", "이미 답변이 있는 민원입니다."),
 
     // -------- Complex --------
     APARTMENT_COMPLEX_ALREADY_EXISTS(HttpStatus.CONFLICT, "APARTMENT_COMPLEX_ALREADY_EXISTS", "이미 아파트 단지 정보가 존재합니다."),
@@ -62,6 +75,8 @@ public enum ErrorCode {
 
     // -------- Garden --------
     GARDEN_NOT_FOUND(HttpStatus.NOT_FOUND, "GARDEN_NOT_FOUND", "정원을 찾을 수 없습니다."),
+    DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "DEVICE_NOT_FOUND", "디바이스를 찾을 수 없습니다."),
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE_NOT_FOUND", "관리 일정을 찾을 수 없습니다."),
 
     // -------- House --------
     HOUSE_NOT_FOUND(HttpStatus.NOT_FOUND, "HOUSE_NOT_FOUND", "세대를 찾을 수 없습니다."),
@@ -75,6 +90,7 @@ public enum ErrorCode {
 
     // -------- ParkingFee --------
     PARKING_FEE_NOT_FOUND(HttpStatus.NOT_FOUND, "PARKING_FEE_NOT_FOUND", "주차 요금을 찾을 수 없습니다.");
+
 
     private final HttpStatus status;
     private final String code;

@@ -26,12 +26,6 @@ public class NoiseEventAnalysis {
     @JoinColumn(name = "noise_event_id", unique = true, nullable = false)
     private NoiseEvent noiseEvent;
 
-    // HOUSE (1) ── (N) NOISE_EVENT_ANALYSIS
-    // 추정 가해 세대
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id", nullable = false)
-    private House house;
-
     // 1차 분류 (시스템)
     @Enumerated(EnumType.STRING)
     @Column(name = "noise_pattern_1", nullable = false, length = 30)
