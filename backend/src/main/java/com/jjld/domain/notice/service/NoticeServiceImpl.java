@@ -7,7 +7,8 @@ import com.jjld.domain.notice.dto.NoticeDetailRequest;
 import com.jjld.domain.notice.dto.NoticeDetailResponse;
 import com.jjld.domain.notice.dto.NoticeListResponse;
 import com.jjld.domain.notice.entity.Notice;
-import com.jjld.global.exception.admin.AdminNotFoundException;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -82,7 +83,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public void noticeWrite(NoticeDetailRequest writeRequest) {
         Admin adminEntity = adminDAO.getAdmin(writeRequest.getAdminId())
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "공지사항을 등록할 관리자를 찾을 수 없습니다."));
 
         Notice entity = Notice.builder()
                 .admin(adminEntity)
@@ -115,7 +116,7 @@ public class NoticeServiceImpl implements NoticeService {
     public void updateNotice(NoticeDetailRequest updateRequest) {
         Notice noticeEntity = noticeDAO.findByNoticeId(updateRequest.getNoticeId());
         Admin adminEntity = adminDAO.getAdmin(updateRequest.getAdminId())
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "공지사항을 수정할 관리자를 찾을 수 없습니다."));
 
         noticeEntity.setAdmin(adminEntity);
         noticeEntity.setNoticeTitle(updateRequest.getNoticeTitle());
