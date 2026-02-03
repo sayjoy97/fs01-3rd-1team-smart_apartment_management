@@ -4,7 +4,8 @@ import com.jjld.domain.cargate.dao.*;
 import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
-import com.jjld.domain.house.repository.HouseRepository;
+import com.jjld.domain.house.dao.HouseDAO;
+import com.jjld.domain.house.entity.House;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import lombok.Builder;
@@ -33,8 +34,7 @@ public class CargateServiceImpl implements CargateService {
     private final RegisteredDAO registeredDAO;
     private final ApprovedDAO approvedDAO;
     private final ParkingFeeDAO parkingFeeDAO;
-
-    private final HouseRepository houseRepository;
+    private final HouseDAO houseDAO;
 
     private final ModelMapper modelMapper;
 
@@ -215,9 +215,7 @@ public class CargateServiceImpl implements CargateService {
     // 로그기록 내 정보수정
     @Transactional
     @Override
-    public void updateVehicleByLog(
-            Long cargateEventId,
-            VehicleRelatedRequest request) {
+    public void updateVehicleByLog(Long cargateEventId, VehicleRelatedRequest request) {
 
         // 로그 조회
         CargateEventLog log = cargateEventLogDAO.findByLogId(cargateEventId);
@@ -228,109 +226,112 @@ public class CargateServiceImpl implements CargateService {
             throw new IllegalStateException("OCR 실패 로그는 수정 불가");
         }
 
-        // UNREGISTERED 차단
         if (request.getVehicleType() == VehicleType.UNREGISTERED) {
-            throw new IllegalArgumentException("미등록 차량은 수정 대상 아님");
-        }
+            updateToUnregistered(vehicle);
 
-        // 차량 번호 수정 (중복 체크 권장)
-        vehicleDAO.changePlateNumber(request.getPlateNumber(), vehicle.getVehicleId());
+        } else if (request.getVehicleType() == VehicleType.REGISTERED) {
+            updateToRegistered(vehicle, request);
 
-        vehicle.setPlateNumber(request.getPlateNumber());
+        } else if (request.getVehicleType() == VehicleType.ADMIN_APPROVED) {
 
-        VehicleType beforeType = vehicle.getVehicleType();
-        VehicleType afterType = request.getVehicleType();
-
-        // 차량 유형 변경 여부 분기
-        if (beforeType == afterType) {
-            updateSameType(vehicle, afterType, request);
-        } else {
-            changeVehicleType(vehicle, beforeType, afterType, request);
-        }
-
-        // vehicle 타입 최종 반영
-        vehicle.setVehicleType(afterType);
-    }
-
-    private void updateSameType(Vehicle vehicle, VehicleType type, VehicleRelatedRequest req) {
-
-        if (type == VehicleType.REGISTERED) {
-            RegisteredCar rc = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
-
-            if (req.getHouseId() == null || req.getVehicleOwner() == null) {
-                throw new IllegalArgumentException("세대 정보 필수");
-            }
-
-            rc.setHouse(houseRepository.getReferenceById(req.getHouseId()));
-            rc.setVehicleOwner(req.getVehicleOwner());
-        }
-
-        if (type == VehicleType.ADMIN_APPROVED) {
-            ApprovedCar ac = approvedDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
-
-            ac.setApprovalReason(formatApprovalReason(req));
-            ac.setStartAt(
-                    req.getStartAt() != null ? req.getStartAt() : LocalDate.now()
-            );
-            ac.setEndAt(req.getEndAt());
+            updateToApproved(vehicle, request);
         }
     }
 
-    private void changeVehicleType(Vehicle vehicle, VehicleType before,
-                                   VehicleType after, VehicleRelatedRequest req
-    ) {
+    // -> 미등록차량으로 변경
+    private void updateToUnregistered(Vehicle vehicle) {
+        Vehicle byVehicleId = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
 
-        // 이전 유형 데이터 제거
-        if (before == VehicleType.REGISTERED) {
-            registeredDAO.deleteByRegisteredCar(vehicle.getVehicleId());
-        }
+        switch (vehicle.getVehicleType()) {
+            case UNREGISTERED:
+                new IllegalArgumentException("이미 미등록 차량입니다.");
+                break;
+            case REGISTERED:
+                registeredDAO.deleteByRegisteredCar(vehicle.getVehicleId());
 
-        if (before == VehicleType.ADMIN_APPROVED) {
-            approvedDAO.deleteByApprovedCar(vehicle.getVehicleId());
-        }
+                byVehicleId.setVehicleType(VehicleType.UNREGISTERED);
+                break;
+            case ADMIN_APPROVED:
+                approvedDAO.deleteByApprovedCar(vehicle.getVehicleId());
 
-        // 신규 유형 생성
-        if (after == VehicleType.REGISTERED) {
-
-            if (req.getHouseId() == null || req.getVehicleOwner() == null) {
-                throw new IllegalArgumentException("세대 정보 필수");
-            }
-
-            registeredDAO.createRegisteredCar(
-                    RegisteredCar.builder()
-                            .vehicle(vehicle)
-                            .house(houseRepository.getReferenceById(req.getHouseId()))
-                            .vehicleOwner(req.getVehicleOwner())
-                            .build()
-            );
-        }
-
-        if (after == VehicleType.ADMIN_APPROVED) {
-
-            ApprovedCar approvedCar = ApprovedCar.builder()
-                    .vehicle(vehicle)
-                    .approvalReason(formatApprovalReason(req))
-                    .startAt(
-                            req.getStartAt() != null
-                                    ? req.getStartAt()
-                                    : LocalDate.now()
-                    )
-                    .endAt(req.getEndAt())
-                    .build();
-
-            approvedDAO.createApprovedCar(approvedCar);
+                byVehicleId.setVehicleType(VehicleType.UNREGISTERED);
+                break;
         }
     }
 
-    private String formatApprovalReason(VehicleRelatedRequest req) {
+    // -> 세대등록 차량으로 변경
+    private void updateToRegistered(Vehicle vehicleEntity, VehicleRelatedRequest request) {
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+                .orElseGet(() -> vehicleDAO.newVehicle(
+                                request.getPlateNumber(),
+                                request.getVehicleType()
+                        )
+                );
 
-        if (req.getApprovalType() == null || req.getApprovalReason() == null) {
-            throw new IllegalArgumentException("승인 사유 정보 부족");
+        switch (vehicle.getVehicleType()) {
+            case UNREGISTERED:
+                vehicle.setVehicleType(VehicleType.REGISTERED);
+                registerHouseVehicle(vehicle, request);
+
+                break;
+            case REGISTERED:
+                RegisteredCar updateEntity = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
+                House findHouse = houseDAO.findHouseId(request.getHouseId());
+
+                updateEntity.setVehicleOwner(request.getVehicleOwner());
+                updateEntity.setHouse(findHouse);
+
+                registeredDAO.updateRegisteredCar(updateEntity);
+                break;
+            case ADMIN_APPROVED:
+                // 승인차량 내용 지우고
+                approvedDAO.deleteByApprovedCar(vehicle.getVehicleId());
+
+                Vehicle byPlateNumber = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+                        .orElseThrow(() -> new IllegalStateException("차량이 존재하지 않습니다."));
+
+                byPlateNumber.setVehicleType(VehicleType.REGISTERED);
+
+                registerHouseVehicle(byPlateNumber, request);
+
+                break;
         }
-
-        return "[" + req.getApprovalType() + "] " + req.getApprovalReason();
     }
 
+    // -> 관리자 승인차량으로 변경
+    private void updateToApproved(Vehicle vehicleEntity, VehicleRelatedRequest request) {
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+                .orElseGet(() -> vehicleDAO.newVehicle(
+                                request.getPlateNumber(),
+                                request.getVehicleType()
+                        )
+                );
+
+        switch (vehicleEntity.getVehicleType()) {
+            case UNREGISTERED:
+                vehicle.setVehicleType(VehicleType.ADMIN_APPROVED);
+
+                registerApprovedVehicle(vehicle, request);
+
+                break;
+            case REGISTERED:
+                registeredDAO.deleteByRegisteredCar(vehicle.getVehicleId());
+
+                vehicle.setVehicleType(VehicleType.ADMIN_APPROVED);
+
+                registerApprovedVehicle(vehicle, request);
+                break;
+            case ADMIN_APPROVED:
+                ApprovedCar updateEntity = approvedDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
+
+                updateEntity.setApprovalReason(request.getApprovalReason());
+                updateEntity.setStartAt(request.getStartAt());
+                updateEntity.setEndAt(request.getEndAt());
+
+                approvedDAO.updateApprovedCar(updateEntity);
+                break;
+        }
+    }
 
     // 컨트롤러에서 직접 요청하는 작업내용
     @Override
@@ -354,13 +355,14 @@ public class CargateServiceImpl implements CargateService {
     // 세대 등록차량일 때 필요한 작업내용
     @Override
     public void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest req) {
+        Vehicle managedVehicle = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
         if (req.getHouseId() == null) {
             throw new IllegalArgumentException("세대 정보 필수");
         }
 
         RegisteredCar registeredCar = RegisteredCar.builder()
-                .vehicle(vehicle)
-                .house(houseRepository.getReferenceById(req.getHouseId()))
+                .vehicle(managedVehicle)
+                .house(houseDAO.findHouseId(req.getHouseId()))
                 .vehicleOwner(req.getVehicleOwner())
                 .build();
 
@@ -370,16 +372,15 @@ public class CargateServiceImpl implements CargateService {
     // 관리자 승인차량 등록일 때 필요한 작업내용
     @Override
     public void registerApprovedVehicle(Vehicle vehicle, VehicleRelatedRequest req) {
+        Vehicle managedVehicle = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
 
         LocalDate startAt = req.getStartAt() != null
                 ? req.getStartAt()
                 : LocalDate.now();
 
         ApprovedCar approvedCar = ApprovedCar.builder()
-                .vehicle(vehicle)
-                .approvalReason(
-                        "[" + req.getApprovalType() + "] " + req.getApprovalReason()
-                )
+                .vehicle(managedVehicle)
+                .approvalReason(req.getApprovalReason())
                 .startAt(startAt)
                 .endAt(req.getEndAt())
                 .build();
@@ -445,10 +446,10 @@ public class CargateServiceImpl implements CargateService {
     // 세대 등록차량 삭제
     @Override
     public boolean deleteRegisCar(Long vehicle_id) {
-        if(!registeredDAO.deleteByRegisteredCar(vehicle_id)){
-            return false;
-        }
-        return true;
+        Vehicle vehicleEntity = vehicleDAO.findByVehicleId(vehicle_id);
+        vehicleEntity.setVehicleType(VehicleType.UNREGISTERED);
+
+        return registeredDAO.deleteByRegisteredCar(vehicleEntity.getVehicleId());
     }
 
     // 관리자 승인차량 조회 리스트
@@ -510,10 +511,9 @@ public class CargateServiceImpl implements CargateService {
     // 관리자 승인차량 삭제
     @Override
     public Boolean deleteApprovedCar(Long vehicle_id) {
-        if(!approvedDAO.deleteByApprovedCar(vehicle_id)){
-            return false;
-        }
-        approvedDAO.deleteByApprovedCar(vehicle_id);
-        return true;
+        Vehicle byVehicleId = vehicleDAO.findByVehicleId(vehicle_id);
+        byVehicleId.setVehicleType(VehicleType.UNREGISTERED);
+
+        return approvedDAO.deleteByApprovedCar(vehicle_id);
     }
 }

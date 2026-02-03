@@ -9,9 +9,10 @@ import com.jjld.domain.house.entity.Enum.CardStatus;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.house.repository.EntranceCardRepository;
 import com.jjld.domain.house.repository.HouseRepository;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import com.jjld.domain.house.specification.HouseSpecification;
-import com.jjld.global.exception.house.HouseCardNotFoundException;
-import com.jjld.global.exception.house.HouseNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +63,7 @@ public class HouseServiceImpl implements HouseService{
     public HouseResponse findByIdHouseId(Long houseId) {
         House house = houseDAO.findHouseId(houseId);
         if(houseId == null){
-            throw new HouseNotFoundException("없는 세대 번호입니다");
+            throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "없는 세대 번호입니다");
         }
 
         HouseResponse houseResponse = HouseResponse.builder()
@@ -78,7 +79,7 @@ public class HouseServiceImpl implements HouseService{
         House house = houseRepository.findByHouseId(houseId);
 
         if(house == null){
-            throw new HouseNotFoundException("존재하지 않는 세대 입니다.");
+            throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "존재하지 않는 세대 입니다.");
         }
 
         // 등록하는 세대 카드가 없으면 빈 리스트 처리
