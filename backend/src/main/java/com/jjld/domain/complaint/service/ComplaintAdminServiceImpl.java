@@ -2,9 +2,7 @@ package com.jjld.domain.complaint.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
 import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.complaint.dao.ComplaintDAO;
-import com.jjld.domain.complaint.dao.ComplaintDAOImpl;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
@@ -18,10 +16,10 @@ import com.jjld.domain.complaint.entity.ComplaintAnalysis;
 import com.jjld.domain.complaint.entity.ComplaintReply;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.BadRequestException;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import com.jjld.domain.complaint.specification.ComplaintSpecification;
-import com.jjld.global.exception.admin.AdminNotFoundException;
-import com.jjld.global.exception.complaint.ComplaintAlreadyAnswer;
-import com.jjld.global.exception.complaint.ComplaintNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,11 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletionException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +58,7 @@ public class ComplaintAdminServiceImpl implements ComplaintAdminService {
     public ComplaintAdminDetailResponse findByComplaintId(Long complaintId) {
         Complaint complaint = complaintDAO.findByComplaintId(complaintId);
         if (complaint == null){
-            throw new ComplaintNotFoundException("상세하려는 민원글이 없습니다");
+            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "상세하려는 민원글이 없습니다");
         }
 
         // ai 요약이 없을 때 null
@@ -104,19 +98,19 @@ public class ComplaintAdminServiceImpl implements ComplaintAdminService {
     public void answerWrite(Long complaintId, Long adminId, ComplaintAdminAnswerResponse answerResponse) {
         Complaint complaint = complaintRepository.findByComplaintId(complaintId);
         if(complaint==null){
-            throw new ComplaintNotFoundException("답변 작성할 민원글이 없습니다.");
+            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "답변 작성할 민원글이 없습니다.");
         }
 
         ComplaintReply complaintReply = complaint.getComplaintReply();
 
         if(complaintReply != null && complaintReply.getAnswer() != null){
-            throw new ComplaintAlreadyAnswer("이미 답변이 있는 민원글 입니다");
+            throw new BadRequestException(ErrorCode.COMPLAINT_ALREADY_ANSWER, "이미 답변이 있는 민원글 입니다");
         }
 
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "관리자를 찾을 수 없습니다."));
         if(admin == null){
-            throw new AdminNotFoundException("존재하지 않는 관리자 번호입니다");
+            throw new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "존재하지 않는 관리자 번호입니다");
         }
 
         complaintReply = new ComplaintReply();

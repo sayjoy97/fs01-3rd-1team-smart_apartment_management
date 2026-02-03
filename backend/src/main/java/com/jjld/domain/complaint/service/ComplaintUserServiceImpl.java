@@ -3,17 +3,14 @@ package com.jjld.domain.complaint.service;
 import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dto.user.*;
 import com.jjld.domain.complaint.entity.Complaint;
-import com.jjld.domain.complaint.entity.ComplaintReply;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.house.repository.HouseRepository;
 import com.jjld.global.exception.ErrorCode;
-import com.jjld.global.exception.complaint.ComplaintNotFoundException;
-import com.jjld.global.exception.house.HouseNotFoundException;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +34,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     public List<ComplaintUserResponse> findByHouse_HouseId(Long houseId) {
         List<Complaint> userComplaint = complaintRepository.findByHouse_HouseId(houseId);
         if(userComplaint.isEmpty()){
-            throw new ComplaintNotFoundException("작성한 민원이 없습니다");
+            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "작성한 민원이 없습니다");
         }
 
         return userComplaint.stream()
@@ -56,7 +53,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     public ComplaintUserDetailResponse findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId) {
         Complaint complaint = complaintDAO.findByHouseIdComplaintId(houseId, complaintId);
         if (complaint == null){
-            throw new ComplaintNotFoundException("상세 조회하려는 민원글이 없습니다");
+            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "상세 조회하려는 민원글이 없습니다");
         }
 
         // 관리자 답변이 없을 때 -> 답변 작성한 관리자 ID가 null
@@ -89,7 +86,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     public List<ComplaintReference> getReferenceComplaints(Long houseId) {
         List<Complaint> reference = complaintRepository.findByHouse_HouseIdOrderByCreatedAtDesc(houseId);
         if (reference.isEmpty()) {
-            throw new ComplaintNotFoundException("참조할 민원 내역이 없습니다");
+            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "참조할 민원 내역이 없습니다");
         }
         return reference.stream()
                 .map(r -> new ComplaintReference(
@@ -105,7 +102,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     public Long write(Long houseId, ComplaintUserWrite userWrite) {
         House house = houseRepository.findByHouseId(houseId);
         if(house == null){
-            throw new HouseNotFoundException("없는 세대 번호입니다");
+            throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "없는 세대 번호입니다");
         }
 
         // 참조할 민원이 없으면 빈 리스트 처리, 있으면 엔티티 리스트로 변환
@@ -113,7 +110,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(refId -> complaintRepository.findById(refId)
-                        .orElseThrow(() -> new ComplaintNotFoundException("참조할 민원이 없습니다.")))
+                        .orElseThrow(() -> new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "참조할 민원이 없습니다.")))
                 .collect(Collectors.toList());
 
         Complaint complaint = Complaint.builder()
@@ -137,10 +134,10 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
 
         Complaint complaint = complaintRepository
                 .findByHouse_HouseIdAndComplaintId(houseId, complaintId)
-                .orElseThrow(() -> new ComplaintNotFoundException("삭제하려는 민원글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "삭제하려는 민원글을 찾을 수 없습니다."));
 
         if (complaint.getComplaintReply() != null) {
-            throw new ComplaintNotFoundException("답변이 달린 민원은 삭제할 수 없습니다");
+            throw new NotFoundException(ErrorCode.COMPLAINT_ALREADY_ANSWER, "답변이 달린 민원은 삭제할 수 없습니다");
         }
 
         // 삭제 대상 complaint 참조하는 자식 complaint를 찾아서 삭제
@@ -159,10 +156,10 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     public void updateComplaint(Long houseId, Long complaintId, ComplaintUserUpdate complaintUserUpdate) {
     Complaint complaint = complaintRepository
             .findByHouse_HouseIdAndComplaintId(houseId, complaintId)
-            .orElseThrow(() -> new ComplaintNotFoundException("수정하려는 민원글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "수정하려는 민원글을 찾을 수 없습니다."));
 
     if(complaint.getComplaintReply() != null){
-        throw new ComplaintNotFoundException("답변이 달린 민원은 수정할 수 없습니다");
+        throw new NotFoundException(ErrorCode.COMPLAINT_ALREADY_ANSWER, "답변이 달린 민원은 수정할 수 없습니다");
     }
     complaint.setTitle(complaintUserUpdate.getTitle());
     complaint.setCategory(ComplaintCategory.valueOf(complaintUserUpdate.getCategory()));

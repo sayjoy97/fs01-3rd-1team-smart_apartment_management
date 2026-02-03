@@ -8,14 +8,16 @@ import com.jjld.domain.garden.dao.GardenDAO;
 import com.jjld.domain.garden.dao.SensorLogDAO;
 import com.jjld.domain.garden.dto.GardenReq;
 import com.jjld.domain.garden.dto.GardenRes;
+import com.jjld.domain.garden.dto.ScheduleFilterRes;
 import com.jjld.domain.garden.entity.Device;
 import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.SensorLog;
-import com.jjld.global.exception.admin.AdminNotFoundException;
-import com.jjld.global.exception.admin.SuperAdminOnlyException;
-import com.jjld.global.exception.garden.GardenNotFoundException;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.ForbiddenException;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,30 +52,7 @@ public class GardenServiceImpl implements GardenService {
                     GardenRes gardenRes = modelMapper.map(Garden, GardenRes.class);
                     List<Device> devices = deviceDAO.getDevices(Garden);
 
-                    // 센서 미설치 시 값 처리
-                    gardenRes.setCurrentTemperature("센서 미설치");
-                    gardenRes.setCurrentHumidity("센서 미설치");
-                    gardenRes.setCurrentSoilMoisture("센서 미설치");
-
-                    // 설치된 센서는 값 처리
-                    if (!devices.isEmpty()) {
-                        for(Device device : devices) {
-                            switch (device.getDeviceType()) {
-                                case TEMP:
-                                    gardenRes.setCurrentTemperature(setSensorLogValue(device));
-                                    break;
-                                case HUMIDITY:
-                                    gardenRes.setCurrentHumidity(setSensorLogValue(device));
-                                    break;
-                                case SOIL_MOISTURE:
-                                    gardenRes.setCurrentSoilMoisture(setSensorLogValue(device));
-                                    break;
-                                case LIGHT:
-                                    gardenRes.setCurrentLight(setSensorLogValue(device));
-                                default:
-                            }
-                        }
-                    }
+                    gardenRes = setSenorState(gardenRes, devices);
 
                     return gardenRes;
                 })
@@ -86,7 +65,7 @@ public class GardenServiceImpl implements GardenService {
     @Override
     public void updateGarden(Long gardenId, GardenReq gardenReq) {
         Garden garden = gardenDAO.getGarden(gardenId)
-                .orElseThrow(() -> new GardenNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GARDEN_NOT_FOUND, "수정할 정원을 찾을 수 없습니다."));
 
         garden.setName(gardenReq.getName());
         garden.setLocation(gardenReq.getLocation());
@@ -99,14 +78,14 @@ public class GardenServiceImpl implements GardenService {
     @Override
     public void deleteGarden(Long gardenId, Long adminId) {
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "관리 구역을 삭제할 관리자를 찾을 수 없습니다."));
 
         if (admin.getAdminRole().equals(AdminRole.ADMIN)) {
-            throw new SuperAdminOnlyException();
+            throw new ForbiddenException(ErrorCode.SUPER_ADMIN_ONLY, "총 관리자만 접근할 수 있는 기능입니다.");
         }
 
         gardenDAO.getGarden(gardenId)
-                .orElseThrow(() -> new GardenNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GARDEN_NOT_FOUND, "삭제할 정원을 찾을 수 없습니다."));
 
         gardenDAO.deleteGarden(gardenId);
     }
@@ -114,10 +93,54 @@ public class GardenServiceImpl implements GardenService {
     @Override
     public void toggleWatering(Long gardenId) {
         Garden garden = gardenDAO.getGarden(gardenId)
-            .orElseThrow(() -> new GardenNotFoundException());
+            .orElseThrow(() -> new NotFoundException(ErrorCode.GARDEN_NOT_FOUND, "자동 급수를 선택할 정원을 찾을 수 없습니다."));
 
         garden.setIsWatering(!garden.getIsWatering());
         gardenDAO.updateGarden(garden);
+    }
+
+    @Override
+    public Page<ScheduleFilterRes> getGardenDetail(Long gardenId) {
+        Garden garden = gardenDAO.getGarden(gardenId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GARDEN_NOT_FOUND, "정보를 조회할 정원을 찾을 수 없습니다."));
+
+        GardenRes gardenRes = modelMapper.map(garden, GardenRes.class);
+        List<Device> devices = deviceDAO.getDevices(garden);
+
+        gardenRes = setSenorState(gardenRes, devices);
+
+
+        return null;
+    }
+
+    GardenRes setSenorState(GardenRes gardenRes, List<Device> devices) {
+        // 센서 미설치 시 값 처리
+        gardenRes.setCurrentTemperature("센서 미설치");
+        gardenRes.setCurrentHumidity("센서 미설치");
+        gardenRes.setCurrentSoilMoisture("센서 미설치");
+        gardenRes.setCurrentLight("센서 미설치");
+
+        // 설치된 센서는 값 처리
+        if (!devices.isEmpty()) {
+            for(Device device : devices) {
+                switch (device.getDeviceType()) {
+                    case TEMP:
+                        gardenRes.setCurrentTemperature(setSensorLogValue(device));
+                        break;
+                    case HUMIDITY:
+                        gardenRes.setCurrentHumidity(setSensorLogValue(device));
+                        break;
+                    case SOIL_MOISTURE:
+                        gardenRes.setCurrentSoilMoisture(setSensorLogValue(device));
+                        break;
+                    case LIGHT:
+                        gardenRes.setCurrentLight(setSensorLogValue(device));
+                    default:
+                }
+            }
+        }
+
+        return gardenRes;
     }
 
     // getGardens에서 센서값을 처리할 때 활용하는 메서드

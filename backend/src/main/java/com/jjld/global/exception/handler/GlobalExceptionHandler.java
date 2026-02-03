@@ -1,6 +1,8 @@
-package com.jjld.global.exception;
+package com.jjld.global.exception.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.jjld.global.exception.BusinessException;
+import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.response.ApiResponse;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;

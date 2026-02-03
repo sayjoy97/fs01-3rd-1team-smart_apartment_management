@@ -8,7 +8,11 @@ import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.entity.History;
 import com.jjld.domain.admin.specification.AdminSpecification;
-import com.jjld.global.exception.admin.*;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.BadRequestException;
+import com.jjld.global.exception.businessexceptions.ConflictException;
+import com.jjld.global.exception.businessexceptions.ForbiddenException;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminRes getAdmin(Long adminId) {
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "조회할 관리자를 찾을 수 없습니다."));
 
         AdminRes response = modelMapper.map(admin, AdminRes.class);
 
@@ -46,11 +50,11 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void createAdmin(AdminReq adminReq) {
         if (adminDAO.findByAdminLoginId(adminReq.getAdminLoginId()).isPresent()) {
-            throw new DuplicateAdminLoginIdException();
+            throw new ConflictException(ErrorCode.DUPLICATE_ADMIN_LOGIN_ID, "이미 사용 중인 관리자 아이디입니다.");
         }
 
         if (!adminReq.getAdminPass().equals(adminReq.getConfirmPass())) {
-            throw new PasswordMismatchException();
+            throw new BadRequestException(ErrorCode.PASSWORD_MISMATCH, "새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
 
         Admin admin = Admin.builder()
@@ -68,7 +72,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteAdmin(Long adminId) {
         if (adminDAO.getAdmin(adminId).isEmpty()) {
-            throw new AdminNotFoundException();
+            throw new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "삭제할 관리자를 찾을 수 없습니다.");
         }
 
         adminDAO.deleteAdmin(adminId);
@@ -99,14 +103,14 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void updateAdminAuthority(Long adminId, Long targetAdminId, AdminRole adminRole) {
         Admin superAdmin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "권한을 수정하는 관리자를 찾을 수 없습니다."));
 
         if (superAdmin.getAdminRole().equals(AdminRole.ADMIN)) {
-            throw new SuperAdminOnlyException();
+            throw new ForbiddenException(ErrorCode.SUPER_ADMIN_ONLY, "총 관리자만 접근할 수 있는 기능입니다.");
         }
 
         Admin targetAdmin = adminDAO.getAdmin(targetAdminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "권한이 수정될 관리자를 찾을 수 없습니다."));
 
         targetAdmin.setAdminRole(adminRole);
         adminDAO.updateAdminAuthority(targetAdmin);
@@ -116,21 +120,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void updateAdmin(Long adminId, UpdateAdminReq updateAdminReq) {
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "정보를 수정할 관리자를 찾을 수 없습니다."));
 
         // 입력한 현재 비밀번호와 DB에 저장된 비밀번호 비교
         if (!encoder.matches(updateAdminReq.getCurrentPassword(), admin.getAdminPass())) {
-            throw new InvalidCurrentPassword();
+            throw new BadRequestException(ErrorCode.CURRENT_PASSWORD_MISMATCH, "현재 비밀번호와 입력한 비밀번호가 일치하지 않습니다.");
         }
 
         // 현재 비밀번호와 새 비밀번호 비교
         if (updateAdminReq.getCurrentPassword().equals(updateAdminReq.getNewPassword())) {
-            throw new SameAsOldPassword();
+            throw new BadRequestException(ErrorCode.SAME_AS_OLD_PASSWORD, "새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다.");
         }
 
         // 새 비밀번호와 새 비밀번호 확인 비교
         if (!updateAdminReq.getNewPassword().equals(updateAdminReq.getConfirmNewPassword())) {
-            throw new PasswordMismatchException();
+            throw new BadRequestException(ErrorCode.PASSWORD_MISMATCH, "새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
 
         admin.setAdminName(updateAdminReq.getAdminName());
@@ -154,7 +158,7 @@ public class AdminServiceImpl implements AdminService {
 
         if (admin == null) {
             log.info("아이디가 존재하지 않습니다.");
-            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
@@ -167,7 +171,7 @@ public class AdminServiceImpl implements AdminService {
                     .build();
             historyDAO.createLog(history);
             log.info("비밀번호가 틀렸습니다.");
-            throw new AdminNotFoundException("아이디 또는 비밀번호가 일치하지 않습니다.");
+            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
         History history = History.builder()
@@ -196,16 +200,16 @@ public class AdminServiceImpl implements AdminService {
             ipAddress = servletRequest.getRemoteAddr();
         }
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "로그인할 관리자를 찾을 수 없습니다."));
 
         // 입력한 새 비밀번호와 DB에 저장된 비밀번호 비교
         if (encoder.matches(setupAdminReq.getNewPassword(), admin.getAdminPass())) {
-            throw new SameAsOldPassword();
+            throw new BadRequestException(ErrorCode.SAME_AS_OLD_PASSWORD, "새 비밀번호는 현재 비밀번호와 다르게 설정해야 합니다.");
         }
 
         // 새 비밀번호와 새 비밀번호 확인 비교
         if (!setupAdminReq.getNewPassword().equals(setupAdminReq.getConfirmNewPassword())) {
-            throw new PasswordMismatchException();
+            throw new BadRequestException(ErrorCode.PASSWORD_MISMATCH, "새 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
 
         admin.setAdminName(setupAdminReq.getAdminName());
@@ -235,7 +239,7 @@ public class AdminServiceImpl implements AdminService {
             ipAddress = servletRequest.getRemoteAddr();
         }
         Admin admin = adminDAO.getAdmin(adminId)
-                .orElseThrow(() -> new AdminNotFoundException());
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ADMIN_NOT_FOUND, "로그아웃할 관리자를 찾을 수 없습니다."));
 
         admin.setState(false);
         adminDAO.updateAdmin(admin);
