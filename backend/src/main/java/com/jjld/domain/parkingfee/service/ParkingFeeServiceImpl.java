@@ -4,6 +4,7 @@ import com.jjld.domain.cargate.dao.ParkingSessionDAO;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
 import com.jjld.domain.parkingfee.dto.AllInOneChargeViewResponse;
+import com.jjld.domain.parkingfee.dto.Daily30TotalResponse;
 import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class VehicleFeeServiceImpl implements VehicleFeeService {
+public class ParkingFeeServiceImpl implements ParkingFeeService {
     private final ParkingFeeDAO parkingFeeDAO;
     private final ParkingSessionDAO parkingSessionDAO;
 
@@ -79,5 +83,28 @@ public class VehicleFeeServiceImpl implements VehicleFeeService {
                 .dayTopCount(dayTopCount)
                 .unRegisAverageCount(regisAverageCount)
                 .build();
+    }
+
+    // 최근 30일 일별 누적금액 조회
+    @Override
+    public List<Daily30TotalResponse> getDaily30Total() {
+        LocalDate startDate = today.minusDays(29);
+        Map<LocalDate, Long> dailyRunningTotal = parkingFeeDAO.getDailyRunningTotal(startDate.atStartOfDay());
+
+        List<Daily30TotalResponse> result = new ArrayList<>();
+
+        for(int i=0; i<30; i++){
+            LocalDate date = startDate.plusDays(i);
+            Long amount = dailyRunningTotal.getOrDefault(date, 0L);
+
+            result.add(
+                    Daily30TotalResponse.builder()
+                            .date(date)
+                            .amount(amount)
+                            .build()
+            );
+        }
+
+        return result;
     }
 }

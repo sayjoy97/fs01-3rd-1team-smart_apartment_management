@@ -3,8 +3,10 @@ package com.jjld.domain.parkingfee.dao;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface ParkingFeeDAO {
 
@@ -20,6 +22,12 @@ public interface ParkingFeeDAO {
     // 일일 최고금액 조회
     long getDayTopCount();
 
-    // 월평균 방문차량(미등록) <- vehicle테이블에서 할것
+    // 최근 30일 일별 누적금액 조회
+    Map<LocalDate, Long> getDailyRunningTotal(LocalDateTime start);
 
+    // 최근 12주 주간별 누적금액 조회
+    List<Long> getWeeklyRunningTotal();
+
+    // 최근 12개월 월간별 누적금액 조회
+    List<Long> getMonthlyRunningTotal();
 }

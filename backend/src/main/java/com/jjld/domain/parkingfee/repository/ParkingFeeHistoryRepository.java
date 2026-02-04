@@ -39,4 +39,15 @@ public interface ParkingFeeHistoryRepository extends JpaRepository<ParkingFeeHis
     // 일일 최고금액 조회
     @Query("select max(feeHistory.totalCharge) from ParkingFeeHistory feeHistory")
     long findMaxCharge();
+
+    // 최근 30일 일별 누적금액 조회
+    @Query("""
+        select date(ps.chargedAt), sum(ps.totalCharge)
+        from ParkingFeeHistory ps
+        where ps.chargedAt >= :start
+        group by date(ps.chargedAt)
+        order by date(ps.chargedAt)
+    
+    """)
+    List<Object[]> findDailyTotalAmount(@Param("start") LocalDateTime start);
 }
