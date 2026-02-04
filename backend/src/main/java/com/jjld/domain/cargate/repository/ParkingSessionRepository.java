@@ -16,9 +16,8 @@ public interface ParkingSessionRepository extends JpaRepository<ParkingSession,L
 
     // 월 평균 방문차량 수
     @Query("""
-    select sum(ps.parkingSessionId)/count(
-        distinct (year(ps.entryAt)*100 + month(ps.entryAt))
-        )
+    select count(ps)*1.0 /
+        count(distinct (year(ps.entryAt)*100 + month(ps.entryAt)))
     from ParkingSession ps
     where ps.vehicle.vehicleType = :vehicleType
     and ps.entryAt >= :start

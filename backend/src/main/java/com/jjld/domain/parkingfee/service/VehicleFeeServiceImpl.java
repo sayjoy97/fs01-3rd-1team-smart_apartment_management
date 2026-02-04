@@ -56,27 +56,20 @@ public class VehicleFeeServiceImpl implements VehicleFeeService {
 
         // 금익 누적조회
         long countByToday = parkingFeeDAO.getCountByType(todayStart, todayEnd);
-        System.out.println("countByToday: " + countByToday);
 
         // 이번달 누적금액
         long countByThisMonth = parkingFeeDAO.getCountByType(thisMonthStart, thisMonthEnd);
-        System.out.println("countByThisMonth: " + countByThisMonth);
-
         // 이번년도 누적금액
         long countByThisYear = parkingFeeDAO.getCountByType(thisYearStart, thisYearEnd);
-        System.out.println("countByThisYear: " + countByThisYear);
 
         // 월평균 금액
         BigDecimal monthAverageCount = parkingFeeDAO.getMonthAverageCount();
-        System.out.println("monthAverageCount: " + monthAverageCount);
 
         // 일일 최고금액
         long dayTopCount = parkingFeeDAO.getDayTopCount();
-        System.out.println("dayTopCount: " + dayTopCount);
 
         // 월평균 방문차량 수
         long regisAverageCount = parkingSessionDAO.getUnRegisAverageCount(VehicleType.UNREGISTERED, start);
-        System.out.println("regisAverageCount: " + regisAverageCount);
 
         return AllInOneChargeViewResponse.builder()
                 .todayCount(countByToday)
