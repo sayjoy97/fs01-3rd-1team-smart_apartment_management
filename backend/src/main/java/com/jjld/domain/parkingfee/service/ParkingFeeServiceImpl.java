@@ -3,9 +3,7 @@ package com.jjld.domain.parkingfee.service;
 import com.jjld.domain.cargate.dao.ParkingSessionDAO;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
-import com.jjld.domain.parkingfee.dto.AllInOneChargeViewResponse;
-import com.jjld.domain.parkingfee.dto.Daily30TotalResponse;
-import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
+import com.jjld.domain.parkingfee.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +104,38 @@ public class ParkingFeeServiceImpl implements ParkingFeeService {
             );
         }
 
+        return result;
+    }
+
+    // 최근 12개월 월별 누적금액 조회
+    @Override
+    public List<MonthlyTotalResponse> getMonthlyTotal() {
+        LocalDate startMonth = today.minusMonths(11);
+
+        Map<LocalDate, MonthlyStat> monthlyRunningTotal = parkingFeeDAO.getMonthlyRunningTotal(startMonth.atStartOfDay());
+
+        System.out.println("monthlyRunningTotal: " + monthlyRunningTotal);
+
+        List<MonthlyTotalResponse> result = new ArrayList<>();
+
+        for(int i=0; i<12; i++){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+            LocalDate selectedMonth = startMonth.plusMonths(i);
+
+            MonthlyStat monthlyStat = monthlyRunningTotal.get(selectedMonth);
+
+            String monthStr = selectedMonth.format(formatter);
+            long monthlySum = monthlyStat != null ? monthlyStat.getMonthlySum() : 0L;
+            double monthlyAvg = monthlyStat != null ? monthlyStat.getMonthlyAvg() : 0.0;
+
+            MonthlyTotalResponse response = MonthlyTotalResponse.builder()
+                    .month(monthStr)
+                    .monthlySum(monthlySum)
+                    .monthlyAvg(monthlyAvg)
+                    .build();
+
+            result.add(response);
+        }
         return result;
     }
 }

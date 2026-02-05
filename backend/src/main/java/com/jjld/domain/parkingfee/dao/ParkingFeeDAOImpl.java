@@ -1,6 +1,7 @@
 package com.jjld.domain.parkingfee.dao;
 
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
+import com.jjld.domain.parkingfee.dto.MonthlyStat;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.domain.parkingfee.repository.ParkingFeeHistoryRepository;
 import com.jjld.domain.parkingfee.repository.ParkingFeeSettingRepository;
@@ -9,8 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +63,22 @@ public class ParkingFeeDAOImpl implements ParkingFeeDAO {
         return map;
     }
 
-    // 최근 12주 주간별 누적금액 조회
-    @Override
-    public List<Long> getWeeklyRunningTotal() {
-        return List.of();
-    }
-
     // 최근 12개월 월간별 누적금액 조회
     @Override
-    public List<Long> getMonthlyRunningTotal() {
-        return List.of();
+    public Map<LocalDate, MonthlyStat> getMonthlyRunningTotal(LocalDateTime startMonth) {
+        List<Object[]> monthlyTotalAmount = feeHistoryRepository.findMonthlyTotalAmount(startMonth);
+
+        Map<LocalDate, MonthlyStat> map = new HashMap<>();
+
+        for (Object[] obj : monthlyTotalAmount) {
+            int year = ((Number) obj[0]).intValue();
+            int month = ((Number) obj[1]).intValue();
+            Long monthlySum = (Long) obj[2];
+            Double monthlyAvg = (Double) obj[3];
+
+            map.put(LocalDate.of(year, month, 1), new MonthlyStat(monthlySum, monthlyAvg));
+        }
+
+        return map;
     }
 }

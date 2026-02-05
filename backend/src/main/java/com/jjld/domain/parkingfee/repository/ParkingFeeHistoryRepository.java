@@ -50,4 +50,14 @@ public interface ParkingFeeHistoryRepository extends JpaRepository<ParkingFeeHis
     
     """)
     List<Object[]> findDailyTotalAmount(@Param("start") LocalDateTime start);
+
+    // 최근 12개월 월별 누적금액 조회
+    @Query("""
+        select year(ps.chargedAt), month(ps.chargedAt),sum(ps.totalCharge), avg(ps.totalCharge)
+        from ParkingFeeHistory ps
+        where ps.chargedAt >= :startMonth
+        group by year(ps.chargedAt), month(ps.chargedAt)
+        order by year(ps.chargedAt), month(ps.chargedAt)
+    """)
+    List<Object[]> findMonthlyTotalAmount(@Param("startMonth") LocalDateTime startMonth);
 }
