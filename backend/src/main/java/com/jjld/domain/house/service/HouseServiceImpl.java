@@ -4,9 +4,11 @@ import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
 import com.jjld.domain.house.dto.HouseSearchCond;
+import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.entity.EntranceCard;
 import com.jjld.domain.house.entity.Enum.CardStatus;
 import com.jjld.domain.house.entity.House;
+import com.jjld.domain.house.repository.AccountRepository;
 import com.jjld.domain.house.repository.EntranceCardRepository;
 import com.jjld.domain.house.repository.HouseRepository;
 import com.jjld.global.exception.ErrorCode;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,6 +34,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService{
     private final HouseRepository houseRepository;
+    private final AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
     private final EntranceCardRepository entranceCardRepository;
     private final HouseDAO houseDAO;
 
@@ -112,17 +117,52 @@ public class HouseServiceImpl implements HouseService{
         houseCardList.forEach(card -> card.setHouse(house));
         house.setCardList(houseCardList);
 
+        String pass = houseManagementResponse.getEntrancePass();
+
         house.setHouseholderName(houseManagementResponse.getHouseholderName());
         house.setHouseholderPhone(houseManagementResponse.getHouseholderPhone());
         house.setHouseholderEmail(houseManagementResponse.getHouseholderEmail());
         house.setHouseholdSize(houseManagementResponse.getHouseholdSize());
-        house.setEntrancePass(houseManagementResponse.getEntrancePass());
-        house.setHouseStatus(houseManagementResponse.getHouseholderName() != null
-                    && !houseManagementResponse.getHouseholderName().isBlank());
+        if(pass == null || pass.isBlank()){
+            house.setEntrancePass(pass);
+        }else{
+            house.setEntrancePass(passwordEncoder.encode(houseManagementResponse.getEntrancePass()));
+        }
 
         houseRepository.save(house);
 
-    }
+        String emailId = houseManagementResponse.getHouseholderEmail();
+
+        if(emailId != null && !emailId.isBlank()) {
+            Account account = accountRepository.findByHouseholderEmail(emailId);
+
+            if (account == null) {
+                Account newAccount = Account.builder()
+                        .householderEmail(houseManagementResponse.getHouseholderEmail())
+                        .password(passwordEncoder.encode(houseManagementResponse.getEntrancePass()))
+                        .firstLogin(true)
+                        .emailVerified(false)
+                        .active(house.getHouseholderName() != null && !house.getHouseholderName().isBlank())
+                        .role("ROLE_USER")
+                        .house(house)
+                        .build();
+
+                accountRepository.save(newAccount);
+            } else {
+                account.setActive(house.getHouseholderName() != null && !house.getHouseholderName().isBlank());
+                accountRepository.save(account);
+            }
+        }else{
+                Account accountByHouse = accountRepository.findByHouse_HouseIdAndActiveTrue(houseId);
+                if(accountByHouse != null){
+                    accountByHouse.setActive(false);
+                    accountRepository.save(accountByHouse);
+                }
+
+        }
+        }
+
+
 
 
 }

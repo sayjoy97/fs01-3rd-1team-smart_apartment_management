@@ -61,7 +61,7 @@ public class House {
     @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Profile> profiles = new ArrayList<>();
 
-    @OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Account account;
+    @OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Account> account;
 
 }
