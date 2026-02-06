@@ -35,6 +35,6 @@ public class Account {
     private String role;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id", nullable = false)
+    @JoinColumn(name = "house_id", nullable = true)
     private House house;
 }

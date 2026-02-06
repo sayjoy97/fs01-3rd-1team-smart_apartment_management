@@ -14,4 +14,9 @@ public class UserLoginRequest {
     private Integer houseHo;
     private String householderEmail;
     private String password;
+
+    public UserLoginRequest(Integer houseHo, Integer houseDong) {
+        this.houseHo = houseHo;
+        this.houseDong = houseDong;
+    }
 }

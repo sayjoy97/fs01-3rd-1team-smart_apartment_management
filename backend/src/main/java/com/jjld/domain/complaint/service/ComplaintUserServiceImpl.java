@@ -6,11 +6,16 @@ import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
+import com.jjld.domain.house.dto.login.AccountUserDetail;
+import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.entity.House;
+import com.jjld.domain.house.repository.AccountRepository;
 import com.jjld.domain.house.repository.HouseRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ComplaintUserServiceImpl implements ComplaintUserService{
@@ -27,12 +33,16 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     private final ComplaintDAO complaintDAO;
     private final ModelMapper modelMapper;
     private final HouseRepository houseRepository;
+    private final AccountRepository accountRepository;
 
 
     // 세대별 작성한 민원 목록 조회
     @Override
-    public List<ComplaintUserResponse> findByHouse_HouseId(Long houseId) {
-        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseId(houseId);
+    public List<ComplaintUserResponse> findMyComplaintDetail(AccountUserDetail userDetail) {
+        String email = userDetail.getHouseholderEmail();
+        Long houseId = userDetail.getAccount().getHouse().getHouseId();
+
+        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseIdAndHouseholderEmail(houseId, email);
         if(userComplaint.isEmpty()){
             throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "작성한 민원이 없습니다");
         }
@@ -50,8 +60,23 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
 
     // 자신이 작성한 민원 상세 조회
     @Override
-    public ComplaintUserDetailResponse findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId) {
-        Complaint complaint = complaintDAO.findByHouseIdComplaintId(houseId, complaintId);
+    public ComplaintUserDetailResponse findMyComplaintDetail(Long complaintId, AccountUserDetail userDetail, String householderEmail) {
+        String email = userDetail.getUsername();
+
+        log.info("JWT에서 가져온 이메일: {}", email);
+
+        Account account = accountRepository.findByHouseholderEmail(email);
+        if (account == null){
+            throw new NotFoundException(ErrorCode.USER_ACCOUNT_NOT_FOUND,"계정이 없습니다.");
+        }
+
+        Long houseId = Optional.ofNullable(account.getHouse())
+                .map(House::getHouseId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "세대 정보가 존재하지 않습니다."));
+        log.info("JWT에서 가져온 houseId: {}", houseId);
+
+
+        Complaint complaint = complaintDAO.findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(complaintId, houseId, email);
         if (complaint == null){
             throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "상세 조회하려는 민원글이 없습니다");
         }
@@ -67,6 +92,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
 
         ComplaintUserDetailResponse userDetailResponse = ComplaintUserDetailResponse.builder()
                 .complaintId(complaint.getComplaintId())
+                .householderEmail(userDetail.getHouseholderEmail())
                 .category(complaint.getCategory().name())
                 .title(complaint.getTitle())
                 .createAt(complaint.getCreatedAt())

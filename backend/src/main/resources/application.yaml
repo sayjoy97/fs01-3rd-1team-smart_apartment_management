@@ -44,4 +44,4 @@ spring:
 jwt:
   header: ${JWT_HEADER}
   secret: ${JWT_SECRET}
-  token-valid-in-second: 3680000
+  token-valid-in-second: 3600000

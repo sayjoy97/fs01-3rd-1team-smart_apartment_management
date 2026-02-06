@@ -21,25 +21,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AccountDetailsService implements UserDetailsService {
-    private final AccountDAO accountDAO;
     private final AccountRepository repository;
-    private final ModelMapper mapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
-        System.out.println("로그인 시도 username = " + username);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account entity = repository.findByHouseholderEmail(username);
-        System.out.println("조회 결과= "+entity);
-        if(entity == null){
-            throw new IllegalArgumentException("인증실패");
+
+        if(entity == null) {
+            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
         }
 
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(entity.getRole()));
-        UserLoginResponse res = mapper.map(entity, UserLoginResponse.class);
-
-
+        List<GrantedAuthority> roles = List.of(new SimpleGrantedAuthority(entity.getRole()));
         return new AccountUserDetail(entity, roles);
     }
 }

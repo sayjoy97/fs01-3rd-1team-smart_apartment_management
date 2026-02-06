@@ -16,6 +16,7 @@ public class ComplaintUserResponse {
     private String title;
     private String category;
     private String status;
+    private String householderEmail;
     private LocalDateTime createAt;
 
 }

@@ -32,6 +32,9 @@ public class Complaint {
     private House house;
 
     @Column(nullable = false)
+    private String householderEmail;
+
+    @Column(nullable = false)
     private String title;
 
     @Enumerated(EnumType.STRING)

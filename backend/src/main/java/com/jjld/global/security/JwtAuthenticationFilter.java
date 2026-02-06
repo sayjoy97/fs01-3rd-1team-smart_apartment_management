@@ -1,43 +1,42 @@
 package com.jjld.global.security;
 
-import ch.qos.logback.core.util.StringUtil;
+import com.jjld.domain.house.service.AccountDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
-public class JwtAuthenticationFilter extends GenericFilterBean {
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
-
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
+    private final AccountDetailsService service;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest rq = (HttpServletRequest) request;
-        String jwtToken = getToken(rq);
-        log.info(jwtToken);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        log.info("Authorization 헤더: " + request.getHeader("Authorization"));
 
-        // 유효성 체크
+        String jwtToken = getToken(request);
         if(StringUtils.hasText(jwtToken) && tokenProvider.validatorToken(jwtToken)){
-            Authentication authentication = tokenProvider.getAuthentication(jwtToken);
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }else{
-            log.info("인증되지 않은 사용자로, 토큰이 없습니다.");
+            Authentication auth = tokenProvider.getAuthentication(jwtToken);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            log.info("JWT 인증 성공: "+ auth.getName());
         }
-        chain.doFilter(request, response);
 
+        filterChain.doFilter(request, response);
     }
 
     // 클라이언트와 요청정보에서 토큰을 꺼내 리턴

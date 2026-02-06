@@ -150,12 +150,19 @@ public class HouseServiceImpl implements HouseService{
                 accountRepository.save(newAccount);
             } else {
                 account.setActive(house.getHouseholderName() != null && !house.getHouseholderName().isBlank());
+                account.setHouse(house);
+
+                if(pass != null && !pass.isBlank()){
+                    account.setPassword(passwordEncoder.encode(pass));
+                }
+
                 accountRepository.save(account);
             }
         }else{
                 Account accountByHouse = accountRepository.findByHouse_HouseIdAndActiveTrue(houseId);
                 if(accountByHouse != null){
                     accountByHouse.setActive(false);
+                    accountByHouse.setHouse(null);
                     accountRepository.save(accountByHouse);
                 }
 

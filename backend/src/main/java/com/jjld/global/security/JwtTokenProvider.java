@@ -3,8 +3,10 @@ package com.jjld.global.security;
 
 import com.jjld.domain.admin.dto.AdminRes;
 import com.jjld.domain.admin.dto.LoginAdminRes;
+import com.jjld.domain.house.dto.login.AccountUserDetail;
 import com.jjld.domain.house.dto.login.UserLoginRequest;
 import com.jjld.domain.house.dto.login.UserLoginResponse;
+import com.jjld.domain.house.service.AccountDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -32,12 +34,14 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
     private final String secret;
     private final long tokenExTime;
+    private final AccountDetailsService accountDetailsService;
     private Key key;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret,
-                            @Value("${jwt.token-valid-in-second}") long tokenExTime) {
+                            @Value("${jwt.token-valid-in-second}") long tokenExTime, AccountDetailsService accountDetailsService) {
         this.secret = secret;
         this.tokenExTime = tokenExTime;
+        this.accountDetailsService = accountDetailsService;
     }
 
     @PostConstruct
@@ -116,7 +120,8 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorityList);
-        return new UsernamePasswordAuthenticationToken(principal, token, authorityList);
+        AccountUserDetail accountUserDetail = (AccountUserDetail) accountDetailsService.loadUserByUsername(claims.getSubject());
+
+        return new UsernamePasswordAuthenticationToken(accountUserDetail, token, authorityList);
     }
 }
