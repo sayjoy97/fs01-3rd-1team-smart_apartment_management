@@ -14,13 +14,13 @@ import java.util.List;
 @RequestMapping("/parkingfee/api")
 @RequiredArgsConstructor
 public class ParkingFeecontroller {
-    private final ParkingFeeService vehicleFeeService;
+    private final ParkingFeeService parkingFeeService;
 
      // 차량 출입관리 페이지 요금 간단조회 - 금일 누적금액&이번달 누적금액 조회
     @GetMapping("/charge")
     @Operation(summary = "차량 출입관리 페이지 요금 간단조회 - 금일 누적금액&이번달 누적금액 조회")
     ResponseEntity<?> getSimpleCharge(){
-        SimpleRateResponse rateByType = vehicleFeeService.getRateByType();
+        SimpleRateResponse rateByType = parkingFeeService.getRateByType();
         return ResponseEntity.ok(ApiResponse.success(rateByType));
     }
 
@@ -28,7 +28,7 @@ public class ParkingFeecontroller {
     @GetMapping("/totalList")
     @Operation(summary = "요금내역관리 페이지 요금 통합조회")
     ResponseEntity<?> getTotalList(){
-        AllInOneChargeViewResponse allInOneChargeView = vehicleFeeService.getAllInOneChargeView();
+        AllInOneChargeViewResponse allInOneChargeView = parkingFeeService.getAllInOneChargeView();
         return ResponseEntity.ok(ApiResponse.success(allInOneChargeView));
     }
 
@@ -36,7 +36,7 @@ public class ParkingFeecontroller {
     @GetMapping("/runningTotal/daily")
     @Operation(summary = "최근 30일 일별 누적금액 조회")
     ResponseEntity<?> getDaily30TotalList(){
-        List<Daily30TotalResponse> daily30Total = vehicleFeeService.getDaily30Total();
+        List<Daily30TotalResponse> daily30Total = parkingFeeService.getDaily30Total();
         return ResponseEntity.ok(ApiResponse.success(daily30Total));
     }
 
@@ -44,7 +44,7 @@ public class ParkingFeecontroller {
     @GetMapping("/runningTotal/monthly")
     @Operation(summary = "최근 12개월 월별 누적금액 및 월별 평균 조회")
     ResponseEntity<?> getMonthlyTotalList(){
-        List<MonthlyTotalResponse> monthlyTotal = vehicleFeeService.getMonthlyTotal();
+        List<MonthlyTotalResponse> monthlyTotal = parkingFeeService.getMonthlyTotal();
         return ResponseEntity.ok(ApiResponse.success(monthlyTotal));
     }
 
@@ -52,7 +52,7 @@ public class ParkingFeecontroller {
     @GetMapping("/runningTotal/year")
     @Operation(summary = "최근 3년 연간 누적금액 및 연간 평균 조회")
     ResponseEntity<?> getYearTotalList(){
-        List<YearTotalResponse> yearTotal = vehicleFeeService.getYearTotal();
+        List<YearTotalResponse> yearTotal = parkingFeeService.getYearTotal();
         return ResponseEntity.ok(ApiResponse.success(yearTotal));
     }
 
@@ -60,12 +60,14 @@ public class ParkingFeecontroller {
     // 주차 요금 설정 모달창 기본내용 조회
     @GetMapping("/charge/setting")
     ResponseEntity<?> getChargeSetting(){
-        return ResponseEntity.ok(ApiResponse.success());
+        FeeSettingResponse feeSetting = parkingFeeService.getFeeSetting();
+        return ResponseEntity.ok(ApiResponse.success(feeSetting));
     }
 
     // 주차 요금 설정 수정
-//    @PostMapping("/charge/setting")
-//    ResponseEntity<?> updateChargeSetting(@RequestBody updateChargeRequest request){
-//        return null;
-//    }
+    @PostMapping("/charge/setting")
+    ResponseEntity<?> updateChargeSetting(@RequestBody FeeSettingRequest request){
+        parkingFeeService.createFeeSetting(request);
+        return ResponseEntity.ok(ApiResponse.success("주차요금 수정 성공"));
+    }
 }

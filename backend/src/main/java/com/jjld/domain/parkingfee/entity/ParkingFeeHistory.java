@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -41,6 +42,7 @@ public class ParkingFeeHistory {
     private Boolean paid;
 
     // 정산 시각
+    @CreationTimestamp
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime chargedAt;
 }

@@ -20,4 +20,10 @@ public interface ParkingFeeService {
 
     // 최근 3년간 연간 누적금액 및 연간평균 조회
     List<YearTotalResponse> getYearTotal();
+
+    // 현재 적용중인 요금설정 정보조회
+    FeeSettingResponse getFeeSetting();
+
+    // 요금설정 변경(새로 등록)
+    void createFeeSetting(FeeSettingRequest feeSettingRequest);
 }

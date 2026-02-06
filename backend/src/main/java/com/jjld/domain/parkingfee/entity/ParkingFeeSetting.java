@@ -35,7 +35,7 @@ public class ParkingFeeSetting {
     @Column(nullable = false)
     private Integer unitMinutes;
 
-    // 단위 요금
+    // 추가 단위 요금
     @Column(nullable = false)
     private Integer unitCharge;
 
@@ -57,7 +57,7 @@ public class ParkingFeeSetting {
     // 피크시간 요금
     private Integer peakUnitCharge;
 
-    // 피크 활성화
+    // 활성화 여부
     @Column(nullable = false)
     private Boolean active;
 

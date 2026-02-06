@@ -3,8 +3,11 @@ package com.jjld.domain.parkingfee.service;
 import com.jjld.domain.cargate.dao.ParkingSessionDAO;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
+import com.jjld.domain.parkingfee.dao.ParkingFeeSettingDAO;
 import com.jjld.domain.parkingfee.dto.*;
+import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +21,9 @@ import java.util.Map;
 public class ParkingFeeServiceImpl implements ParkingFeeService {
     private final ParkingFeeDAO parkingFeeDAO;
     private final ParkingSessionDAO parkingSessionDAO;
+    private final ParkingFeeSettingDAO parkingFeeSettingDAO;
+
+    private final ModelMapper modelMapper;
 
     // 오늘 날짜
     LocalDate today = LocalDate.now();
@@ -162,5 +168,25 @@ public class ParkingFeeServiceImpl implements ParkingFeeService {
         }
 
         return result;
+    }
+
+    // 현재 적용중인 요금설정 정보조회
+    @Override
+    public FeeSettingResponse getFeeSetting() {
+        ParkingFeeSetting feeSetting = parkingFeeSettingDAO.getFeeSetting();
+        System.out.println("feeSetting = " + feeSetting);
+
+        FeeSettingResponse result = new ModelMapper().map(feeSetting, FeeSettingResponse.class);
+        System.out.println("result = " + result);
+        return result;
+    }
+
+    // 요금설정 변경(새로 등록)
+    @Override
+    public void createFeeSetting(FeeSettingRequest feeSettingRequest) {
+        ParkingFeeSetting entity = new ModelMapper().map(feeSettingRequest, ParkingFeeSetting.class);
+        entity.setActive(true);
+
+       parkingFeeSettingDAO.createFeeSetting(entity);
     }
 }
