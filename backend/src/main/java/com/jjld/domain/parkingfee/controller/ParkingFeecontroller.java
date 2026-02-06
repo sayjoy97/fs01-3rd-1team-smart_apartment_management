@@ -1,9 +1,6 @@
 package com.jjld.domain.parkingfee.controller;
 
-import com.jjld.domain.parkingfee.dto.AllInOneChargeViewResponse;
-import com.jjld.domain.parkingfee.dto.Daily30TotalResponse;
-import com.jjld.domain.parkingfee.dto.MonthlyTotalResponse;
-import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
+import com.jjld.domain.parkingfee.dto.*;
 import com.jjld.domain.parkingfee.service.ParkingFeeService;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,20 +40,28 @@ public class ParkingFeecontroller {
         return ResponseEntity.ok(ApiResponse.success(daily30Total));
     }
 
-    // 최근 12개월 월별 누적금액 조회
+    // 최근 12개월 월별 누적금액 및 월별 평균 조회
     @GetMapping("/runningTotal/monthly")
-    @Operation(summary = "최근 12개월 월별 누적금액 조회")
+    @Operation(summary = "최근 12개월 월별 누적금액 및 월별 평균 조회")
     ResponseEntity<?> getMonthlyTotalList(){
         List<MonthlyTotalResponse> monthlyTotal = vehicleFeeService.getMonthlyTotal();
         return ResponseEntity.ok(ApiResponse.success(monthlyTotal));
     }
 
+    // 최근 3년 연간 누적금액 및 연간 평균 조회
+    @GetMapping("/runningTotal/year")
+    @Operation(summary = "최근 3년 연간 누적금액 및 연간 평균 조회")
+    ResponseEntity<?> getYearTotalList(){
+        List<YearTotalResponse> yearTotal = vehicleFeeService.getYearTotal();
+        return ResponseEntity.ok(ApiResponse.success(yearTotal));
+    }
+
 
     // 주차 요금 설정 모달창 기본내용 조회
-//    @GetMapping("/charge/setting")
-//    ResponseEntity<?> getChargeSetting(){
-//        return null;
-//    }
+    @GetMapping("/charge/setting")
+    ResponseEntity<?> getChargeSetting(){
+        return ResponseEntity.ok(ApiResponse.success());
+    }
 
     // 주차 요금 설정 수정
 //    @PostMapping("/charge/setting")

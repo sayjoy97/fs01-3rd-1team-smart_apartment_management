@@ -1,7 +1,7 @@
 package com.jjld.domain.parkingfee.dao;
 
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
-import com.jjld.domain.parkingfee.dto.MonthlyStat;
+import com.jjld.domain.parkingfee.dto.SelectedStat;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.domain.parkingfee.repository.ParkingFeeHistoryRepository;
 import com.jjld.domain.parkingfee.repository.ParkingFeeSettingRepository;
@@ -65,10 +65,10 @@ public class ParkingFeeDAOImpl implements ParkingFeeDAO {
 
     // 최근 12개월 월간별 누적금액 조회
     @Override
-    public Map<LocalDate, MonthlyStat> getMonthlyRunningTotal(LocalDateTime startMonth) {
+    public Map<YearMonth, SelectedStat> getMonthlyRunningTotal(LocalDateTime startMonth) {
         List<Object[]> monthlyTotalAmount = feeHistoryRepository.findMonthlyTotalAmount(startMonth);
 
-        Map<LocalDate, MonthlyStat> map = new HashMap<>();
+        Map<YearMonth, SelectedStat> map = new HashMap<>();
 
         for (Object[] obj : monthlyTotalAmount) {
             int year = ((Number) obj[0]).intValue();
@@ -76,7 +76,24 @@ public class ParkingFeeDAOImpl implements ParkingFeeDAO {
             Long monthlySum = (Long) obj[2];
             Double monthlyAvg = (Double) obj[3];
 
-            map.put(LocalDate.of(year, month, 1), new MonthlyStat(monthlySum, monthlyAvg));
+            map.put(YearMonth.of(year, month), new SelectedStat(monthlySum, monthlyAvg));
+        }
+
+        return map;
+    }
+
+    // 최근 n년간 연간 누적금액 및 연간평균 조회
+    @Override
+    public Map<Year, SelectedStat> getYearlyRunningTotal(LocalDateTime startYear) {
+        List<Object[]> yearlyTotalAmount = feeHistoryRepository.findYearlyTotalAmount(startYear);
+
+        Map<Year, SelectedStat> map = new HashMap<>();
+        for (Object[] obj : yearlyTotalAmount) {
+            int year = ((Number) obj[0]).intValue();
+            Long yearlySum = (Long) obj[1];
+            Double yearlyAvg = (Double) obj[2];
+
+            map.put(Year.of(year), new SelectedStat(yearlySum, yearlyAvg));
         }
 
         return map;

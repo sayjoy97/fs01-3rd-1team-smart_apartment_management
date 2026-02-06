@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.YearMonth;
+import java.time.Year;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthlyTotalResponse {
-    private YearMonth month;
-    private Long monthlySum;
-    private Double monthlyAvg;
+public class YearTotalResponse {
+    private Year year;
+    private long yearTotalSum;
+    private Double yearTotalAvg;
 }

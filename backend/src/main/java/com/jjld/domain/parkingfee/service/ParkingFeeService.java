@@ -1,9 +1,6 @@
 package com.jjld.domain.parkingfee.service;
 
-import com.jjld.domain.parkingfee.dto.AllInOneChargeViewResponse;
-import com.jjld.domain.parkingfee.dto.Daily30TotalResponse;
-import com.jjld.domain.parkingfee.dto.MonthlyTotalResponse;
-import com.jjld.domain.parkingfee.dto.SimpleRateResponse;
+import com.jjld.domain.parkingfee.dto.*;
 
 import java.util.List;
 
@@ -18,8 +15,9 @@ public interface ParkingFeeService {
     // 최근 30일 일별 누적금액 조회
     List<Daily30TotalResponse> getDaily30Total();
 
-    // 최근 12개월 월별 누적금액 조회
+    // 최근 12개월 월별 누적금액 및 월별평균 조회
     List<MonthlyTotalResponse> getMonthlyTotal();
 
-    // 최근 3년 연간 누적금액 조회
+    // 최근 3년간 연간 누적금액 및 연간평균 조회
+    List<YearTotalResponse> getYearTotal();
 }

@@ -1,6 +1,6 @@
 package com.jjld.domain.parkingfee.dao;
 
-import com.jjld.domain.parkingfee.dto.MonthlyStat;
+import com.jjld.domain.parkingfee.dto.SelectedStat;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 
 import java.math.BigDecimal;
@@ -24,9 +24,10 @@ public interface ParkingFeeDAO {
     // 최근 30일 일별 누적금액 조회
     Map<LocalDate, Long> getDailyRunningTotal(LocalDateTime start);
 
-    // 최근 12개월 월별 누적금액 조회
-    Map<LocalDate, MonthlyStat> getMonthlyRunningTotal(LocalDateTime startMonth);
+    // 최근 12개월 월별 누적금액 및 월간평균 조회
+    Map<YearMonth, SelectedStat> getMonthlyRunningTotal(LocalDateTime startMonth);
 
-    // 최근 3년간 연간 누적금액 조회
+    // 최근 n년간 연간 누적금액 및 연간평균 조회
+    Map<Year, SelectedStat> getYearlyRunningTotal(LocalDateTime startYear);
 
 }

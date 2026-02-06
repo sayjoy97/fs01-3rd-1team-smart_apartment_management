@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,32 +107,60 @@ public class ParkingFeeServiceImpl implements ParkingFeeService {
     // 최근 12개월 월별 누적금액 조회
     @Override
     public List<MonthlyTotalResponse> getMonthlyTotal() {
-        LocalDate startMonth = today.minusMonths(11);
+        int month = 11;
+        LocalDate startMonth = today.minusMonths(month);
 
-        Map<LocalDate, MonthlyStat> monthlyRunningTotal = parkingFeeDAO.getMonthlyRunningTotal(startMonth.atStartOfDay());
-
-        System.out.println("monthlyRunningTotal: " + monthlyRunningTotal);
+        Map<YearMonth, SelectedStat> monthlyRunningTotal = parkingFeeDAO.getMonthlyRunningTotal(startMonth.atStartOfDay());
 
         List<MonthlyTotalResponse> result = new ArrayList<>();
 
-        for(int i=0; i<12; i++){
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        for(int i=0; i<=month; i++){
             LocalDate selectedMonth = startMonth.plusMonths(i);
 
-            MonthlyStat monthlyStat = monthlyRunningTotal.get(selectedMonth);
+            YearMonth yearMonth = YearMonth.of(selectedMonth.getYear(), selectedMonth.getMonth());
 
-            String monthStr = selectedMonth.format(formatter);
-            long monthlySum = monthlyStat != null ? monthlyStat.getMonthlySum() : 0L;
-            double monthlyAvg = monthlyStat != null ? monthlyStat.getMonthlyAvg() : 0.0;
+            SelectedStat monthlyStat = monthlyRunningTotal.get(yearMonth);
+            long monthlySum = monthlyStat != null ? monthlyStat.getTotalSum() : 0L;
+            double monthlyAvg = monthlyStat != null ? monthlyStat.getTotalAvg() : 0.0;
 
             MonthlyTotalResponse response = MonthlyTotalResponse.builder()
-                    .month(monthStr)
+                    .month(yearMonth)
                     .monthlySum(monthlySum)
                     .monthlyAvg(monthlyAvg)
                     .build();
 
             result.add(response);
         }
+        return result;
+    }
+
+    // 최근 3년간 연간 누적금액 및 연간평균 조회
+    @Override
+    public List<YearTotalResponse> getYearTotal() {
+        LocalDate startYear = today.minusYears(2);
+
+        Map<Year, SelectedStat> yearlyRunningTotal = parkingFeeDAO.getYearlyRunningTotal(startYear.atStartOfDay());
+
+        List<YearTotalResponse> result = new ArrayList<>();
+
+        for(int i=0; i<=(today.getYear() - startYear.getYear()); i++){
+            LocalDate selectedYear = startYear.plusYears(i);
+
+            Year year = Year.of(selectedYear.getYear());
+            SelectedStat yearlyStat = yearlyRunningTotal.get(year);
+
+            long yearlySum = yearlyStat != null ? yearlyStat.getTotalSum() : 0L;
+            double yearlyAvg = yearlyStat != null ? yearlyStat.getTotalAvg() : 0.0;
+
+            YearTotalResponse response = YearTotalResponse.builder()
+                    .year(year)
+                    .yearTotalSum(yearlySum)
+                    .yearTotalAvg(yearlyAvg)
+                    .build();
+
+            result.add(response);
+        }
+
         return result;
     }
 }

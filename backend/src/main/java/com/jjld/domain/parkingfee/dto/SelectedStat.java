@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthlyStat {
-    private Long monthlySum;
-    private Double monthlyAvg;
+public class SelectedStat {
+    private Long totalSum;
+    private Double totalAvg;
 }
