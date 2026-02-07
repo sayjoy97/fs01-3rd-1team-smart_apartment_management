@@ -1,12 +1,8 @@
 package com.jjld.domain.complaint.repository;
 
 import com.jjld.domain.complaint.entity.Complaint;
-import com.jjld.domain.house.entity.House;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,10 +15,10 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
     Complaint findByComplaintId(Long complaintId);
 
     // 로그인한 입주민 기준의 민원 목록 조회
-    List<Complaint> findByHouse_HouseId(Long houseId);
+    List<Complaint> findByHouse_HouseIdAndHouseholderEmail(Long houseId, String email);
 
     // 로그인한 입주민 기준의 민원 상세 조회
-    Complaint findByComplaintIdAndHouse_HouseId(Long houseId, Long complaintId);
+    Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId,  String email);
 
     // 입주민 민원 작성 시 참조할 민원 목록 조회
     List<Complaint> findByHouse_HouseIdOrderByCreatedAtDesc(Long houseId);
@@ -32,7 +28,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
 
     // 입주민 민원 삭제
     // 삭제 대상 complaint를 참조하는 모든 complaint를 조회
-    List<Complaint> findAllByReferenceComplaintsContains(Complaint complaint);
-    void deleteByComplaintId(Long complaintId);
+    List<Complaint> findAllByReferenceComplaintsContainsAndHouse_HouseIdAndHouseholderEmail(Complaint complaint, Long houseId, String email);
+    void deleteByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaint, Long houseId, String email);
 
 }

@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class ComplaintUserDetailResponse {
     private Long complaintId;
+    private String householderEmail;
     private String category;
     private String title;
     private LocalDateTime createAt;

@@ -4,6 +4,7 @@ import com.jjld.domain.complaint.specification.ComplaintSpecification;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
 import com.jjld.domain.house.dto.HouseSearchCond;
+import com.jjld.domain.house.dto.login.UserLoginResponse;
 import com.jjld.domain.house.entity.EntranceCard;
 
 import java.util.List;
