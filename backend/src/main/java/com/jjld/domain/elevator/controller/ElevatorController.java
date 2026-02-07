@@ -1,13 +1,14 @@
 package com.jjld.domain.elevator.controller;
 
+import com.jjld.domain.elevator.dto.AdvertisementReq;
 import com.jjld.domain.elevator.dto.ElevatorDetailRes;
 import com.jjld.domain.elevator.dto.ElevatorReq;
 import com.jjld.domain.elevator.dto.ElevatorRes;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
+import com.jjld.domain.elevator.service.AdvertisementService;
 import com.jjld.domain.elevator.service.ElevatorService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.validation.Valid;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ElevatorController {
     private final ElevatorService elevatorService;
+    private final AdvertisementService advertisementService;
 
     // 엘리베이터 생성
     @PostMapping("/admin/{adminId}")
@@ -62,5 +64,15 @@ public class ElevatorController {
     public ResponseEntity<?> getElevatorDetailInfo(@PathVariable Long elevatorId) {
         ElevatorDetailRes response =  elevatorService.getElevatorDetailInfo(elevatorId);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // 엘리베이터 광고 등록
+    @PostMapping("/admin/{adminId}/advertisement")
+    public ResponseEntity<?> createAdvertisement(
+            @PathVariable Long adminId,
+            @Valid @RequestBody AdvertisementReq advertisementReq
+    ) {
+        advertisementService.createAdvertisement(adminId, advertisementReq);
+        return ResponseEntity.ok(ApiResponse.success("광고 등록을 성공했습니다."));
     }
 }

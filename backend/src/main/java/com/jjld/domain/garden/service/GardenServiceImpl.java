@@ -16,6 +16,7 @@ import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GardenServiceImpl implements GardenService {
     private final GardenDAO gardenDAO;
     private final DeviceDAO deviceDAO;
@@ -114,6 +116,13 @@ public class GardenServiceImpl implements GardenService {
 
         return null;
     }
+
+    @Override
+    public void testMqtt(Long gardenId, String payload) {
+        log.info("gardenId: {}", gardenId);
+        log.info("payload: {}", payload);
+    }
+
 
     GardenRes setSensorState(GardenRes gardenRes, List<Device> devices) {
         // 센서 미설치 시 값 처리

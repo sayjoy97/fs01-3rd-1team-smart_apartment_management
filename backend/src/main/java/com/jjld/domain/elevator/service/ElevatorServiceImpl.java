@@ -20,6 +20,7 @@ import com.jjld.global.exception.businessexceptions.ConflictException;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ElevatorServiceImpl implements ElevatorService {
     private final ElevatorDAO elevatorDAO;
     private final AdminDAO adminDAO;
@@ -178,5 +180,11 @@ public class ElevatorServiceImpl implements ElevatorService {
         ElevatorDetailRes response = new ElevatorDetailRes(elevatorRes, dtoLogs);
 
         return response;
+    }
+
+    @Override
+    public void testMqtt(Long elevatorId, String payload) {
+        log.info("elevatorId: {}", elevatorId);
+        log.info("payload: {}", payload);
     }
 }

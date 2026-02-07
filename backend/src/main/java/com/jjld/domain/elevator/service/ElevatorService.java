@@ -17,4 +17,6 @@ public interface ElevatorService {
     void deleteElevator(Long elevatorId, Long adminId);
 
     ElevatorDetailRes getElevatorDetailInfo(Long elevatorId);
+
+    void testMqtt(Long elevatorId, String payload);
 }
