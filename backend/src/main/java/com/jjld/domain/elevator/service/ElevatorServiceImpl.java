@@ -5,6 +5,7 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.elevator.dao.ElevatorDAO;
 import com.jjld.domain.elevator.dto.ElevatorReq;
+import com.jjld.domain.elevator.dto.ElevatorRes;
 import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.Enum.Direction;
 import com.jjld.domain.elevator.entity.Enum.DoorStatus;
@@ -16,6 +17,9 @@ import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +52,18 @@ public class ElevatorServiceImpl implements ElevatorService {
         elevator.setState(ElevatorState.IDLE);
 
         elevatorDAO.save(elevator);
+    }
+
+    // 엘리베이터 목록 조회
+    @Override
+    public List<ElevatorRes> getElevators() {
+        List<Elevator> elevators = elevatorDAO.getElevators();
+
+        List<ElevatorRes> response = elevators
+                .stream()
+                .map(elevator -> modelMapper.map(elevator, ElevatorRes.class))
+                .collect(Collectors.toList());
+
+        return response;
     }
 }
