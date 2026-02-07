@@ -72,6 +72,7 @@ public enum ErrorCode {
 
     // -------- Elevator --------
     ELEVATOR_NOT_FOUND(HttpStatus.NOT_FOUND, "ELEVATOR_NOT_FOUND", "엘리베이터를 찾을 수 없습니다."),
+    DUPLICATE_ELEVATOR(HttpStatus.CONFLICT, "DUPLICATE_ELEVATOR", "엘리베이터가 이미 존재합니다."),
 
     // -------- Garden --------
     GARDEN_NOT_FOUND(HttpStatus.NOT_FOUND, "GARDEN_NOT_FOUND", "정원을 찾을 수 없습니다."),
@@ -90,8 +91,12 @@ public enum ErrorCode {
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE_NOT_FOUND", "공지 사항을 찾을 수 없습니다."),
 
     // -------- ParkingFee --------
-    PARKING_FEE_NOT_FOUND(HttpStatus.NOT_FOUND, "PARKING_FEE_NOT_FOUND", "주차 요금을 찾을 수 없습니다.");
+    PARKING_FEE_NOT_FOUND(HttpStatus.NOT_FOUND, "PARKING_FEE_NOT_FOUND", "주차 요금을 찾을 수 없습니다."),
 
+    // -------- MQTT --------
+    UNKNOWN_SERVICE_TYPE(HttpStatus.BAD_REQUEST, "UNKNOWN_SERVICE_TYPE", "알 수 없는 MQTT 서비스 타입입니다."),
+    INVALID_TOPIC_FORMAT(HttpStatus.BAD_REQUEST, "INVALID_TOPIC_FORMAT", "MQTT 토픽 형식이 잘못되었습니다."),
+    INVALID_PAYLOAD_FORMAT(HttpStatus.BAD_REQUEST, "INVALID_PAYLOAD_FORMAT", "MQTT 메시지 형식이 잘못되었습니다.");
 
     private final HttpStatus status;
     private final String code;
