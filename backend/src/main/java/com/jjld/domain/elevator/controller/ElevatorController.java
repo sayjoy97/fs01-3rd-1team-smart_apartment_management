@@ -2,6 +2,7 @@ package com.jjld.domain.elevator.controller;
 
 import com.jjld.domain.elevator.dto.ElevatorReq;
 import com.jjld.domain.elevator.dto.ElevatorRes;
+import com.jjld.domain.elevator.entity.Enum.ElevatorState;
 import com.jjld.domain.elevator.service.ElevatorService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.validation.Valid;
@@ -24,7 +25,7 @@ public class ElevatorController {
             @Valid @RequestBody ElevatorReq elevatorReq
     ) {
         elevatorService.createElevator(adminId, elevatorReq);
-        return ResponseEntity.ok(ApiResponse.success("엘리베이터  성공했습니다."));
+        return ResponseEntity.ok(ApiResponse.success("엘리베이터 생성을 성공했습니다."));
     }
 
     // 엘리베이터 목록 조회
@@ -32,5 +33,15 @@ public class ElevatorController {
     public ResponseEntity<?> getElevators() {
         List<ElevatorRes> response = elevatorService.getElevators();
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // 엘리베이터 상태 변경
+    @PutMapping("/{elevatorId}")
+    public ResponseEntity<?> updateElevatorState(
+            @PathVariable Long elevatorId,
+            @RequestParam ElevatorState elevatorState
+    ) {
+        elevatorService.updateElevatorState(elevatorId, elevatorState);
+        return ResponseEntity.ok(ApiResponse.success("엘리베이터 상태 변경을 성공했습니다."));
     }
 }

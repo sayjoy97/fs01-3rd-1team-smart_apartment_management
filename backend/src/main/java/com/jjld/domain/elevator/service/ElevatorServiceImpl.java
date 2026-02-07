@@ -66,4 +66,18 @@ public class ElevatorServiceImpl implements ElevatorService {
 
         return response;
     }
+
+    // 엘리베이터 상태 변경
+    @Override
+    public void updateElevatorState(Long elevatorId, ElevatorState elevatorState) {
+        Elevator elevator = elevatorDAO.getElevator(elevatorId).orElse(null);
+
+        if (elevator == null) {
+            throw new NotFoundException(ErrorCode.ELEVATOR_NOT_FOUND, "엘리베이터를 찾을 수 없습니다.");
+        }
+
+        elevator.setState(elevatorState);
+
+        elevatorDAO.save(elevator);
+    }
 }

@@ -31,4 +31,10 @@ public class ElevatorDAOImpl implements ElevatorDAO {
     public List<Elevator> getElevators() {
         return elevatorRepository.findAll();
     }
+
+    // elevatorId를 이용해서 엘리베이터 조회
+    @Override
+    public Optional<Elevator> getElevator(Long elevatorId) {
+        return elevatorRepository.findById(elevatorId);
+    }
 }

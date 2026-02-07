@@ -13,4 +13,6 @@ public interface ElevatorDAO {
     void save(Elevator elevator);
 
     List<Elevator> getElevators();
+
+    Optional<Elevator> getElevator(Long elevatorId);
 }
