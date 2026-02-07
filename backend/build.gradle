@@ -34,6 +34,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 
     // Source: https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
@@ -56,6 +57,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-integration'
     // Spring Integration MQTT
     implementation 'org.springframework.integration:spring-integration-mqtt'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
 }
 
 

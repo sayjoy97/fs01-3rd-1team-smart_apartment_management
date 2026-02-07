@@ -4,8 +4,8 @@ import com.jjld.global.exception.BusinessException;
 import com.jjld.global.exception.ErrorCode;
 
 public class UnprocessableEntityException extends BusinessException {
-    public UnprocessableEntityException(ErrorCode errorCode) {
-        super(errorCode);
+    public UnprocessableEntityException() {
+        super(ErrorCode.UNPROCESSABLE_ENTITY);
     }
 
     public UnprocessableEntityException(ErrorCode errorCode, String message) {
