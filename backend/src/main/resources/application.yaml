@@ -52,3 +52,8 @@ spring:
       path: /swagger.html         # Swagger UI 추가 접근 경로 => http://localhost:8080/swagger.html
       tags-sorter: alpha          # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
       operations-sorter: alpha    # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+
+jwt:
+  header: ${JWT_HEADER}
+  secret: ${JWT_SECRET}
+  token-valid-in-second: 3600000
