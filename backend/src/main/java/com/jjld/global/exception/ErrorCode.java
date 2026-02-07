@@ -73,6 +73,7 @@ public enum ErrorCode {
     // -------- Elevator --------
     ELEVATOR_NOT_FOUND(HttpStatus.NOT_FOUND, "ELEVATOR_NOT_FOUND", "엘리베이터를 찾을 수 없습니다."),
     DUPLICATE_ELEVATOR(HttpStatus.CONFLICT, "DUPLICATE_ELEVATOR", "엘리베이터가 이미 존재합니다."),
+    ELEVATOR_EVENT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "ELEVATOR_EVENT_TYPE_NOT_FOUND", "엘리베이터 이벤트 타입을 찾을 수 없습니다."),
 
     // -------- Garden --------
     GARDEN_NOT_FOUND(HttpStatus.NOT_FOUND, "GARDEN_NOT_FOUND", "정원을 찾을 수 없습니다."),

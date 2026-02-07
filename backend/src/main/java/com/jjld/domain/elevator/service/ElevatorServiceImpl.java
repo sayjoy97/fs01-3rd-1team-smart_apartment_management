@@ -13,6 +13,7 @@ import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.ElevatorEventLog;
 import com.jjld.domain.elevator.entity.Enum.Direction;
 import com.jjld.domain.elevator.entity.Enum.DoorStatus;
+import com.jjld.domain.elevator.entity.Enum.ElevatorEventType;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.ConflictException;
@@ -95,7 +96,36 @@ public class ElevatorServiceImpl implements ElevatorService {
 
         elevator.setState(elevatorState);
 
+        ElevatorEventType eventType = null;
+        String message = null;
+
+        switch (elevatorState) {
+            case ERROR -> {
+                eventType = ElevatorEventType.ERROR;
+                message = "엘리베이터가 고장났습니다.";
+            }
+            case REPAIR -> {
+                eventType = ElevatorEventType.REPAIR;
+                message = "엘리베이터 점검을 시작합니다.";
+            }
+            case IDLE -> {
+                eventType = ElevatorEventType.REPAIRED;
+                message = "엘리베이터 수리가 완료됐습니다.";
+            }
+        }
+
+        if (eventType == null) {
+            throw new NotFoundException(ErrorCode.ELEVATOR_EVENT_TYPE_NOT_FOUND, "엘리베이터 이벤트 타입을 찾을 수 없습니다.");
+        }
+
+        ElevatorEventLog elevatorEventLog = ElevatorEventLog.builder()
+                .elevator(elevator)
+                .eventType(eventType)
+                .message(message)
+                .build();
+
         elevatorDAO.save(elevator);
+        elevatorEventLogDAO.save(elevatorEventLog);
     }
 
     // 엘리베이터 삭제
@@ -134,7 +164,15 @@ public class ElevatorServiceImpl implements ElevatorService {
 
         List<ElevatorEventLogRes> dtoLogs = entityLogs
                 .stream()
-                .map(elevatorEventLog -> modelMapper.map(elevatorEventLog, ElevatorEventLogRes.class))
+                .map(elevatorEventLog -> ElevatorEventLogRes
+                        .builder()
+                        .logId(elevatorEventLog.getLogId())
+                        .elevatorId(elevatorEventLog.getElevator().getElevatorId())
+                        .eventType(elevatorEventLog.getEventType())
+                        .floor(elevatorEventLog.getFloor())
+                        .message(elevatorEventLog.getMessage())
+                        .createdAt(elevatorEventLog.getCreatedAt())
+                        .build())
                 .collect(Collectors.toList());
 
         ElevatorDetailRes response = new ElevatorDetailRes(elevatorRes, dtoLogs);

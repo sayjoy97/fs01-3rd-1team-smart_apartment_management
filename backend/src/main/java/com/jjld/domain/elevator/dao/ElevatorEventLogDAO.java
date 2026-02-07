@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ElevatorEventLogDAO {
     List<ElevatorEventLog> getLogs(Elevator elevator, Pageable pageable);
+
+    void save(ElevatorEventLog elevatorEventLog);
 }

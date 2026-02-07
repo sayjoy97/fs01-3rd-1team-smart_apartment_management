@@ -19,4 +19,9 @@ public class ElevatorEventLogDAOImpl implements ElevatorEventLogDAO {
     public List<ElevatorEventLog> getLogs(Elevator elevator, Pageable pageable) {
         return elevatorEventLogRepository.findByElevatorOrderByCreatedAtDesc(elevator, pageable);
     }
+
+    @Override
+    public void save(ElevatorEventLog elevatorEventLog) {
+        elevatorEventLogRepository.save(elevatorEventLog);
+    }
 }
