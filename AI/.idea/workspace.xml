@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/Gate.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CarGate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/GateEventLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/GateEventLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ai.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ai.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/Koushim_yolov8-license-plate-detection/best.pt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test1.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test10.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test2.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test3.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test4.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test5.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test6.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test7.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test8.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/images/test9.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/ocr_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/output/plate_0.jpg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,10 +37,17 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="38pOyCfXWSMc80oOntAt0XHcANe" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -32,17 +55,33 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.mymqtt.executor": "Run",
     "Python.ocr_test.executor": "Run",
+    "Python.start.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "develop",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "feat/ai-59",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/NOVA_fullstack/Workspace/fs01-3rd-1team-smart_apartment_management/ai/test/images"
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Workspace\fs01-3rd-1team-smart_apartment_management\AI\license_plate" />
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\images" />
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\Koushim_yolov8-license-plate-detection" />
     </key>
@@ -50,7 +89,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-ca5e2b39c7df-6e1f45a539f7-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.29346.308" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.30387.173" />
+        <option value="bundled-python-sdk-4762d8aabb82-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.30387.173" />
       </set>
     </attachedChunks>
   </component>
@@ -61,7 +101,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1769493298996</updated>
+      <workItem from="1770466318750" duration="8503000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/AI$ocr_test.coverage" NAME="ocr_test 커버리지 결과" MODIFIED="1770467469677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/AI$mymqtt.coverage" NAME="mymqtt 커버리지 결과" MODIFIED="1770471321893" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/license_plate" />
+    <SUITE FILE_PATH="coverage/AI$start.coverage" NAME="start 커버리지 결과" MODIFIED="1770477296846" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/license_plate" />
   </component>
 </project>
