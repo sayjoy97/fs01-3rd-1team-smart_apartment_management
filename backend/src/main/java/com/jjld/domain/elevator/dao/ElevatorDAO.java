@@ -1,6 +1,5 @@
 package com.jjld.domain.elevator.dao;
 
-import com.jjld.domain.elevator.dto.ElevatorRes;
 import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.Enum.Dong;
 
@@ -15,4 +14,6 @@ public interface ElevatorDAO {
     List<Elevator> getElevators();
 
     Optional<Elevator> getElevator(Long elevatorId);
+
+    void deleteElevator(Long elevatorId);
 }

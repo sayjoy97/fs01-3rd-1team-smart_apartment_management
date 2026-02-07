@@ -1,11 +1,13 @@
 package com.jjld.domain.elevator.controller;
 
+import com.jjld.domain.elevator.dto.ElevatorDetailRes;
 import com.jjld.domain.elevator.dto.ElevatorReq;
 import com.jjld.domain.elevator.dto.ElevatorRes;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
 import com.jjld.domain.elevator.service.ElevatorService;
 import com.jjld.global.response.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,5 +45,22 @@ public class ElevatorController {
     ) {
         elevatorService.updateElevatorState(elevatorId, elevatorState);
         return ResponseEntity.ok(ApiResponse.success("엘리베이터 상태 변경을 성공했습니다."));
+    }
+
+    // 엘리베이터 삭제
+    @DeleteMapping("/{elevatorId}/admin/{adminId}")
+    public ResponseEntity<?> deleteElevator(
+            @PathVariable Long elevatorId,
+            @PathVariable Long adminId
+    ) {
+        elevatorService.deleteElevator(elevatorId, adminId);
+        return ResponseEntity.ok(ApiResponse.success("엘리베이터 삭제를 성공했습니다."));
+    }
+
+    // 엘리베이터 상세 조회
+    @GetMapping("/{elevatorId}")
+    public ResponseEntity<?> getElevatorDetailInfo(@PathVariable Long elevatorId) {
+        ElevatorDetailRes response =  elevatorService.getElevatorDetailInfo(elevatorId);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }

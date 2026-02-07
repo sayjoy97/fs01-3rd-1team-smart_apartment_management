@@ -37,4 +37,10 @@ public class ElevatorDAOImpl implements ElevatorDAO {
     public Optional<Elevator> getElevator(Long elevatorId) {
         return elevatorRepository.findById(elevatorId);
     }
+
+    // 엘리베이터 삭제
+    @Override
+    public void deleteElevator(Long elevatorId) {
+        elevatorRepository.deleteById(elevatorId);
+    }
 }
