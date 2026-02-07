@@ -31,10 +31,7 @@ public class ComplaintUserController {
     @GetMapping("/list")
     @Operation(summary = "입주민 등록한 민원 목록 조회")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<?> getUserComplaintList() {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AccountUserDetail userDetail = (AccountUserDetail) authentication.getPrincipal();
+    public ResponseEntity<?> getUserComplaintList(@AuthenticationPrincipal AccountUserDetail userDetail) {
 
         List<ComplaintUserResponse> userComplaint = service.findMyComplaintDetail(userDetail);
 
@@ -48,15 +45,10 @@ public class ComplaintUserController {
     @Operation(summary = "입주민 등록한 민원 상세 조회")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<ApiResponse<ComplaintUserDetailResponse>> getUserComplaintDetail(
-            @PathVariable Long complaintId
+            @PathVariable Long complaintId,
+            @AuthenticationPrincipal AccountUserDetail userDetail
             ){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null || !(authentication.getPrincipal() instanceof AccountUserDetail)){
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, "인증되지 않은 사용자입니다.");
-        }
-
-        AccountUserDetail userDetail = (AccountUserDetail) authentication.getPrincipal();
         String email = userDetail.getHouseholderEmail();
         ComplaintUserDetailResponse response = service.findMyComplaintDetail(complaintId, userDetail, email);
 
@@ -79,10 +71,12 @@ public class ComplaintUserController {
     // 입주민 민원 작성
     @PostMapping("/write")
     @Operation(summary = "입주민 민원 작성")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> writeComplaint(
-            @RequestParam Long houseId,
+            @AuthenticationPrincipal AccountUserDetail userDetail,
             @RequestBody ComplaintUserWrite userWrite){
-        service.write(houseId, userWrite);
+
+        service.write(userDetail, userWrite);
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)
         );
@@ -91,10 +85,15 @@ public class ComplaintUserController {
     // 입주민 민원 삭제
     @DeleteMapping("/delete")
     @Operation(summary = "관리자 답변 전 민원 삭제")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> deleteComplaint(
-            @RequestParam Long houseId,
-            @RequestParam Long complaintId){
-        service.deleteComplaint(houseId, complaintId);
+            @RequestParam Long complaintId,
+            @AuthenticationPrincipal AccountUserDetail userDetail){
+
+        String email = userDetail.getHouseholderEmail();
+        Long houseId = userDetail.getAccount().getHouse().getHouseId();
+
+        service.deleteByComplaintId(complaintId,houseId, email);
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)
         );
@@ -103,12 +102,16 @@ public class ComplaintUserController {
     // 입주민 민원 수정
     @PutMapping("/update")
     @Operation(summary = "관리자 답변 전 민원 수정")
+    @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<?> updateComplaint(
-            @RequestParam Long houseId,
             @RequestParam Long complaintId,
-            @RequestBody ComplaintUserUpdate complaintUserUpdate
+            @RequestBody ComplaintUserUpdate complaintUserUpdate,
+            @AuthenticationPrincipal AccountUserDetail userDetail
     ){
-        service.updateComplaint(houseId, complaintId, complaintUserUpdate);
+        String email = userDetail.getHouseholderEmail();
+        Long houseId = userDetail.getAccount().getHouse().getHouseId();
+
+        service.updateComplaint(houseId, complaintId, email,complaintUserUpdate);
 
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)

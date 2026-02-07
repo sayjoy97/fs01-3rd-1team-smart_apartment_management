@@ -21,11 +21,11 @@ public interface ComplaintUserService {
     List<ComplaintReference> getReferenceComplaints(Long houseId);
 
     // 입주민 민원 작성
-    Long write(Long houseId, ComplaintUserWrite userWrite);
+    Long write(AccountUserDetail userDetail, ComplaintUserWrite userWrite);
 
     // 입주민 민원 삭제
-    void deleteComplaint(Long houseId, Long complaint);
+    void deleteByComplaintId(Long complaintId, Long houseId, String householderEmail);
 
     // 입주민 민원 수정
-    void updateComplaint(Long houseId, Long complaint, ComplaintUserUpdate complaintUserUpdate);
+    void updateComplaint(Long complaintId, Long houseId, String householderEmail, ComplaintUserUpdate complaintUserUpdate);
 }

@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface HouseRepository extends JpaRepository<House, Long>, JpaSpecificationExecutor<House> {
     House findByHouseId(Long houseId);
 
-    House findByHouseholderName(String householderName);
+    House findByHouseIdAndHouseholderEmail(Long houseId, String householderEmail);
 
 }

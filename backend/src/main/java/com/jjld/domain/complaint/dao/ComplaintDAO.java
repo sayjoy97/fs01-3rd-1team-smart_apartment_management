@@ -15,7 +15,7 @@ public interface ComplaintDAO {
     Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId, String email);
 
     // 입주민 민원 삭제
-    void deleteComplaint(Long complaintId);
+    void deleteComplaint(Long complaintId, Long houseId, String email);
 
     // 입주민 민원 수정
     void update(Complaint complaint);

@@ -32,8 +32,8 @@ public class ComplaintDAOImpl implements ComplaintDAO{
 
     // 입주민 민원 삭제
     @Override
-    public void deleteComplaint(Long complaintId) {
-        complaintRepository.deleteByComplaintId(complaintId);
+    public void deleteComplaint(Long complaintId, Long houseId, String email) {
+        complaintRepository.deleteByComplaintIdAndHouse_HouseIdAndHouseholderEmail(complaintId, houseId, email);
     }
 
     // 입주민 민원 수정

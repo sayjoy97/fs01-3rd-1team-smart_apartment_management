@@ -28,7 +28,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
 
     // 입주민 민원 삭제
     // 삭제 대상 complaint를 참조하는 모든 complaint를 조회
-    List<Complaint> findAllByReferenceComplaintsContains(Complaint complaint);
-    void deleteByComplaintId(Long complaintId);
+    List<Complaint> findAllByReferenceComplaintsContainsAndHouse_HouseIdAndHouseholderEmail(Complaint complaint, Long houseId, String email);
+    void deleteByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaint, Long houseId, String email);
 
 }
