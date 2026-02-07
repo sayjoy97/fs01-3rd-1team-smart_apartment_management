@@ -19,6 +19,7 @@ import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.ConflictException;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.mqtt.MqttPublish;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -38,6 +39,7 @@ public class ElevatorServiceImpl implements ElevatorService {
     private final ElevatorDAO elevatorDAO;
     private final AdminDAO adminDAO;
     private final ElevatorEventLogDAO elevatorEventLogDAO;
+    private final MqttPublish mqttPublish;
     private final ModelMapper modelMapper;
 
     // 엘리베이터 생성
@@ -186,5 +188,6 @@ public class ElevatorServiceImpl implements ElevatorService {
     public void testMqtt(Long elevatorId, String payload) {
         log.info("elevatorId: {}", elevatorId);
         log.info("payload: {}", payload);
+        mqttPublish.sandToMqtt("test", "jjld/command/elevator");
     }
 }

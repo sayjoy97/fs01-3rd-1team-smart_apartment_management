@@ -42,23 +42,3 @@ public class MqttRouter {
         handler.handle(topicInfo, payload);
     }
 }
-
-//@Component
-//@RequiredArgsConstructor
-//public class MqttRouter {
-//    private final Map<String, MqttMessageHandler> handlerMap;
-//    private final MqttTopicParser topicParser;
-//
-//    public void route(String topic, String payload) {
-//        TopicInfo topicInfo = topicParser.parse(topic);
-//        MqttServiceType type = topicInfo.getServiceType();
-//
-//        MqttMessageHandler handler = handlerMap.get(type.name().toLowerCase() + "MqttHandler");
-//
-//        if (handler == null) {
-//            throw new BadRequestException(ErrorCode.UNKNOWN_SERVICE_TYPE, "알 수 없는 MQTT 서비스 타입입니다." + type.name());
-//        }
-//
-//        handler.handle(topicInfo, payload);
-//    }
-//}
