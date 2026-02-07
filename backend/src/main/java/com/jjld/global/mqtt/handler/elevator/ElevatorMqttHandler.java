@@ -2,12 +2,10 @@ package com.jjld.global.mqtt.handler.elevator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jjld.domain.elevator.service.ElevatorService;
-import com.jjld.domain.garden.service.GardenService;
 import com.jjld.global.exception.BusinessException;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.BadRequestException;
 import com.jjld.global.mqtt.handler.MqttMessageHandler;
-import com.jjld.global.mqtt.handler.garden.GardenServiceType;
 import com.jjld.global.mqtt.topic.MqttServiceType;
 import com.jjld.global.mqtt.topic.TopicInfo;
 import lombok.RequiredArgsConstructor;
