@@ -1,15 +1,14 @@
+import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
-import Navigation from "../components/Navigation";
-import Dashboard from "../pages/Dashboard";
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
-      <Navigation />
 
-      <main className="pt-28 p-6">
-        <Dashboard />
+      {/* 헤더(상단바+메뉴바) 높이 보정 */}
+      <main className="pt-28 px-6">
+        <Outlet />
       </main>
     </div>
   );
