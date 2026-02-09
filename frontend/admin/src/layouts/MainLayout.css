@@ -1,0 +1,20 @@
+.main-layout {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+.header {
+  width: 100%;
+  position: fixed;
+  height: 112px;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  background-color: yellow;
+}
+
+.main-content {
+  padding-top: 7rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
