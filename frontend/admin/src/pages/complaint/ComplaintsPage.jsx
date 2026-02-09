@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { complaintAllList } from "../../api/complaintAPI";
+import "./ComplaintsPage.css";
+import "../../App.css";
 
 // 카테고리 매핑
 const categoryOptions = [
@@ -66,44 +68,69 @@ const ComplaintsPage = () => {
   console.log("민원 목록: ", complaintList);
 
   return (
-    <div className="page">
-      <div>sdfsdf</div>
+    <>
       <div className="complaint-toggle">
-        <button onClick={() => setActiveTab("complaints")}>민원 목록</button>
-        <button onClick={() => setActiveTab("ai")}>AI 요약</button>
+        <button
+          onClick={() => setActiveTab("complaints")}
+          style={{
+            background: activeTab === "complaints" ? "#007bff" : "#e0e0e0",
+            color: activeTab === "complaints" ? "#fff" : "#000",
+          }}
+        >
+          민원 목록
+        </button>
+        <button
+          onClick={() => setActiveTab("ai")}
+          style={{
+            background: activeTab === "ai" ? "#17a2b8" : "#e0e0e0",
+            color: activeTab === "ai" ? "#fff" : "#000",
+          }}
+        >
+          AI 요약
+        </button>
       </div>
 
       {/* 민원 목록 */}
-      {activeTab === "complaints" && (
-        <>
-          <div className="filter">
-            <select value={filterCategory} onChange={handleCategoryChange}>
-              {categoryOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <select value={filterStatus} onChange={handleStatusChange}>
-              {statusOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="component">
+        <h2 className="sub-title">민원 목록</h2>
+        <p className="info">모든 입주민 민원을 조회하고 관리합니다</p>
+        {activeTab === "complaints" && (
+          <>
+            <div className="filter">
+              <div className="category">
+                <p>카테고리</p>
+                <select value={filterCategory} onChange={handleCategoryChange}>
+                  {categoryOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="status">
+                <p>상태</p>
+                <select value={filterStatus} onChange={handleStatusChange}>
+                  {statusOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-          {/* 민원 목록 */}
-          <ul>
-            {complaintList.length === 0 ? (
-              <li>데이터가 없습니다.</li>
-            ) : (
-              complaintList.map((c) => <li key={c.complaintId}>{c.title}</li>)
-            )}
-          </ul>
-        </>
-      )}
-    </div>
+            {/* 민원 목록 */}
+            <ul>
+              {complaintList.length === 0 ? (
+                <li>데이터가 없습니다.</li>
+              ) : (
+                complaintList.map((c) => <li key={c.complaintId}>{c.title}</li>)
+              )}
+            </ul>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
