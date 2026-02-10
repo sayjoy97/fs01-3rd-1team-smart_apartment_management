@@ -118,7 +118,7 @@ const ComplaintsPage = () => {
                 <select
                   value={filterCategory}
                   onChange={handleCategoryChange}
-                  style={{ width: "95%", backgroundColor: "white" }}
+                  style={{ width: "95%", backgroundColor: "var(--background)" }}
                 >
                   {categoryOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -133,7 +133,7 @@ const ComplaintsPage = () => {
                 <select
                   value={filterStatus}
                   onChange={handleStatusChange}
-                  style={{ width: "95%", backgroundColor: "white" }}
+                  style={{ width: "95%", backgroundColor: "var(--background)" }}
                 >
                   {statusOptions.map((o) => (
                     <option key={o.value} value={o.value}>
@@ -181,7 +181,7 @@ const ComplaintsPage = () => {
                             {c.status === "ANSWERED" ? (
                               <p
                                 style={{
-                                  backgroundColor: "#5a8cb9",
+                                  backgroundColor: "var(--blue-primary)",
                                   color: "white",
                                   textAlign: "center",
                                 }}
@@ -191,7 +191,7 @@ const ComplaintsPage = () => {
                             ) : (
                               <p
                                 style={{
-                                  backgroundColor: "#c35f5f",
+                                  backgroundColor: "var(--status-error)",
                                   color: "white",
                                   textAlign: "center",
                                 }}

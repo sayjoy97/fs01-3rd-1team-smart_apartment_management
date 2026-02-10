@@ -11,13 +11,13 @@
 }
 
 .filter {
-  background-color: #f9fafb;
+  background-color: var(--card);
   display: flex;
   gap: 15px;
   height: 100px;
   margin-bottom: 10px;
   border-radius: 1.2rem;
-  border: 1px solid #e1e1e1;
+  border: 1px solid var(--card-border);
   padding: 20px;
 }
 
@@ -46,12 +46,12 @@
 }
 
 .complaint-table-head {
-  background: #f0f0f0;
+  background: var(--background);
 }
 
 .complaint-table th,
 .complaint-table td {
-  border: 1px solid #e1e1e1;
+  border: 1px solid var(--card-border);
   padding: 10px;
 }
 
@@ -60,15 +60,14 @@
 }
 
 .complaint-table tbody tr:hover {
-  background-color: #fafafa;
+  background-color: var(--background);
 }
 
 .complaint-table button {
   padding: 6px 10px;
   border: none;
   border-radius: 6px;
-  background: #007bff;
-  color: white;
+  background: var(--background);
   cursor: pointer;
 }
 
@@ -81,25 +80,25 @@
   justify-content: center;
   gap: 8px;
   padding: 14px;
-  border-top: 1px solid #eee;
-  background: #fafafa;
+  border-top: 1px solid var(--card-border);
+  background: var(--card);
 }
 
 .pagination button {
   min-width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: white;
+  border: 1px solid var(--card-border);
+  background: var(--background);
   cursor: pointer;
 }
 
 .pagination button:hover {
-  background: #f0f0f0;
+  background: var(--background);
 }
 
 .pagination button.active {
-  background: #007bff;
+  background: var(--primary);
   color: white;
   border: none;
 }
