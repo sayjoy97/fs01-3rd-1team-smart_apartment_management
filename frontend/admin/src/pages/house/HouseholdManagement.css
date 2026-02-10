@@ -1,3 +1,90 @@
 .component {
   height: 100vh;
 }
+
+.check {
+  width: 50%;
+  border-radius: 1rem;
+  padding: 5px;
+}
+
+.table-wrapper {
+  height: 700px;
+  flex: 0 0 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.complaint-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.complaint-table-head {
+  background: var(--background);
+}
+
+.complaint-table th,
+.complaint-table td {
+  border: 1px solid var(--card-border);
+  padding: 10px;
+}
+
+.complaint-table th {
+  font-weight: 600;
+}
+
+.complaint-table tbody tr:hover {
+  background-color: var(--background);
+}
+
+.complaint-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: var(--background);
+  cursor: pointer;
+}
+
+.complaint-table button:hover {
+  opacity: 0.85;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-top: 1px solid var(--card-border);
+  background: var(--card);
+}
+
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--background);
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: var(--background);
+}
+
+.pagination button.active {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

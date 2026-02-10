@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import "../../App.css";
 import "./HouseholdManagement.css";
 import { houseHoFilter } from "./houseHoFilter";
-import { SearchCheckIcon } from "lucide-react";
-import { houseAllList } from "../../api/houseAPI";
+import { Replace, SearchCheckIcon } from "lucide-react";
+import { hoouseManagement, houseAllList } from "../../api/houseAPI";
+import HouseholdDetailModal from "./modal/HouseholdDetailModal";
 
 // 아파트 동 매핑
 const houseDongOptions = [
   { label: "전체", value: "" },
   { label: "101동", value: 101 },
-  { label: "201동", value: 201 },
-  { label: "301동", value: 301 },
-  { label: "401동", value: 401 },
+  { label: "102동", value: 102 },
+  { label: "103동", value: 103 },
+  { label: "104동", value: 104 },
 ];
 
 // 아파트 호실 매핑
@@ -19,7 +20,8 @@ const houseHoOptions = houseHoFilter(4, 2);
 
 const HouseholdMangement = () => {
   // 전체 페이지
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // 필터
   const [filterHouseHo, setFilterHouseHo] = useState("");
@@ -28,34 +30,72 @@ const HouseholdMangement = () => {
   // 검색
   const [keyword, setKeyword] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [houseList, setHouseList] = useState([]);
 
   // 초기화
   const [clearData, setClearData] = useState("");
+
+  // 세대 데이터 저장
+  const [detailData, setDetailData] = useState(null);
+
+  // 모달
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [managementHouse, setManagementHouse] = useState(null);
+
   const handleHouseHoChange = (e) => {
     setFilterHouseHo(e.target.value);
-    setCurrentPage(0);
+    setCurrentPage(1);
   };
 
   const handleHouseDongChange = (e) => {
     setFilterHouseDong(e.target.value);
-    setCurrentPage(0);
+    setCurrentPage(1);
   };
 
   useEffect(() => {
+    console.log("검색어:", searchKeyword);
     houseAllList({
       houseDong: filterHouseDong,
       houseHo: filterHouseHo,
-      houseHolderName: searchKeyword,
+      householderName: searchKeyword,
     })
       .then((res) => {
         console.log("응답: ", res);
-        houseAllList(res);
+        setHouseList(res.data);
       })
       .catch((err) => console.log("세대 정보 조회중 오류 발생", err));
   }, [filterHouseDong, filterHouseHo, searchKeyword]);
 
-  console.log("세대 정보: ");
+  const list = houseList || [];
 
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(houseList.length / itemsPerPage);
+
+  // 현재 페이지 시작
+  const startIndex = (currentPage - 1) * itemsPerPage;
+
+  // 현재 페이지 데이터
+  const currentItems = list.slice(startIndex, startIndex + itemsPerPage);
+
+  // 모달 열기
+  const openDetailModal = (houseData) => {
+    setDetailData(houseData);
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setManagementHouse(null);
+  };
+
+  // 저장
+  const handleSave = async (houseId, formData) => {
+    await hoouseManagement(houseId, formData);
+    setIsModalOpen(false);
+  };
+
+  console.log("값", list);
   return (
     <>
       <div className="component">
@@ -104,17 +144,95 @@ const HouseholdMangement = () => {
                 onChange={(e) => setKeyword(e.target.value)}
                 style={{ width: "95%", backgroundColor: "var(--background)" }}
               />
-              <button onClick={() => setKeyword(searchKeyword)}>
+              <button onClick={() => setSearchKeyword(keyword)}>
                 <SearchCheckIcon />
               </button>
             </div>
           </div>
           <div className="check">
-            <button onClick={() => setClearData} className="clear">
+            <button
+              onClick={() => {
+                setCurrentPage(1);
+                setFilterHouseDong("");
+                setFilterHouseHo("");
+                setSearchKeyword("");
+                setKeyword("");
+              }}
+              className="clear"
+            >
               초기화
             </button>
           </div>
         </div>
+        <div className="table-wrapper">
+          <div className="table-scroll">
+            <table className="complaint-table">
+              <thead>
+                <tr>
+                  <th>동호수</th>
+                  <th>(대표)세대주 이름</th>
+                  <th>연락처</th>
+                  <th>입주일</th>
+                  <th>상태</th>
+                  <th>관리</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: "center", height: "300px" }}>
+                      데이터가 없습니다
+                    </td>
+                  </tr>
+                ) : (
+                  currentItems.map((h) => (
+                    <tr key={h.houseId}>
+                      <td>
+                        {h.houseDong}동 {h.houseHo}호
+                      </td>
+                      <td>{h.householderName}</td>
+                      <td>{h.householderPhone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")}</td>
+                      <td>{h.moveInAt}</td>
+                      {h.houseStatus === true ? <td>거주중</td> : <td>공실</td>}
+                      <td>
+                        <button onClick={() => openDetailModal(h)}>관리</button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          {/* 페이지네이션 */}
+          <div className="pagination">
+            <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
+              ◀
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                disabled={currentPage === i + 1}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage((p) => p + 1)}
+              disabled={currentPage === totalPages}
+            >
+              ▶
+            </button>
+          </div>
+        </div>
+        {/* 세대 관리 모달 */}
+        {isModalOpen && (
+          <HouseholdDetailModal
+            data={detailData}
+            onSave={handleSave}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
       </div>
     </>
   );
