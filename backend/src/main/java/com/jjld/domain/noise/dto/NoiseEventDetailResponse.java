@@ -51,4 +51,7 @@ public class NoiseEventDetailResponse {
 
     // 관리자 메모
     private String adminMemo;
+
+    private Boolean habitual;            // 상습 기준 충족 여부
+    private Boolean canRegisterHabitual; // 상습구간 등록 버튼 노출 여부
 }

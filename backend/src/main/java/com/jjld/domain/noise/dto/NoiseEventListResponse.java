@@ -44,4 +44,7 @@ public class NoiseEventListResponse {
 
     // 즉시 처리 필요 여부 (우선순위 표시용)
     private Boolean urgentBreak;
+
+    private Boolean recurrent; // 🔁 재발
+    private Boolean habitual;  // [상습]
 }

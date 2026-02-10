@@ -1,5 +1,6 @@
 package com.jjld.domain.noise.repository;
 
+import com.jjld.domain.noise.entity.Enum.SensorType;
 import com.jjld.domain.noise.entity.NoiseEvent;
 import com.jjld.domain.noise.entity.NoiseSensor;
 import org.springframework.data.domain.Page;
@@ -23,4 +24,15 @@ public interface NoiseEventRepository extends JpaRepository<NoiseEvent, Long> {
 
     // 모든 이벤트 집계/통계용
     List<NoiseEvent> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    // 특정센서에서 특정시간범위 내에 특정센서타입의 이벤트가 존재하는지 여부
+    boolean existsByNoiseSensorAndNoiseSensor_SensorTypeInAndCreatedAtBetween(
+            NoiseSensor sensor,
+            List<SensorType> sensorTypes,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
+    // 최근 N초 내 같은 센서 이벤트 수
+    long countByNoiseSensorAndCreatedAtAfter(NoiseSensor sensor, LocalDateTime after);
 }

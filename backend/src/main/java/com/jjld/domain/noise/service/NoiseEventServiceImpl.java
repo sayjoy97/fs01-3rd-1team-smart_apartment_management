@@ -11,11 +11,14 @@ import com.jjld.domain.noise.entity.NoiseEventAnalysis;
 import com.jjld.domain.noise.entity.NoiseEventProcess;
 import com.jjld.domain.noise.entity.NoiseSensor;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
+import com.jjld.domain.noise.repository.NoiseHabitualZoneRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     private final NoiseEventDAO noiseEventDAO;
     private final NoiseEventProcessRepository noiseEventProcessRepository;
     private final NoisePolicyService noisePolicyService;
+    private final NoiseHabitualZoneRepository noiseHabitualZoneRepository;
 
     //-----목록-------
     @Override
@@ -42,7 +46,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     @Transactional(readOnly = true)
     public Page<NoiseUrgentEventResponse> getUrgentNoiseEventResponses(Pageable pageable) {
         // 1. 즉시 처리 필요 이벤트(Process) 조회
-        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
         // 2. 엔티티 → DTO 변환
         return processPage.map(this::toUrgentResponse);
     }
@@ -58,26 +62,22 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     @Override
     public Page<NoiseEventProcess> findUrgentNoiseByStatus(Pageable pageable) {
         return noiseEventProcessRepository
-                .findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+                .findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
     }
     // 소음 이벤트 승인 처리 (이벤트 상태를 APPROVED로 변경 >> 관리자 메모 저장)
+    // 알림 발송 완료
     @Override
-    public void approveNoiseEvent(Long noiseEventId, String adminMemo) {
-        NoiseEventProcess process =
-                noiseEventDAO.findNoiseEventDetail(noiseEventId);
-        // 승인 상태로 변경
-        process.setStatus(ProcessStatus.APPROVED);
-        // 관리자 메모 저장
+    public void notifyNoiseEvent(Long noiseEventId, String adminMemo) {
+        NoiseEventProcess process = noiseEventDAO.findNoiseEventDetail(noiseEventId);
+        process.setStatus(ProcessStatus.NOTIFIED);
         process.setAdminMemo(adminMemo);
     }
     // 소음 이벤트 보류 처리 (이벤트 상태를 HOLD로 변경 >> 관리자 메모 저장)
+    // 관찰 시작 (미처리 -> 관찰 중)
     @Override
-    public void holdNoiseEvent(Long noiseEventId, String adminMemo) {
-        NoiseEventProcess process =
-                noiseEventDAO.findNoiseEventDetail(noiseEventId);
-        // 보류 상태로 변경
-        process.setStatus(ProcessStatus.HOLD);
-        // 관리자 메모 저장
+    public void startObserving(Long noiseEventId, String adminMemo) {
+        NoiseEventProcess process = noiseEventDAO.findNoiseEventDetail(noiseEventId);
+        process.setStatus(ProcessStatus.OBSERVING);
         process.setAdminMemo(adminMemo);
     }
 
@@ -108,6 +108,8 @@ public class NoiseEventServiceImpl implements NoiseEventService {
                 .repeatCount(analysis.getRepeatCount())
                 .status(process.getStatus())
                 .urgentBreak(process.getUrgentBreak())
+                .recurrent(isRecurred(process))
+                .habitual(isHabitual(process))
                 .build();
     }
 
@@ -146,6 +148,8 @@ public class NoiseEventServiceImpl implements NoiseEventService {
         NoiseSensor sensor = noiseEvent.getNoiseSensor();
         House upper = sensor.getUpperHouse();
         House lower = sensor.getLowerHouse();
+        boolean habitual = isHabitual(process);
+        boolean canRegisterHabitual = habitual && !existsHabitualZone(sensor);
 
         return NoiseEventDetailResponse.builder()
                 .noiseEventId(noiseEvent.getNoiseEventId())
@@ -176,6 +180,32 @@ public class NoiseEventServiceImpl implements NoiseEventService {
                 // 처리 상태
                 .status(process.getStatus())
                 .adminMemo(process.getAdminMemo())
+
+                .habitual(habitual)
+                .canRegisterHabitual(canRegisterHabitual)
                 .build();
+    }
+    // 재발 여부 계산
+    private boolean isRecurred(NoiseEventProcess process) {
+        if (process.getStatus() != ProcessStatus.OBSERVING) {
+            return false;
+        }
+        NoiseSensor sensor = process.getNoiseEvent().getNoiseSensor();
+        LocalDateTime since = LocalDateTime.now().minusHours(24);
+        long count = noiseEventProcessRepository
+                .countByNoiseEvent_NoiseSensorAndCreatedAtAfter(sensor, ProcessStatus.OBSERVING, since);
+        return count >= 3;
+    }
+    // 상습여부계산
+    private boolean isHabitual(NoiseEventProcess process) {
+        NoiseSensor sensor = process.getNoiseEvent().getNoiseSensor();
+        LocalDateTime since = LocalDateTime.now().minusDays(30);
+        long count = noiseEventProcessRepository
+                .countByNoiseEvent_NoiseSensorAndUrgentBreakTrueAndCreatedAtAfter(sensor, since);
+        return count >= 5;
+    }
+    // 상습구간 기준충족(버튼 나타나는 여부) 계산
+    private boolean existsHabitualZone(NoiseSensor sensor) {
+        return noiseHabitualZoneRepository.existsBySensorAndStatus(sensor, "MONITORING");
     }
 }
