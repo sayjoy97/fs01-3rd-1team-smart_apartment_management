@@ -22,11 +22,17 @@ export const complaintAllList = async ({ category, status, page, size }) => {
 };
 
 // 민원 관리자 답변
-export const answerWrite = async (answerData) => {
+export const answerWrite = async (complaintId, adminId, answer) => {
   try {
-    const response = await backendServer.post(request.complaintAnswerWrite, answerData);
+    const response = await backendServer.post(
+      request.complaintAnswerWrite,
+      { answer },
+      {
+        params: { complaintId, adminId },
+      },
+    );
 
-    return response;
+    return response.data;
   } catch (error) {
     console.error("민원 답변 중 에러발생: ", error);
     alert("민원 답변 작성중 에러가 발생했습니다.");
@@ -36,7 +42,7 @@ export const answerWrite = async (answerData) => {
 // 민원 상세 조회
 export const detailView = async (complaintId) => {
   try {
-    const response = await backendServer.get(`/detail/${complaintId}`);
+    const response = await backendServer.get(`/complaint/api/detail/${complaintId}`);
 
     return response;
   } catch (error) {

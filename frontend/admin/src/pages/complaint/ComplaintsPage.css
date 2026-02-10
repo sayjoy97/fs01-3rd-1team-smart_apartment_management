@@ -1,5 +1,7 @@
 .component {
-  height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .complaint-toggle {
@@ -9,11 +11,100 @@
 }
 
 .filter {
-  background-color: green;
+  background-color: #f9fafb;
   display: flex;
   gap: 15px;
-  height: 80px;
+  height: 100px;
   margin-bottom: 10px;
   border-radius: 1.2rem;
   border: 1px solid #e1e1e1;
+  padding: 20px;
+}
+
+.check {
+  width: 50%;
+  border-radius: 1rem;
+  padding: 5px;
+}
+
+.table-wrapper {
+  height: 700px;
+  flex: 0 0 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.complaint-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.complaint-table-head {
+  background: #f0f0f0;
+}
+
+.complaint-table th,
+.complaint-table td {
+  border: 1px solid #e1e1e1;
+  padding: 10px;
+}
+
+.complaint-table th {
+  font-weight: 600;
+}
+
+.complaint-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.complaint-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.complaint-table button:hover {
+  opacity: 0.85;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.pagination button {
+  min-width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #f0f0f0;
+}
+
+.pagination button.active {
+  background: #007bff;
+  color: white;
+  border: none;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }

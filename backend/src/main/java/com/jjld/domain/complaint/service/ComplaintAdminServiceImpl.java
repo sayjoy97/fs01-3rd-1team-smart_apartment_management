@@ -80,6 +80,7 @@ public class ComplaintAdminServiceImpl implements ComplaintAdminService {
                 .complaintId(complaint.getComplaintId())
                 .houseDong(complaint.getHouse().getHouseDong())
                 .houseHo(complaint.getHouse().getHouseHo())
+                .houseHolderEmail(complaint.getHouseholderEmail())
                 .category(complaint.getCategory().name())
                 .createAt(complaint.getCreatedAt())
                 .replyAt(complaint.getUpdatedAt())

@@ -50,7 +50,7 @@ public class ComplaintAdminController {
     // 관리자 민원 상세 조회
     @GetMapping("/detail/{complaintId}")
     @Operation(summary = "관리자 민원 상세 조회")
-    public ResponseEntity<?>  getComplaint(@RequestParam("complaintId") Long complaintId){
+    public ResponseEntity<?>  getComplaint(@PathVariable Long complaintId){
         ComplaintAdminDetailResponse complaint = service.findByComplaintId(complaintId);
 
         return ResponseEntity.ok(
