@@ -5,22 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/ai.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ai.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/Koushim_yolov8-license-plate-detection/best.pt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test2.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test3.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test4.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test5.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test6.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test7.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test8.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/images/test9.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/ocr_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/output/plate_0.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/license_plate/mymqtt.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/mymqtt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CarGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/Cargate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CargateEventLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CargateEventLog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/CargateRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/CargateRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/properties/MqttTopicProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/properties/MqttTopicProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttServiceType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttServiceType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttTopicRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttTopicRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/resources/application.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +63,7 @@
     "Python.mymqtt.executor": "Run",
     "Python.ocr_test.executor": "Run",
     "Python.start.executor": "Run",
+    "Python.tset.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -86,10 +92,40 @@
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\Koushim_yolov8-license-plate-detection" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration name="start" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ai" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="AI_BROKER" value="192.168.14.68" />
+        <env name="AI_IMAGE_PATH" value="C:\Users\Admin\Desktop\image_result" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/license_plate" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/license_plate/start.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.start" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-PY-253.30387.173" />
         <option value="bundled-python-sdk-4762d8aabb82-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.30387.173" />
       </set>
     </attachedChunks>
