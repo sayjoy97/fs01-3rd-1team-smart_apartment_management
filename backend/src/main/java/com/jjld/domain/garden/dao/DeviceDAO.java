@@ -1,6 +1,7 @@
 package com.jjld.domain.garden.dao;
 
 import com.jjld.domain.garden.entity.Device;
+import com.jjld.domain.garden.entity.Enum.DeviceType;
 import com.jjld.domain.garden.entity.Garden;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface DeviceDAO {
     void saveDevice(Device device);
 
     Optional<Device> getDevice(Long deviceId);
+
+    Optional<Device> getDevice(Garden garden, DeviceType deviceType);
 }

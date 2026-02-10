@@ -129,9 +129,12 @@ public class GardenController {
     }
 
     // 정원 관리 기능 수동 물주기
-    @PostMapping("/{gardenId}/manual-watering")
-    public ResponseEntity<?> manualWatering(@PathVariable Long gardenId) {
-        deviceService.manualWatering(gardenId);
+    @PostMapping("/{gardenId}/manual-watering/admin/{adminId}")
+    public ResponseEntity<?> manualWatering(
+            @PathVariable Long gardenId,
+            @PathVariable Long adminId
+    ) {
+        deviceService.manualWatering(gardenId, adminId);
         return ResponseEntity.ok(ApiResponse.success("수동 물주기를 성공했습니다."));
     }
 
