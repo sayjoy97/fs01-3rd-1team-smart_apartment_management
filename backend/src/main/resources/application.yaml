@@ -28,6 +28,18 @@ spring:
 
     defer-datasource-initialization: true
 
+  mqtt:
+    url: tcp://localhost:1883  # 브로커의 주소
+    client-id: jjld-apartment-management2
+    topic:
+      # 발행(Publish)할 토픽
+      command: jjld/command
+      # 구독(Subscribe)할 토픽
+      # 예시 - [본인 기능]: "jjld/[본인 기능]/#"
+      # 토픽 등록 후 properties - MqttTopicProperties로 이동
+      garden: "jjld/garden/#"
+      elevator: "jjld/elevator/#"
+
   springdoc:
     cache:
       disabled: true              # 캐시 사용 여부

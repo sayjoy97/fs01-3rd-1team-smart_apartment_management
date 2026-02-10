@@ -1,0 +1,19 @@
+.component {
+  height: 100vh;
+}
+
+.complaint-toggle {
+  margin-bottom: 10px;
+  display: flex;
+  gap: 30px;
+}
+
+.filter {
+  background-color: green;
+  display: flex;
+  gap: 15px;
+  height: 80px;
+  margin-bottom: 10px;
+  border-radius: 1.2rem;
+  border: 1px solid #e1e1e1;
+}

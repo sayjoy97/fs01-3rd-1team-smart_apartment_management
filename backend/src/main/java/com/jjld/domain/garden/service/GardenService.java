@@ -19,4 +19,6 @@ public interface GardenService {
     void toggleWatering(Long gardenId);
 
     Page<ScheduleFilterRes> getGardenDetail(Long gardenId);
+
+    void testMqtt(Long gardenId, String payload);
 }

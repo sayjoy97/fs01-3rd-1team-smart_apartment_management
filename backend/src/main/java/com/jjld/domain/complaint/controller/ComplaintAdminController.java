@@ -17,11 +17,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/complaint/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ComplaintAdminController {
 
     private final ComplaintAdminServiceImpl service;
@@ -29,16 +33,22 @@ public class ComplaintAdminController {
     // 관리자 민원 목록 출력
     @GetMapping("/list")
     @Operation(summary = "관리자 민원 목록 조회")
-    public Page<ComplaintAdminResponse> search(
+    public Map<String, Object> search(
             ComplaintSearchCond cond,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return service.search(cond, page, size);
+        Page<ComplaintAdminResponse> result = service.search(cond, page, size);
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("totalPages", result.getTotalPages());
+        response.put("totalElements", result.getTotalElements());
+        response.put("page", result.getNumber());
+        return response;
     }
 
     // 관리자 민원 상세 조회
-    @GetMapping("/comlaints/{complaintId}")
+    @GetMapping("/detail/{complaintId}")
     @Operation(summary = "관리자 민원 상세 조회")
     public ResponseEntity<?>  getComplaint(@RequestParam("complaintId") Long complaintId){
         ComplaintAdminDetailResponse complaint = service.findByComplaintId(complaintId);

@@ -16,6 +16,7 @@ import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GardenServiceImpl implements GardenService {
     private final GardenDAO gardenDAO;
     private final DeviceDAO deviceDAO;
@@ -52,7 +54,7 @@ public class GardenServiceImpl implements GardenService {
                     GardenRes gardenRes = modelMapper.map(Garden, GardenRes.class);
                     List<Device> devices = deviceDAO.getDevices(Garden);
 
-                    gardenRes = setSenorState(gardenRes, devices);
+                    gardenRes = setSensorState(gardenRes, devices);
 
                     return gardenRes;
                 })
@@ -90,6 +92,7 @@ public class GardenServiceImpl implements GardenService {
         gardenDAO.deleteGarden(gardenId);
     }
 
+    // 정원 관리 기능 자동 급수 토글 버튼
     @Override
     public void toggleWatering(Long gardenId) {
         Garden garden = gardenDAO.getGarden(gardenId)
@@ -99,6 +102,7 @@ public class GardenServiceImpl implements GardenService {
         gardenDAO.updateGarden(garden);
     }
 
+    // 정원 관리 상세 조회
     @Override
     public Page<ScheduleFilterRes> getGardenDetail(Long gardenId) {
         Garden garden = gardenDAO.getGarden(gardenId)
@@ -107,13 +111,20 @@ public class GardenServiceImpl implements GardenService {
         GardenRes gardenRes = modelMapper.map(garden, GardenRes.class);
         List<Device> devices = deviceDAO.getDevices(garden);
 
-        gardenRes = setSenorState(gardenRes, devices);
+        gardenRes = setSensorState(gardenRes, devices);
 
 
         return null;
     }
 
-    GardenRes setSenorState(GardenRes gardenRes, List<Device> devices) {
+    @Override
+    public void testMqtt(Long gardenId, String payload) {
+        log.info("gardenId: {}", gardenId);
+        log.info("payload: {}", payload);
+    }
+
+
+    GardenRes setSensorState(GardenRes gardenRes, List<Device> devices) {
         // 센서 미설치 시 값 처리
         gardenRes.setCurrentTemperature("센서 미설치");
         gardenRes.setCurrentHumidity("센서 미설치");
@@ -126,6 +137,9 @@ public class GardenServiceImpl implements GardenService {
                 switch (device.getDeviceType()) {
                     case TEMP:
                         gardenRes.setCurrentTemperature(setSensorLogValue(device));
+                        System.out.println(device.getDeviceId());
+                        System.out.println(device.getGarden().getGardenId());
+                        System.out.println(device.getState().toString());
                         break;
                     case HUMIDITY:
                         gardenRes.setCurrentHumidity(setSensorLogValue(device));
