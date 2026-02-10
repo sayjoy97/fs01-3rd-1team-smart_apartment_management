@@ -10,5 +10,5 @@ public interface DeviceService {
 
     void updateDevice(Long deviceId, DeviceState deviceState);
 
-    void manualWatering(Long gardenId);
+    void manualWatering(Long gardenId, Long adminId);
 }

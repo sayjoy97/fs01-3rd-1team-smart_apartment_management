@@ -6,5 +6,6 @@ public enum ElevatorEventType {
     DOOR_OPEN,      // 문 열림
     DOOR_CLOSE,     // 문 닫힘
     ERROR,          // 고장 발생
-    REPAIR     // 점검 시작/진행
+    REPAIR,         // 점검 시작/진행
+    REPAIRED        // 점검 완료
 }
