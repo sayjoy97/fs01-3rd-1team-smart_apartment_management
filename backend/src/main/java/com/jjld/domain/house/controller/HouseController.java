@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/house/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class HouseController {
     private final HouseService service;
     private final EntranceCardService cardService;
