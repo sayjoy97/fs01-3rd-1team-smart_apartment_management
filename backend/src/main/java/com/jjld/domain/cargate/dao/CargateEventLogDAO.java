@@ -17,5 +17,7 @@ public interface CargateEventLogDAO {
 
     CargateEventLog findCargateEventLogById(Long id);
 
+    // 기록 추가
+    CargateEventLog createCargateLog(CargateEventLog entity);
 
 }

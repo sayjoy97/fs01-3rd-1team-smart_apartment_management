@@ -12,4 +12,6 @@ public interface ParkingFeeDAO {
     // 조건 날짜별 누적금액 조회
     long getCountByType(LocalDateTime start, LocalDateTime end);
 
+
+
 }

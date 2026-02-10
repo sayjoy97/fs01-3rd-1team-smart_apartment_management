@@ -42,7 +42,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     @Transactional(readOnly = true)
     public Page<NoiseUrgentEventResponse> getUrgentNoiseEventResponses(Pageable pageable) {
         // 1. 즉시 처리 필요 이벤트(Process) 조회
-        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
         // 2. 엔티티 → DTO 변환
         return processPage.map(this::toUrgentResponse);
     }
@@ -58,7 +58,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     @Override
     public Page<NoiseEventProcess> findUrgentNoiseByStatus(Pageable pageable) {
         return noiseEventProcessRepository
-                .findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+                .findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
     }
     // 소음 이벤트 승인 처리 (이벤트 상태를 APPROVED로 변경 >> 관리자 메모 저장)
     @Override
@@ -66,7 +66,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
         NoiseEventProcess process =
                 noiseEventDAO.findNoiseEventDetail(noiseEventId);
         // 승인 상태로 변경
-        process.setStatus(ProcessStatus.APPROVED);
+        process.setStatus(ProcessStatus.UNPROCESSED);
         // 관리자 메모 저장
         process.setAdminMemo(adminMemo);
     }
@@ -76,7 +76,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
         NoiseEventProcess process =
                 noiseEventDAO.findNoiseEventDetail(noiseEventId);
         // 보류 상태로 변경
-        process.setStatus(ProcessStatus.HOLD);
+        process.setStatus(ProcessStatus.UNPROCESSED);
         // 관리자 메모 저장
         process.setAdminMemo(adminMemo);
     }

@@ -38,5 +38,11 @@ public class CargateEventLogDAOImpl implements CargateEventLogDAO {
         return cargateEventLogRepository.findByCargateEventId(id);
     }
 
+    // 기록 추가
+    @Override
+    public CargateEventLog createCargateLog(CargateEventLog entity) {
+        return cargateEventLogRepository.save(entity);
+    }
+
 
 }

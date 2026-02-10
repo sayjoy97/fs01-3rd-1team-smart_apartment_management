@@ -22,7 +22,7 @@ public class CargateEventLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cargate_id")
-    private CarGate carGate; // 발생 게이트 위치
+    private Cargate carGate; // 발생 게이트 위치
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id")
