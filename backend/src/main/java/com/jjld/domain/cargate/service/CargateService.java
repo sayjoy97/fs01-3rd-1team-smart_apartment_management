@@ -56,6 +56,10 @@ public interface CargateService {
     // 관리자 승인차량 삭제
     Boolean deleteApprovedCar(Long vehicle_id);
 
-    // 차량번호로 차량조회
-    void AddToTheAccessLog(String plateNumber, CargateServiceType serviceType);
+    // 입출차 처리
+    void AddToTheAccessLog(String payload, CargateServiceType serviceType);
+
+    // 요금 정산완료시 처리
+    void FeeSettlement(String payload, CargateServiceType serviceType);
+
 }

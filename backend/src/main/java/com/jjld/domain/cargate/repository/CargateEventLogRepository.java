@@ -45,4 +45,19 @@ public interface CargateEventLogRepository extends JpaRepository<CargateEventLog
 
     // 로그아이디별 상세조회
     CargateEventLog findByCargateEventId(Long cargate_event_log_id);
+
+    // vehicle_id별 특정 유형 차량 최신데이터 조회
+    @Query("""
+        select log
+        from CargateEventLog log
+        where log.vehicle = :vehicleId
+        and log.gateType = :gateType
+        order by log.cargateEventId desc
+        limit 1
+    """)
+    Optional<CargateEventLog> findByVehicleIdToType(
+            @Param("vehicleId")Long vehicleId,
+            @Param("gateType") GateType gateType
+
+            );
 }

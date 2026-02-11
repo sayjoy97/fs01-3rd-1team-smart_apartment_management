@@ -1,6 +1,7 @@
 package com.jjld.domain.cargate.dao;
 
 import com.jjld.domain.cargate.entity.CargateEventLog;
+import com.jjld.domain.cargate.entity.Enum.GateType;
 import com.jjld.domain.cargate.repository.CargateEventLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,12 @@ public class CargateEventLogDAOImpl implements CargateEventLogDAO {
                 .orElseThrow(() -> new IllegalArgumentException("출입 로그 없음"));
     }
 
+    // vehicle_id별 가장 최근 데이터 가져오기(ENTRY)
+    @Override
+    public CargateEventLog findByVehicleIdTypeEntry(Long vehicle_id) {
+        return null;
+    }
+
     @Override
     public CargateEventLog findCargateEventLogById(Long id) {
         return cargateEventLogRepository.findByCargateEventId(id);
@@ -42,6 +49,13 @@ public class CargateEventLogDAOImpl implements CargateEventLogDAO {
     @Override
     public CargateEventLog createCargateLog(CargateEventLog entity) {
         return cargateEventLogRepository.save(entity);
+    }
+
+    // 출차 로그기록 조회
+    @Override
+    public CargateEventLog findVehicleByType(Long vehicleId, GateType gateType) {
+        return cargateEventLogRepository.findByVehicleIdToType(vehicleId, gateType)
+                .orElseThrow(() -> new IllegalStateException("Not Found"));
     }
 
 

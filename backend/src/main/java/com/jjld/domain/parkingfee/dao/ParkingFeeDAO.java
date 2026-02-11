@@ -1,5 +1,6 @@
 package com.jjld.domain.parkingfee.dao;
 
+import com.jjld.domain.parkingfee.entity.ParkingFeeHistory;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ public interface ParkingFeeDAO {
     // 조건 날짜별 누적금액 조회
     long getCountByType(LocalDateTime start, LocalDateTime end);
 
-
+    // 요금정산 내용추가
+    void createFeeHistory(ParkingFeeHistory feeHistoryEntity);
 
 }

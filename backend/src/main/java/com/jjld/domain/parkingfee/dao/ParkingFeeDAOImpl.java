@@ -1,6 +1,7 @@
 package com.jjld.domain.parkingfee.dao;
 
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
+import com.jjld.domain.parkingfee.entity.ParkingFeeHistory;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.domain.parkingfee.repository.ParkingFeeHistoryRepository;
 import com.jjld.domain.parkingfee.repository.ParkingFeeSettingRepository;
@@ -27,5 +28,11 @@ public class ParkingFeeDAOImpl implements ParkingFeeDAO {
     public long getCountByType(LocalDateTime start, LocalDateTime end) {
         ParkingStatus out = ParkingStatus.OUT;
         return feeHistoryRepository.getCountBySettingDay(out, start, end);
+    }
+
+    // 요금정산 내용추가
+    @Override
+    public void createFeeHistory(ParkingFeeHistory feeHistoryEntity) {
+        feeHistoryRepository.save(feeHistoryEntity);
     }
 }

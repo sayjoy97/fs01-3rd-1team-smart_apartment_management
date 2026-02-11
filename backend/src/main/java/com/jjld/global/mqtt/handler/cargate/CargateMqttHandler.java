@@ -32,15 +32,16 @@ public class CargateMqttHandler implements MqttMessageHandler {
 
         try{
             switch (serviceType){
-                case ENTRY:
-                case EXIT: {
-                    if(message[2].endsWith(".jpg")){
+                case ENTRY, EXIT:
+                    if (message[2].endsWith(".jpg")) {
                         cargateService.AddToTheAccessLog(payload, serviceType);
+                        break;
                     }
-                    break;
-                }
+                case PAYMENT:
+                    cargateService.FeeSettlement(payload, serviceType);
                 default:
                     log.info("잘못된 방식");
+                    break;
             }
 
         }catch (BusinessException e){
@@ -53,6 +54,5 @@ public class CargateMqttHandler implements MqttMessageHandler {
     @Override
     public MqttServiceType getServiceType() {
         return MqttServiceType.CARGATE;
-    }  // ------ 수정할 부분 ------
-    //                                                             [본인 기능]
+    }
 }
