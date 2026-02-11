@@ -1,6 +1,5 @@
 package com.jjld.domain.noise.service;
 
-import com.jjld.domain.house.entity.House;
 import com.jjld.domain.noise.entity.*;
 import com.jjld.domain.noise.entity.Enum.ProcessStatus;
 import com.jjld.domain.noise.repository.*;

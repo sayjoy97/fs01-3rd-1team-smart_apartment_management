@@ -33,7 +33,7 @@ public interface NoiseEventProcessRepository extends JpaRepository<NoiseEventPro
     Optional<NoiseEventProcess> findByNoiseEvent_NoiseEventId(Long noiseEventId);
 
     // 최근 N시간 내 같은 센서 이벤트 수 (재발 태그 계산용)
-    long countByNoiseEvent_NoiseSensorAndCreatedAtAfter(NoiseSensor sensor, ProcessStatus status, LocalDateTime after);
+    long countByNoiseEvent_NoiseSensorAndStatusAndCreatedAtAfter(NoiseSensor sensor, ProcessStatus status, LocalDateTime after);
 
     // 최근 N일간 긴급 이벤트 수 (상습 태그 계산용)
     long countByNoiseEvent_NoiseSensorAndUrgentBreakTrueAndCreatedAtAfter(NoiseSensor sensor, LocalDateTime after);

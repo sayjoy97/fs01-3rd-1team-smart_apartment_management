@@ -39,6 +39,7 @@ spring:
       # 토픽 등록 후 properties - MqttTopicProperties로 이동
       garden: "jjld/garden/#"
       elevator: "jjld/elevator/#"
+      energy: "jjld/energy/#"
 
   springdoc:
     cache:

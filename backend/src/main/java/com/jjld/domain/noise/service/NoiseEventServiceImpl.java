@@ -193,7 +193,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
         NoiseSensor sensor = process.getNoiseEvent().getNoiseSensor();
         LocalDateTime since = LocalDateTime.now().minusHours(24);
         long count = noiseEventProcessRepository
-                .countByNoiseEvent_NoiseSensorAndCreatedAtAfter(sensor, ProcessStatus.OBSERVING, since);
+                .countByNoiseEvent_NoiseSensorAndStatusAndCreatedAtAfter(sensor, ProcessStatus.OBSERVING, since);
         return count >= 3;
     }
     // 상습여부계산
