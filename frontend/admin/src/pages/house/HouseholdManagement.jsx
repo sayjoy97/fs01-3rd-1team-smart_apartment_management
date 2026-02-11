@@ -91,6 +91,9 @@ const HouseholdMangement = () => {
 
   // 저장
   const handleSave = async (houseId, formData) => {
+    console.log("넘기는 houseId:", formData.houseId);
+    console.log("type:", typeof formData.houseId);
+    console.log(formData);
     await hoouseManagement(houseId, formData);
     setIsModalOpen(false);
   };

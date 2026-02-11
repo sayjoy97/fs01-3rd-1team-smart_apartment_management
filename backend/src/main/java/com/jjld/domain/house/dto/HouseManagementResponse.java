@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseManagementResponse {
+    private Long houseId;
     private String householderName;
     private String householderPhone;
     private String householderEmail;

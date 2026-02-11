@@ -6,13 +6,14 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
   console.log("세대 상세: ", data);
 
   const [formData, setFormData] = useState({
+    houseId: data.houseId,
     householderName: data.householderName || "",
     householderPhone: data.householderPhone || "",
     householderEmail: data.householderEmail || "",
     entrancePass: data.entrancePass || "",
     moveInAt: data.moveInAt || "",
-    householdSize: 0,
-    cardUid: [],
+    householdSize: data.householdSize || 0,
+    cardUid: [data.cardUid],
   });
 
   const handleSaveClick = () => {
@@ -25,7 +26,8 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "householdSize" ? Number(value) : value,
+      cardUid: value ? [value] : [],
     }));
   };
 
@@ -41,14 +43,26 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
           세대주 이름
           <input
             name="householderName"
+            type="text"
             placeholder="세대주 이름 입력"
             value={formData.householderName}
             onChange={handleChange}
           />
         </p>
         <p>
+          이메일
+          <input
+            type="email"
+            name="householderEmail"
+            placeholder="이메일 입력"
+            value={formData.householderEmail}
+            onChange={handleChange}
+          />
+        </p>
+        <p>
           연락처
           <input
+            type="number"
             name="householderPhone"
             placeholder="연락처 입력 (-) 없이"
             value={formData.householderPhone}
@@ -59,6 +73,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
           공동현관 비밀번호
           <span style={{ fontSize: "12px" }}>* 공동현관 출입을 위한 비밀번호입니다</span>
           <input
+            type="password"
             name="entrancePass"
             placeholder="4자리 숫자 입력 (예: 1234)"
             value={formData.entrancePass}
@@ -68,6 +83,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
         <p>
           입주일
           <input
+            type="date"
             name="moveInAt"
             placeholder="연도-월-일"
             value={formData.moveInAt}
@@ -77,6 +93,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
         <p>
           세대원 수
           <input
+            type="number"
             name="householdSize"
             placeholder="세대원 수를 입력"
             value={formData.householdSize}
@@ -86,6 +103,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
         <p>
           RFID 출입카드
           <input
+            type="text"
             name="cardUid"
             placeholder="카드 리더기"
             value={formData.cardUid}
@@ -93,7 +111,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
           />
         </p>
         <button onClick={onClose}>닫기</button>
-        <button onClick={onSave}>저장</button>
+        <button onClick={handleSaveClick}>저장</button>
       </div>
     </div>
   );

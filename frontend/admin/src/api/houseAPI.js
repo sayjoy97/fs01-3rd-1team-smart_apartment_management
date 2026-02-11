@@ -21,6 +21,13 @@ export const houseAllList = async ({ houseDong, houseHo, householderName }) => {
 
 // 세대 관리
 export const hoouseManagement = async (houseId, inputData) => {
+  const { houseId: _, ...body } = inputData;
+
+  body.householdSize = Number(body.householdSize);
+
+  if (typeof body.cardUid === "string") {
+    body.cardUid = [body.cardUid];
+  }
   try {
     const response = await backendServer.put(request.houseInsert, inputData, {
       params: { houseId },
