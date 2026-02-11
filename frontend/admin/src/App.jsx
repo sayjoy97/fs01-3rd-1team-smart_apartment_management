@@ -7,6 +7,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import Dashboard from "./pages/dashboard/Dashboard";
 import HouseholdMangement from "./pages/house/HouseholdMangement";
 import ComplaintsPage from "./pages/complaint/ComplaintsPage";
+import NoisePage from "./pages/noise/NoisePage";
 
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
@@ -39,8 +40,9 @@ export default function App() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="/house" element={<HouseholdMangement />} />
-        <Route path="/complaint" element={<ComplaintsPage />} />
+        <Route path="house" element={<HouseholdMangement />} />
+        <Route path="complaint" element={<ComplaintsPage />} />
+        <Route path="noise" element={<NoisePage />} />
       </Route>
 
       {/* 그 외 전부 로그인으로 */}

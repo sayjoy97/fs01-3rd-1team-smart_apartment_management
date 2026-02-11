@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  Home,
   Users,
   FileText,
   MessageSquare,
