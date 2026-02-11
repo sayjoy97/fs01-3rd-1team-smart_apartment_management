@@ -1,0 +1,26 @@
+/* src/pages/noise/NoisePage.css */
+
+.noise-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.noise-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.noise-header p {
+  color: var(--color-muted-foreground);
+}
+
+.noise-controls button {
+  margin-right: 8px;
+}
+
+.noise-item {
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
