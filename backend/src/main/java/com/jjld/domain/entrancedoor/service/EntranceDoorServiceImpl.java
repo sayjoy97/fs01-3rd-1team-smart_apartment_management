@@ -44,6 +44,7 @@ public class EntranceDoorServiceImpl implements EntranceDoorService{
                             .orElse(null);
 
                     return new EntranceGateResponse(
+                            door.getDoorId(),
                             door.getHouseDong(),
                             door.getStatus().name(),
                             lastAccess

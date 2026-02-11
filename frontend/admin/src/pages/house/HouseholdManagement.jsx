@@ -53,7 +53,6 @@ const HouseholdMangement = () => {
   };
 
   useEffect(() => {
-    console.log("검색어:", searchKeyword);
     houseAllList({
       houseDong: filterHouseDong,
       houseHo: filterHouseHo,

@@ -18,6 +18,9 @@ const requests = {
   // 3) 공지사항
 
   // -------- 출입·보안 --------
+  // 1) 출입 관리
+  entranceLog: "/entrance/api/log", // 공동현관 출입기록
+  entraceDoorList: "/entrance/api/dong/list", // 세대별 공동 현관
 
   // -------- 시설 --------
 

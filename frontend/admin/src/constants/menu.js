@@ -47,7 +47,7 @@ export const menuStructure = [
     icon: DoorOpen,
     type: "dropdown",
     items: [
-      { id: "accesscontrol", label: "출입 관리", icon: DoorOpen },
+      { id: "accesscontrol", label: "출입 관리", icon: DoorOpen, path: "/entrance" },
       { id: "vehicles", label: "방문차량 관리", icon: Car },
     ],
   },

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EntranceGateResponse {
+    private Long doorId;
     private Integer houseDong;
     private String status;
     private LocalDateTime lastAccessTime;
