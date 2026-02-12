@@ -8,6 +8,7 @@ const requests = {
   // -------- 세대·입주민 --------
   // 1) 세대 관리
   houseList: "/house/api/list", // 세대 목록 조회
+  houseDetail: "/house/api/detail/${houseId}", // 세대 상세 조회
   houseInsert: "/house/api/insert", // 세대 관리 (등록, 수정, 초기화)
 
   // 2) 민원 관리

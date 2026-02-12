@@ -3,7 +3,7 @@ import "../../App.css";
 import "./HouseholdManagement.css";
 import { houseHoFilter } from "./houseHoFilter";
 import { Replace, SearchCheckIcon } from "lucide-react";
-import { hoouseManagement, houseAllList } from "../../api/houseAPI";
+import { hoouseManagement, houseAllList, houseDetail } from "../../api/houseAPI";
 import HouseholdDetailModal from "./modal/HouseholdDetailModal";
 
 // 아파트 동 매핑
@@ -40,7 +40,13 @@ const HouseholdMangement = () => {
 
   // 모달
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [managementHouse, setManagementHouse] = useState(null);
+  const [selectedHouse, setSelectedHouse] = useState(null);
+
+  // 새로고침
+  const [reload, setReload] = useState(0);
+
+  // 에러 표시
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleHouseHoChange = (e) => {
     setFilterHouseHo(e.target.value);
@@ -63,7 +69,7 @@ const HouseholdMangement = () => {
         setHouseList(res.data);
       })
       .catch((err) => console.log("세대 정보 조회중 오류 발생", err));
-  }, [filterHouseDong, filterHouseHo, searchKeyword]);
+  }, [filterHouseDong, filterHouseHo, searchKeyword, reload]);
 
   const list = houseList || [];
 
@@ -77,24 +83,33 @@ const HouseholdMangement = () => {
   const currentItems = list.slice(startIndex, startIndex + itemsPerPage);
 
   // 모달 열기
-  const openDetailModal = (houseData) => {
-    setDetailData(houseData);
-    setIsModalOpen(true);
+  const openDetailModal = async (houseId) => {
+    try {
+      const res = await houseDetail(houseId);
+      setErrorMsg("");
+      setSelectedHouse(res.data.data);
+      setIsModalOpen(true);
+    } catch (e) {
+      console.log("세대 상세조회 실패", e);
+    }
   };
 
   // 모달 닫기
   const closeModal = () => {
     setIsModalOpen(false);
-    setManagementHouse(null);
+    setSelectedHouse(null);
   };
 
   // 저장
   const handleSave = async (houseId, formData) => {
-    console.log("넘기는 houseId:", formData.houseId);
-    console.log("type:", typeof formData.houseId);
-    console.log(formData);
-    await hoouseManagement(houseId, formData);
-    setIsModalOpen(false);
+    try {
+      setErrorMsg("");
+      await hoouseManagement(houseId, formData);
+      setReload((r) => r + 1);
+      setIsModalOpen(false);
+    } catch (e) {
+      setErrorMsg(e.message);
+    }
   };
 
   console.log("값", list);
@@ -197,7 +212,7 @@ const HouseholdMangement = () => {
                       <td>{h.moveInAt}</td>
                       {h.houseStatus === true ? <td>거주중</td> : <td>공실</td>}
                       <td>
-                        <button onClick={() => openDetailModal(h)}>관리</button>
+                        <button onClick={() => openDetailModal(h.houseId)}>관리</button>
                       </td>
                     </tr>
                   ))
@@ -230,9 +245,10 @@ const HouseholdMangement = () => {
         {/* 세대 관리 모달 */}
         {isModalOpen && (
           <HouseholdDetailModal
-            data={detailData}
+            data={selectedHouse}
             onSave={handleSave}
             onClose={() => setIsModalOpen(false)}
+            errorMsg={errorMsg}
           />
         )}
       </div>

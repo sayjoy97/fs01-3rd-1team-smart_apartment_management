@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getEntranceDoor, getEntranceLog } from "../../api/entranceDoorAPI";
 import "../../App.css";
 import EntranceControlModal from "./modal/EntranceControlModal";
+import useMqtt from "../../hook/useMqtt";
 
 // 공동현관 매핑
 const entraceDoorOptions = [
@@ -40,6 +41,8 @@ const EntranceDoor = () => {
 
   const [doorList, setDoorList] = useState([]);
   const [logList, setLogList] = useState([]);
+
+  const { connectStatus, imageSrc, publish } = useMqtt();
 
   // 필터 조회 시 페이지 1로 초기화
   const handleHouseDongChange = (e) => {
@@ -206,14 +209,16 @@ const EntranceDoor = () => {
           </div>
         </div>
 
-        <EntranceControlModal
-          entrance={modalEntrance}
-          onConfirm={(doorId) => {
-            doorControl(doorId);
-            setModalEntrance(null);
-          }}
-          onClose={() => setModalEntrance(null)}
-        />
+        {modalEntrance && (
+          <EntranceControlModal
+            entrance={modalEntrance}
+            imageSrc={imageSrc}
+            onConfirm={(doorId) => {
+              doorControl(doorId);
+            }}
+            onClose={() => setModalEntrance(null)}
+          />
+        )}
       </div>
     </>
   );

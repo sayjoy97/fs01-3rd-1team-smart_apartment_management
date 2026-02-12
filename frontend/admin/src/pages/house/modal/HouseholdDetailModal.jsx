@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const HouseholdDetailModal = ({ data, onSave, onClose }) => {
+const HouseholdDetailModal = ({ data, onSave, onClose, errorMsg }) => {
   if (!data) return null;
 
   console.log("세대 상세: ", data);
@@ -13,11 +13,35 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
     entrancePass: data.entrancePass || "",
     moveInAt: data.moveInAt || "",
     householdSize: data.householdSize || 0,
-    cardUid: [data.cardUid],
+    cardUid: data.cardUid || [],
   });
+
+  const [cardInput, setCardInput] = useState("");
 
   const handleSaveClick = () => {
     onSave(data.houseId, formData);
+  };
+
+  const addCard = () => {
+    if (!cardInput.trim()) return;
+
+    if (formData.cardUid.includes(cardInput)) {
+      alert("이미 등록된 카드입니다.");
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      cardUid: [...prev.cardUid, cardInput],
+    }));
+
+    setCardInput("");
+  };
+
+  const removeCard = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      cardUid: prev.cardUid.filter((_, i) => i !== index),
+    }));
   };
 
   // input 변경
@@ -27,7 +51,6 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
     setFormData((prev) => ({
       ...prev,
       [name]: name === "householdSize" ? Number(value) : value,
-      cardUid: value ? [value] : [],
     }));
   };
 
@@ -62,7 +85,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
         <p>
           연락처
           <input
-            type="number"
+            type="text"
             name="householderPhone"
             placeholder="연락처 입력 (-) 없이"
             value={formData.householderPhone}
@@ -76,7 +99,7 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
             type="password"
             name="entrancePass"
             placeholder="4자리 숫자 입력 (예: 1234)"
-            value={formData.entrancePass}
+            value={formData.entrancePass.slice(0, 4)}
             onChange={handleChange}
           />
         </p>
@@ -100,16 +123,27 @@ const HouseholdDetailModal = ({ data, onSave, onClose }) => {
             onChange={handleChange}
           />
         </p>
-        <p>
-          RFID 출입카드
+        <p>RFID 출입카드 </p>
+        <div className="card-box">
           <input
             type="text"
-            name="cardUid"
-            placeholder="카드 리더기"
-            value={formData.cardUid}
-            onChange={handleChange}
+            placeholder="카드 리더기 UID"
+            value={cardInput}
+            onChange={(e) => setCardInput(e.target.value)}
           />
-        </p>
+          <button type="button" onClick={addCard}>
+            카드 추가
+          </button>
+        </div>
+        <div className="card-list">
+          {formData.cardUid.map((uid, idx) => (
+            <div key={idx} className="list">
+              <span>{uid}</span>
+              <button onClick={() => removeCard(idx)}>삭제</button>
+            </div>
+          ))}
+        </div>
+        {errorMsg && <div style={{ color: "red", marginTop: "12px" }}>{errorMsg}</div>}
         <button onClick={onClose}>닫기</button>
         <button onClick={handleSaveClick}>저장</button>
       </div>

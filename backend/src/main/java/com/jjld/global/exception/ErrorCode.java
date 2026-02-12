@@ -85,7 +85,7 @@ public enum ErrorCode {
     HOUSE_NOT_FOUND(HttpStatus.NOT_FOUND, "HOUSE_NOT_FOUND", "세대를 찾을 수 없습니다."),
     HOUSE_CARD_NOT_FOUND(HttpStatus.NOT_FOUND, "HOUSE_CARD_NOT_FOUND", "등록된 세대 카드를 찾을 수 없습니다"),
     USER_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_ACCOUNT_NOT_FOUND", "사용자 계정을 찾을 수 없습니다."),
-
+    CARD_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "CARD_ALREADY_ASSIGNED", "이미 다른 세대에 등록된 카드입니다"),
     // -------- Noise --------
     NOISE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOISE_NOT_FOUND", "소음을 찾을 수 없습니다."),
 

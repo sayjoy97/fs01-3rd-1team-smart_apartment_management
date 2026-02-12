@@ -19,6 +19,16 @@ export const houseAllList = async ({ houseDong, houseHo, householderName }) => {
   }
 };
 
+// 세대 상세
+export const houseDetail = async (houseId) => {
+  try {
+    const response = await backendServer.get(`/house/api/detail/${houseId}`);
+    return response;
+  } catch (error) {
+    console.error("세대 상세 중 에러발생", error);
+  }
+};
+
 // 세대 관리
 export const hoouseManagement = async (houseId, inputData) => {
   const { houseId: _, ...body } = inputData;
@@ -35,6 +45,9 @@ export const hoouseManagement = async (houseId, inputData) => {
 
     return response.data;
   } catch (error) {
-    console.error("세대 관리 중 에러발생: ", error);
+    const serverMsg = error.response?.data?.message;
+    console.error("세대 관리 중 에러발생: ", serverMsg);
+
+    throw new Error(serverMsg || "세대 등록 중 오류 발생");
   }
 };

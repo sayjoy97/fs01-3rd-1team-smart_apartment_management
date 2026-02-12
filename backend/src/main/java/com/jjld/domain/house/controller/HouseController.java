@@ -1,10 +1,7 @@
 package com.jjld.domain.house.controller;
 
 
-import com.jjld.domain.house.dto.EntranceCardResponse;
-import com.jjld.domain.house.dto.HouseManagementResponse;
-import com.jjld.domain.house.dto.HouseResponse;
-import com.jjld.domain.house.dto.HouseSearchCond;
+import com.jjld.domain.house.dto.*;
 import com.jjld.domain.house.service.EntranceCardService;
 import com.jjld.domain.house.service.HouseService;
 import com.jjld.global.response.ApiResponse;
@@ -32,6 +29,18 @@ public class HouseController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(houseList)
+        );
+    }
+
+    // 세대 상세 조회
+    @GetMapping("/detail/{houseId}")
+    @Operation(summary = "세대 상세 조회")
+    public ResponseEntity<?> getDetail(@PathVariable Long houseId){
+
+        HouseDetailResponse res = service.getDetail(houseId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(res)
         );
     }
 
