@@ -26,6 +26,24 @@ const requests = {
   // -------- 시설 --------
 
   // -------- 환경·에너지 --------
+  energyDashboard: "/energy/api/dashboard",
+
+  energyPolicyActive: "/energy/api/policy/active",
+  energyPolicyHistory: "/energy/api/policy/history",
+  energyPolicyCreate: "/energy/api/policy",
+
+  energyDeviceList: "/energy/api/devices",
+  energyDeviceCheckRequired: "/energy/api/devices/check-required",
+
+  energyDeviceDetail: (id) => `/energy/api/devices/${id}`,
+  energyDeviceStartCheck: (id) => `/energy/api/devices/${id}/start-check`,
+  energyDeviceCompleteCheck: (id) => `/energy/api/devices/${id}/complete-check`,
+  energyDeviceControl: (id) => `/energy/api/devices/${id}/control`,
+  energyDeviceControlLogs: (id) => `/energy/api/devices/${id}/control-logs`,
+  energyDeviceSavingResults: (id) => `/energy/api/devices/${id}/saving-results`,
+
+  energyUsageCreate: "/energy/api/usage",
+  energyMeasurementCreate: "/energy/api/measurement",
 
   // -------- 시스템 --------
 };
