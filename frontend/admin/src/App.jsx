@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {Routes, Route, Navigate} from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -11,9 +11,10 @@ import ComplaintsPage from "./pages/complaint/ComplaintsPage";
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
 // PrivateRoute 컴포넌트
-function PrivateRoute({ children }) {
-  const auth = localStorage.getItem("auth");
-  return auth ? children : <Navigate to="/login" replace />;
+function PrivateRoute({children}) {
+  const token = localStorage.getItem("accessToken"); // 🔥 이걸로 체크해야 함
+
+  return token ? children : <Navigate to="/login" replace />;
 }
 
 export default function App() {

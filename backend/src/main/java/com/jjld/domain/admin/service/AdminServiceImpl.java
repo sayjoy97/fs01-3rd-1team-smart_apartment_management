@@ -7,18 +7,27 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.Enum.AccessType;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.admin.entity.History;
+import com.jjld.domain.admin.security.AdminUserDetail;
 import com.jjld.domain.admin.specification.AdminSpecification;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.BadRequestException;
 import com.jjld.global.exception.businessexceptions.ConflictException;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +43,8 @@ public class AdminServiceImpl implements AdminService {
     private final HistoryDAO historyDAO;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider tokenProvider;
 
     // adminId를 이용해 관리자 조회
     @Override
@@ -146,50 +157,58 @@ public class AdminServiceImpl implements AdminService {
     }
 
     // 관리자 로그인
-    @Override
-    public LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest) {
-        // 프록시, 로드밸런서를 거치면 IP가 프록시 IP로 나올 수 있으므로 X-Forwarded-For 헤더 체크 필요
-        String ipAddress = servletRequest.getHeader("X-Forwarded-For");
-        if (ipAddress == null) {
-            ipAddress = servletRequest.getRemoteAddr();
-        }
-
-        Admin admin = adminDAO.findByAdminLoginId(loginAdminReq.getAdminLoginId()).orElse(null);
-
-        if (admin == null) {
-            log.info("아이디가 존재하지 않습니다.");
-            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-
-        if (!encoder.matches(loginAdminReq.getAdminPass(), admin.getAdminPass())) {
-            History history = History.builder()
-                    .admin(admin)
-                    .ipAddress(ipAddress)
-                    .accessType(AccessType.LOGIN)
-                    .success(false)
-                    .message("아이디 또는 비밀번호 불일치")
-                    .build();
-            historyDAO.createLog(history);
-            log.info("비밀번호가 틀렸습니다.");
-            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
-        }
-
-        History history = History.builder()
-                .admin(admin)
-                .ipAddress(ipAddress)
-                .accessType(AccessType.LOGIN)
-                .success(true)
-                .message("로그인 성공")
-                .build();
-        historyDAO.createLog(history);
-
-        admin.setState(true);
-        adminDAO.updateAdmin(admin);
-
-        LoginAdminRes response = modelMapper.map(admin, LoginAdminRes.class);
-
-        return response;
-    }
+//    @Override
+//    public LoginRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest) {
+//        try {
+//            UsernamePasswordAuthenticationToken token =
+//                    new UsernamePasswordAuthenticationToken(loginAdminReq.getAdminLoginId(), loginAdminReq.getAdminPass());
+//
+//            token.setDetails(loginAdminReq);
+//
+//            // 인증 수행
+//            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
+//            AdminUserDetail adminUserDetail = (AdminUserDetail) authentication.getPrincipal();
+//
+//            String jwtToken = tokenProvider.createToken(authentication);
+//
+//            String ipAddress = servletRequest.getHeader("X-Forwarded-For");
+//            if (ipAddress == null) {
+//                ipAddress = servletRequest.getRemoteAddr();
+//            }
+//
+//            Admin admin = adminUserDetail.getAdmin();
+//
+//            History history = History.builder()
+//                    .admin(admin)
+//                    .ipAddress(ipAddress)
+//                    .accessType(AccessType.LOGIN)
+//                    .success(true)
+//                    .message("로그인 성공")
+//                    .build();
+//            historyDAO.createLog(history);
+//
+//            admin.setState(true);
+//            adminDAO.updateAdmin(admin);
+//
+//            LoginAdminRes loginAdminRes = modelMapper.map(admin, LoginAdminRes.class);
+//
+//            LoginRes response = LoginRes.builder()
+//                    .accessToken(jwtToken)
+//                    .username(adminUserDetail.getUsername())
+//                    .roles(adminUserDetail.getAuthorities().stream()
+//                            .map(GrantedAuthority::getAuthority)
+//                            .toList())
+//                    .loginAdminRes(loginAdminRes)
+//                    .build();
+//
+//            return response;
+//        } catch (exception instanceof BadCredentialsException && admin != null) {
+//            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
+//        } catch (UsernameNotFoundException e) {
+//            // 🔥 아이디 or 비번 틀림
+//            throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
+//        }
+//    }
 
     // 관리자 최초 로그인 처리
     @Override

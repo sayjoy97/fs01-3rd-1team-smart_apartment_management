@@ -2,14 +2,21 @@ package com.jjld.domain.admin.controller;
 
 import com.jjld.domain.admin.dto.*;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
+import com.jjld.domain.admin.security.AdminUserDetail;
 import com.jjld.domain.admin.service.AdminService;
 import com.jjld.domain.admin.service.HistoryService;
 import com.jjld.global.response.ApiResponse;
+import com.jjld.global.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
@@ -21,6 +28,8 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
     private final HistoryService historyService;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider tokenProvider;
 
     // adminId를 이용해 관리자 조회
     @GetMapping("/{adminId}")
@@ -79,14 +88,25 @@ public class AdminController {
     }
 
     // 관리자 로그인
-    @PostMapping("admin/login")
-    public ResponseEntity<?> loginAdmin(
-            @Valid @RequestBody LoginAdminReq loginAdminReq,
-            HttpServletRequest servletRequest
-    ) {
-        LoginAdminRes response = adminService.loginAdmin(loginAdminReq, servletRequest);
-        return ResponseEntity.ok(ApiResponse.success(response));
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> loginAdmin(
+//            @Valid @RequestBody LoginAdminReq loginAdminReq,
+//            HttpServletRequest servletRequest
+//    ) {
+//        LoginAdminRes response = adminService.loginAdmin(loginAdminReq, servletRequest);
+//        return ResponseEntity.ok(ApiResponse.success(response));
+//    }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(
+//            @Valid @RequestBody LoginAdminReq loginAdminReq,
+//            HttpServletRequest servletRequest
+//    ) {
+//        LoginRes response = adminService.loginAdmin(loginAdminReq, servletRequest);
+//        return ResponseEntity.ok(ApiResponse.success(response));
+//    }
+
+
 
     // 관리자 최초 로그인 시 설정
     @PostMapping("/{adminId}/initial-setup")

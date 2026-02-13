@@ -1,0 +1,95 @@
+.container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: linear-gradient(to bottom right, #eff6ff, #e0e7ff);
+}
+
+/* 다크모드 대응 (html 또는 body에 dark 클래스가 있을 때) */
+:global(.dark) .container {
+  background: linear-gradient(to bottom right, #111827, #1f2937);
+}
+
+.loginBox {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 28rem;
+}
+
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.logoWrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.logoCircle {
+  background: var(--primary, #6366f1);
+  padding: 0.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoIcon {
+  width: 28px;
+  height: 28px;
+  color: var(--primary-foreground, white);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: var(--muted-foreground, #6b7280);
+  font-size: 0.9rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.loginButton {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.loginButton:hover {
+  background-color: #6a97c0;
+}
+
+.loginIcon {
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.testInfo {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted-foreground, #6b7280);
+}

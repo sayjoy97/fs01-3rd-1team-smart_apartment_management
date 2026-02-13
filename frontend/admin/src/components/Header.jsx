@@ -1,17 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Building2,
-  Moon,
-  Sun,
-  Bell,
-  UserCircle,
-  Settings,
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
+import {useEffect, useMemo, useState} from "react";
+import {useNavigate, useLocation} from "react-router-dom";
+import {Building2, Moon, Sun, Bell, UserCircle, Settings, LogOut, ChevronDown} from "lucide-react";
 
-import { menuStructure } from "../constants/menu";
+import {menuStructure} from "../constants/menu";
+import {logout} from "../api/admin/adminAPI";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -52,8 +44,25 @@ export default function Header() {
   }, [isDarkMode]);
 
   const handleLogout = () => {
+    logout(localStorage.getItem("adminId"))
+      .then((res) => {
+        console.log("로그아웃 성공");
+      })
+      .catch((err) => {
+        const status = err.response.status;
+        const {code, message} = err.response.data.error;
+
+        switch (code) {
+          case "ADMIN_NOT_FOUND":
+            alert(message);
+            break;
+          default:
+            alert("알 수 없는 오류가 발생했습니다.");
+        }
+      });
+
     localStorage.removeItem("auth");
-    navigate("/login", { replace: true });
+    navigate("/login", {replace: true});
   };
 
   const toggleDropdown = (groupId) => {
@@ -68,7 +77,7 @@ export default function Header() {
 
   const markAsRead = (id, e) => {
     e.stopPropagation();
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
+    setNotifications((prev) => prev.map((n) => (n.id === id ? {...n, unread: false} : n)));
   };
 
   const isActivePath = (menuId) => {

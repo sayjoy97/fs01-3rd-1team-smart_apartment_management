@@ -23,7 +23,7 @@ public interface AdminService {
 
     void updateAdmin(Long adminId, UpdateAdminReq updateAdminReq);
 
-    LoginAdminRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest);
+//    LoginRes loginAdmin(LoginAdminReq loginAdminReq, HttpServletRequest servletRequest);
 
     void initialSetupAdmin(Long adminId, SetupAdminReq setupAdminReq, HttpServletRequest servletRequest);
 
