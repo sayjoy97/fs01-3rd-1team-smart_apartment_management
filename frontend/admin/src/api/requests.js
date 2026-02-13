@@ -16,6 +16,14 @@ const requests = {
   complaintDetail: "/complaint/api/detail/${complaintId}",
 
   // 3) 공지사항
+  noticeAllList: "notices/api/list", // 전체 공지사항 조회
+  fixedNoticeList: "notices/api/fixed", // 고정 공지사항 조회
+  noticeBySearch: "notices/api/search", // 타입별 리스트 조회
+  noticeDetail: "notices/api/detail", // 공지사항 상세조회
+  noticeWrite: "notices/api/write", // 공지사항 작성
+  noticeUpdate: "notices/api/update", // 공지사항 수정
+  noticeDelete: "notices/api/delete", // 공지사항 삭제
+  noticeChangeFixStatus: "notices/api/fixStatus/change", // 공지사항 고정 상태변화
 
   // -------- 출입·보안 --------
 

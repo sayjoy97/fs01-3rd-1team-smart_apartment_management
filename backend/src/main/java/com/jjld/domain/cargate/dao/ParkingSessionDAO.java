@@ -1,7 +1,9 @@
 package com.jjld.domain.cargate.dao;
 
+import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.ParkingSession;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ParkingSessionDAO {
@@ -16,4 +18,7 @@ public interface ParkingSessionDAO {
 
     // 상태 출차로 수정
     void exitVehicleStatus(ParkingSession entity);
+
+    // 월평균 방문(미등록)차량 조회
+    long getUnRegisAverageCount(VehicleType vehicleType, LocalDateTime start);
 }
