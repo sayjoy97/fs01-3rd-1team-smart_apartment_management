@@ -1,0 +1,29 @@
+package com.jjld.domain.parkingfee.service;
+
+import com.jjld.domain.parkingfee.dto.*;
+
+import java.util.List;
+
+
+public interface ParkingFeeService {
+    // 차량 출입관리 페이지 출력용 금일+이번달 요금누적 조회
+    SimpleRateResponse getRateByType();
+
+    // 요금관리 페이지 상단 통합조회
+    AllInOneChargeViewResponse getAllInOneChargeView();
+
+    // 최근 30일 일별 누적금액 조회
+    List<Daily30TotalResponse> getDaily30Total();
+
+    // 최근 12개월 월별 누적금액 및 월별평균 조회
+    List<MonthlyTotalResponse> getMonthlyTotal();
+
+    // 최근 3년간 연간 누적금액 및 연간평균 조회
+    List<YearTotalResponse> getYearTotal();
+
+    // 현재 적용중인 요금설정 정보조회
+    FeeSettingResponse getFeeSetting();
+
+    // 요금설정 변경(새로 등록)
+    void createFeeSetting(FeeSettingRequest feeSettingRequest);
+}

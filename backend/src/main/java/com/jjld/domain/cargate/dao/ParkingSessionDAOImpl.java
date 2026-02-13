@@ -1,11 +1,13 @@
 package com.jjld.domain.cargate.dao;
 
 import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
+import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.ParkingSession;
 import com.jjld.domain.cargate.repository.ParkingSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -35,5 +37,11 @@ public class ParkingSessionDAOImpl implements ParkingSessionDAO {
     @Override
     public void exitVehicleStatus(ParkingSession entity) {
         parkingSessionRepository.save(entity);
+    }
+
+    // 월평균 방문(미등록)차량 조회
+    @Override
+    public long getUnRegisAverageCount(VehicleType vehicleType, LocalDateTime start) {
+        return parkingSessionRepository.findMonthlyAvgCount(vehicleType, start);
     }
 }

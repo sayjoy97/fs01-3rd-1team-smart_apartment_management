@@ -9,6 +9,7 @@ import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
+import com.jjld.domain.parkingfee.dao.ParkingFeeSettingDAO;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.global.mqtt.MqttPublish;
 import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
@@ -41,6 +42,7 @@ public class CargateServiceImpl implements CargateService {
     private final ApprovedDAO approvedDAO;
     private final ParkingFeeDAO parkingFeeDAO;
     private final CargateDAO cargateDAO;
+    private final ParkingFeeSettingDAO parkingFeeSettingDAO;
     private final HouseDAO houseDAO;
 
     private final MqttPublish mqttPublish;
@@ -175,7 +177,8 @@ public class CargateServiceImpl implements CargateService {
         Vehicle vehicle = log.getVehicle();
         ParkingSession ps = log.getParkingSession();
 
-        ParkingFeeSetting setting = parkingFeeDAO.findByFirstActive();
+
+        ParkingFeeSetting setting = parkingFeeSettingDAO.findAppliedSetting(ps.getEntryAt());
 
         int fee = calculateFee(stayMinutes, setting, ps.getEntryAt());
 
@@ -208,12 +211,10 @@ public class CargateServiceImpl implements CargateService {
         // 피크 요금 적용
         if (s.getPeakEnabled()) {
             LocalTime entryTime = entryAt.toLocalTime();
-            if (!entryTime.isBefore(s.getPeakStartTime())
-                    && !entryTime.isAfter(s.getPeakEndTime())) {
+            if (!entryTime.isBefore(s.getPeakStartTime()) && !entryTime.isAfter(s.getPeakEndTime())) {
 
-                long peakUnits = (long) Math.ceil(
-                        (double) extra / s.getPeakUnitMinutes()
-                );
+                long peakUnits = (long) Math.ceil((double) extra / s.getPeakUnitMinutes());
+
                 fee = s.getBaseCharge() + (int) peakUnits * s.getPeakUnitCharge();
             }
         }
