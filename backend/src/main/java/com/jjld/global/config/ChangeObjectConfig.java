@@ -16,9 +16,9 @@ public class ChangeObjectConfig {
         return mapper;
     }
 
-//    @Bean
-//    public ObjectMapper getObjectMapper() {
-//        ObjectMapper mapper = new ObjectMapper();
-//        return mapper;
-//    }
+    @Bean
+    public ObjectMapper getObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper;
+    }
 }

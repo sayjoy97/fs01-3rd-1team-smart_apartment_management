@@ -1,18 +1,14 @@
 package com.jjld.global.security;
 
 
-import com.jjld.domain.admin.dto.AdminRes;
-import com.jjld.domain.admin.dto.LoginAdminRes;
+import com.jjld.domain.admin.dto.AdminReq;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
 import com.jjld.domain.house.dto.login.UserLoginRequest;
-import com.jjld.domain.house.dto.login.UserLoginResponse;
 import com.jjld.domain.house.service.AccountDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -60,9 +55,9 @@ public class JwtTokenProvider {
         if(principal instanceof UserLoginRequest userLoginRequest){
             userId = userLoginRequest.getHouseholderEmail();
             role = "ROLE_USER";
-        }else if(principal instanceof AdminRes adminRes){
-            userId = adminRes.getAdminLoginId();
-            role = "ROLE_ADMIN";
+        }else if(principal instanceof AdminReq adminReq){
+            userId = adminReq.getAdminLoginId();
+            role = adminReq.getAdminRole().name();
         }else{
             userId = userInfo.getName();
             role = userInfo.getAuthorities().stream()

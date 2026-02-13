@@ -1,7 +1,11 @@
 import React from "react";
 
 const requests = {
-  // 로그인
+  // -------- 관리자 --------
+  // 1) 로그인·로그아웃
+  login: "/admin/api/login", // 로그인
+  initialSetupAdmin: "/admin/api/${adminId}/initial-setup", // 관리자 최초 로그인 시 설정
+  logout: (adminId) => `/admin/api/${adminId}/logout`, // 로그아웃
 
   // -------- 메인-대시보드 --------
 
