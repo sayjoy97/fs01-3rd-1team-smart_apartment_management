@@ -12,7 +12,7 @@ from ultralytics import YOLO
 
 class LicensePlateRecognizer:
     YOLO_CONF_THRESHOLD = 0.45
-    OCR_CONF_THRESHOLD = 0.45
+    OCR_CONF_THRESHOLD = 0.35
     FINAL_CONF_THRESHOLD = 0.30
 
     PLATE_PATTERN = re.compile(r"\d{2,3}[가-힣]\d{4}")
@@ -113,13 +113,18 @@ class LicensePlateRecognizer:
                 confs.append(conf)
 
         if not texts:
+            print("[OCR FILTERED TEXT] 없음")
             return None, 0.0
 
         joined = "".join(texts)
+        print(f"[OCR FILTERED TEXT] {joined}")
+
         match = self.PLATE_PATTERN.search(joined)
         if not match:
+            print("[PATTERN MATCH] 실패")
             return None, 0.0
 
+        print(f"[PATTERN MATCH] 성공: {match.group()}")
         return match.group(), sum(confs) / len(confs)
 
     # OCR 추출 실패시 리턴
@@ -168,6 +173,9 @@ class LicensePlateRecognizer:
                 low_text=0.4,
                 contrast_ths=0.4
             )
+
+            raw_texts = [r[1] for r in ocr_raw]
+            print(f"[OCR RAW TEXT] {raw_texts}")
 
             plate, ocr_conf = self.extract_plate_with_conf(
                 [(r[1], r[2]) for r in ocr_raw]

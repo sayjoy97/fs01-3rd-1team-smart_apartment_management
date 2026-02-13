@@ -6,26 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/license_plate/mymqtt.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/mymqtt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/CargateEventLogDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CarGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/Cargate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CargateEventLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/CargateEventLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/entity/ParkingSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/CargateRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/CargateRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/properties/MqttTopicProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/properties/MqttTopicProperties.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttServiceType.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttServiceType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttTopicRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/topic/MqttTopicRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/notice/controller/NoticeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/notice/controller/NoticeController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/api/noticeAPI.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/api/noticeAPI.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/api/requests.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/api/requests.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/constants/menu.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/constants/menu.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,34 +43,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.mymqtt.executor": "Run",
-    "Python.ocr_test.executor": "Run",
-    "Python.start.executor": "Run",
-    "Python.tset.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/ai-59",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.mymqtt.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ocr_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.start.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tset.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/ai-59&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Workspace\fs01-3rd-1team-smart_apartment_management\AI\license_plate" />
@@ -92,13 +79,14 @@
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\Koushim_yolov8-license-plate-detection" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.start">
     <configuration name="start" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ai" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
         <env name="AI_BROKER" value="192.168.14.68" />
         <env name="AI_IMAGE_PATH" value="C:\Users\Admin\Desktop\image_result" />
       </envs>
@@ -117,9 +105,37 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ai" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/license_plate" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/license_plate/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.test" />
+      <item itemvalue="Python.start" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.start" />
+        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
