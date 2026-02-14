@@ -29,11 +29,11 @@ public class ParkingSession {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "entry_cargate_id", referencedColumnName = "cargate_id")
-    private CarGate entryCarGate; // 입차한 게이트
+    private Cargate entryCargate; // 입차한 게이트
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exit_cargate_id", referencedColumnName = "cargate_id")
-    private CarGate exitCarGate; // 출차한 게이트
+    private Cargate exitCargate; // 출차한 게이트
 
     @Column(columnDefinition = "DATETIME")
     private LocalDateTime entryAt; // 입차시간
@@ -51,18 +51,18 @@ public class ParkingSession {
     private List<CargateEventLog> cargateEventLogs = new ArrayList<>();
 
     //입차 시
-    public static ParkingSession entry(Vehicle vehicle, CarGate carGate, LocalDateTime time) {
+    public static ParkingSession entry(Vehicle vehicle, Cargate carGate, LocalDateTime time) {
         return ParkingSession.builder()
                 .vehicle(vehicle)
-                .entryCarGate(carGate)
+                .entryCargate(carGate)
                 .entryAt(time)
                 .status(ParkingStatus.IN)
                 .build();
     }
 
     // 출차시
-    public void exit(CarGate carGate, LocalDateTime time) {
-        this.exitCarGate = carGate;
+    public void exit(Cargate carGate, LocalDateTime time) {
+        this.exitCargate = carGate;
         this.exitAt = time;
         this.status = ParkingStatus.OUT;
     }

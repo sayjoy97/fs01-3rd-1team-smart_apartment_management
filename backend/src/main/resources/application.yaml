@@ -28,6 +28,19 @@ spring:
 
     defer-datasource-initialization: true
 
+  mqtt:
+    url: tcp://localhost:1883  # 브로커의 주소
+    client-id: jjld-apartment-management2
+    topic:
+      # 발행(Publish)할 토픽
+      command: jjld/command
+      # 구독(Subscribe)할 토픽
+      # 예시 - [본인 기능]: "jjld/[본인 기능]/#"
+      # 토픽 등록 후 properties - MqttTopicProperties로 이동
+      garden: "jjld/garden/#"
+      elevator: "jjld/elevator/#"
+      cargate: "jjld/cargate/#"
+
   springdoc:
     cache:
       disabled: true              # 캐시 사용 여부
@@ -40,3 +53,8 @@ spring:
       path: /swagger.html         # Swagger UI 추가 접근 경로 => http://localhost:8080/swagger.html
       tags-sorter: alpha          # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
       operations-sorter: alpha    # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+
+jwt:
+  header: ${JWT_HEADER}
+  secret: ${JWT_SECRET}
+  token-valid-in-second: 3600000

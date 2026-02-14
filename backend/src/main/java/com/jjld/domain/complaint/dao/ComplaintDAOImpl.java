@@ -26,14 +26,14 @@ public class ComplaintDAOImpl implements ComplaintDAO{
 
     // 입주민 자신이 작성한 민원 상세 조회
     @Override
-    public Complaint findByHouseIdComplaintId(Long houseId, Long complaintId) {
-        return complaintRepository.findByComplaintIdAndHouse_HouseId(houseId, complaintId);
+    public Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId, String email) {
+        return complaintRepository.findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(complaintId, houseId, email);
     }
 
     // 입주민 민원 삭제
     @Override
-    public void deleteComplaint(Long complaintId) {
-        complaintRepository.deleteByComplaintId(complaintId);
+    public void deleteComplaint(Long complaintId, Long houseId, String email) {
+        complaintRepository.deleteByComplaintIdAndHouse_HouseIdAndHouseholderEmail(complaintId, houseId, email);
     }
 
     // 입주민 민원 수정

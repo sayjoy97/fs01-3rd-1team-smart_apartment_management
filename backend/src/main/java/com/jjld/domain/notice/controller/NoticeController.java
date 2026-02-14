@@ -84,9 +84,9 @@ public class NoticeController {
     }
 
     // 게시글 고정으로 바꾸기
-    @PutMapping("/{notice_id}/fixStatus/change")
+    @PutMapping("/fixStatus/change")
     @Operation( summary = "게시글 고정상태 변화")
-    public ResponseEntity<?> noticeChangeFixStatus(@PathVariable Long notice_id ){
+    public ResponseEntity<?> noticeChangeFixStatus(@RequestParam(name = "notice_id") Long notice_id ){
         noticeService.fixStatusChange(notice_id);
 
         return ResponseEntity.ok(ApiResponse.success("true"));

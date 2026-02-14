@@ -37,7 +37,7 @@ public class NoiseFlowServiceImpl implements NoiseFlowService {
         NoiseEventProcess process = NoiseEventProcess.builder()
                 .noiseEvent(noiseEvent)
                 .noisePolicy(policy)
-                .status(ProcessStatus.PENDING)
+                .status(ProcessStatus.UNPROCESSED)
                 .urgentBreak(analysis.getPolicyBreak())
                 .build();
         noiseEventProcessRepository.save(process);

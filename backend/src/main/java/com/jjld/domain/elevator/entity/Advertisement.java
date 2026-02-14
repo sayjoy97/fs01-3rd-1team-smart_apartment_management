@@ -4,7 +4,7 @@ import com.jjld.domain.admin.entity.Admin;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "advertisement")
@@ -28,8 +28,8 @@ public class Advertisement {
     private String advertisementContent;  // 광고 내용
 
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime advertisementStartDate;  // 계약 시작일
+    private LocalDate advertisementStartDate;  // 계약 시작일
 
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime advertisementEndDate;  // 계약 종료일
+    private LocalDate advertisementEndDate;  // 계약 종료일
 }

@@ -45,7 +45,7 @@ public class NoiseDashboardDAOImpl implements NoiseDashboardDAO {
     public long countWaitingNoiseEvent() {
         // ProcessStatus.PENDING (승인보류) 상태인 이벤트만 카운트
         return noiseEventProcessRepository
-                .countByStatus(ProcessStatus.PENDING);
+                .countByStatus(ProcessStatus.UNPROCESSED);
     }
     // 현재 시간대 판단(현재 활성화된 소음 정책 기준으로)
     @Override

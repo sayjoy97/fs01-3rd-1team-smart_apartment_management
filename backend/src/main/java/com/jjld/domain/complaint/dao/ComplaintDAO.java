@@ -12,10 +12,10 @@ public interface ComplaintDAO {
     void updateAnswer(Complaint complaint);
 
     // 입주민의 민원 상세 조회
-    Complaint findByHouseIdComplaintId(Long houseId, Long complaintId);
+    Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId, String email);
 
     // 입주민 민원 삭제
-    void deleteComplaint(Long complaintId);
+    void deleteComplaint(Long complaintId, Long houseId, String email);
 
     // 입주민 민원 수정
     void update(Complaint complaint);

@@ -1,6 +1,7 @@
 package com.jjld.domain.parkingfee.dao;
 
 import com.jjld.domain.parkingfee.dto.SelectedStat;
+import com.jjld.domain.parkingfee.entity.ParkingFeeHistory;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 
 import java.math.BigDecimal;
@@ -8,6 +9,9 @@ import java.time.*;
 import java.util.Map;
 
 public interface ParkingFeeDAO {
+
+    // 활성화된 주차요금 1건 조회
+    ParkingFeeSetting findByFirstActive();
 
     // 조건 날짜별 누적금액 조회
     long getCountByType(LocalDateTime start, LocalDateTime end);
@@ -26,5 +30,8 @@ public interface ParkingFeeDAO {
 
     // 최근 n년간 연간 누적금액 및 연간평균 조회
     Map<Year, SelectedStat> getYearlyRunningTotal(LocalDateTime startYear);
+
+    // 요금정산 내용추가
+    void createFeeHistory(ParkingFeeHistory feeHistoryEntity);
 
 }

@@ -3,6 +3,7 @@ package com.jjld.domain.cargate.service;
 import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.Vehicle;
+import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -54,4 +55,11 @@ public interface CargateService {
 
     // 관리자 승인차량 삭제
     Boolean deleteApprovedCar(Long vehicle_id);
+
+    // 입출차 처리
+    void AddToTheAccessLog(String payload, CargateServiceType serviceType);
+
+    // 요금 정산완료시 처리
+    void FeeSettlement(String payload, CargateServiceType serviceType);
+
 }

@@ -56,7 +56,6 @@ public class ParkingFeecontroller {
         return ResponseEntity.ok(ApiResponse.success(yearTotal));
     }
 
-
     // 주차 요금 설정 모달창 기본내용 조회
     @GetMapping("/charge/setting")
     ResponseEntity<?> getChargeSetting(){

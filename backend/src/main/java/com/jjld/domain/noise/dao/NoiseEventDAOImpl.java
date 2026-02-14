@@ -20,7 +20,7 @@ public class NoiseEventDAOImpl implements NoiseEventDAO {
     public Page<NoiseEventProcess> findUrgentNoiseEvent(Pageable pageable) {
         return noiseEventProcessRepository
                 .findByUrgentBreakTrueAndStatus(
-                        ProcessStatus.PENDING,
+                        ProcessStatus.UNPROCESSED,
                         pageable
                 );
     }
