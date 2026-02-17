@@ -98,6 +98,22 @@ const EntranceDoor = () => {
       .catch((err) => console.log("공동현관 출입 기록 조회중 오류 발생", err));
   }, [filterHouseDong, filterAccessType, currentPage]);
 
+  // 모달 열기
+  const openModal = (entrance) => {
+    setModalEntrance(entrance);
+    if (connectStatus === "connected") {
+      publish("jjld/entrance/door/gate_command/cam", "start");
+    }
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setModalEntrance(null);
+    if (connectStatus === "connected") {
+      publish("jjld/entrance/door/gate_command/cam", "stop");
+    }
+  };
+
   return (
     <>
       <div className="card-grid">
@@ -172,9 +188,8 @@ const EntranceDoor = () => {
                     list.map((l) => (
                       <tr key={l.accessLogId}>
                         <td>{l.accessedAt}</td>
-                        <td>
-                          {l.houseDong}동 {l.houseHo}호실
-                        </td>
+                        <td>{l.houseDong}동</td>
+                        <td>{l.houseHo}호실</td>
                         <td>{l.accessType}</td>
                         <td>{l.status}</td>
                       </tr>

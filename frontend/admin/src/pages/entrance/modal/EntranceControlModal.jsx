@@ -5,16 +5,7 @@ import useMqtt from "../../../hook/useMqtt";
 export default function EntranceControlModal({ entrance, imageSrc, onConfirm, onClose }) {
   const { connectStatus, publish } = useMqtt();
 
-  useEffect(() => {
-    if (connectStatus === "connected") {
-      publish("jjld/entrance/door/gate_command/cam", "start");
-    }
-    return () => {
-      if (connectStatus === "connected") {
-        publish("jjld/entrance/door/gate_command/cam", "stop");
-      }
-    };
-  }, [connectStatus, publish]);
+  console.log("imageSrc:", imageSrc);
 
   if (!entrance) return null;
   return (
@@ -26,7 +17,7 @@ export default function EntranceControlModal({ entrance, imageSrc, onConfirm, on
           {entrance.building} {entrance.location}
         </p>
         <div className="cctv">
-          <img src={imageSrc || null} alt="camera" className="cctv-view" />
+          <img src={imageSrc || " "} alt="camera" className="cctv-view" />
         </div>
 
         <button

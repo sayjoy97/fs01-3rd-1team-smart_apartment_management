@@ -14,7 +14,7 @@ const useMqtt = () => {
     const mqttClient = mqtt.connect(BROKER_URL, {
       clientId: `react_client_${Math.random().toString(16).substring(2, 8)}`,
       keepalive: 60,
-      protocolld: "MQTT",
+      protocolId: "MQTT",
       clean: true,
       reconnectPeriod: 1000,
       connectTimeout: 30 * 1000,
@@ -28,7 +28,7 @@ const useMqtt = () => {
     mqttClient.on("message", (topic, message) => {
       const payload = message.toString();
 
-      if (topic === "jjld/entrance/door/gate_command/cam") {
+      if (topic === "jjld/entrance/door/gate_command/cam/frame") {
         setImageState(`data:image/jpeg;base64,${payload}`);
         return;
       }
