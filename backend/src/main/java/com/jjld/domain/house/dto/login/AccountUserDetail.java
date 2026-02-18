@@ -19,6 +19,7 @@ public class AccountUserDetail implements UserDetails {
         return account;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

@@ -24,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ComplaintUserController {
     private final ComplaintUserService service;
 
