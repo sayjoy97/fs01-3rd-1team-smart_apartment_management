@@ -42,7 +42,7 @@ public class JWTSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/account/api/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/account/api/login","/complaint/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
@@ -64,7 +64,8 @@ public class JWTSecurityConfig {
                 "http://localhost:5173",
                 "http://192.168.14.59:5173",
                 "http://localhost:8081",
-                "http://localhost:8082"
+                "http://localhost:8082",
+                "http://localhost:9600"
         ));
 
         configurationSource.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

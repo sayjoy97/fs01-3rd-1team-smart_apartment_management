@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Redirect, router, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -20,5 +21,15 @@ export default function Index() {
     checkToekn();
   }, []);
 
-  if (loading) return null;
+  if (loading) {
+    return <View style={styles.container} />;
+  }
+  return null;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#eff6ff",
+  },
+});

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,5 +26,7 @@ public class ComplaintUserDetailResponse {
 
     private boolean canEdit;
     private boolean canDelete;
+
+    private List<ComplaintReferenceResponse> referencedComplaints;
 
 }

@@ -14,7 +14,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "complaint")
@@ -66,12 +68,16 @@ public class Complaint {
             fetch = FetchType.LAZY)
     private ComplaintReply complaintReply;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "complaint_reference",
             joinColumns = @JoinColumn(name = "complaint_id"),
             inverseJoinColumns = @JoinColumn(name = "reference_id")
     )
-    private List<Complaint> referenceComplaints = new ArrayList<>();
+    private Set<Complaint> referenceComplaints = new HashSet<>();
 
+    public void addReferenceComplaint(Complaint ref){
+        this.referenceComplaints.add(ref);
+    }
 }

@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
         String email = userDetail.getHouseholderEmail();
         Long houseId = userDetail.getAccount().getHouse().getHouseId();
 
-        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseIdAndHouseholderEmail(houseId, email);
+        List<Complaint> userComplaint = complaintRepository.findByHouse_HouseIdAndHouseholderEmailOrderByCreatedAtDesc(houseId, email);
         if(userComplaint.isEmpty()){
             throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "작성한 민원이 없습니다");
         }
@@ -90,6 +91,12 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .map(r -> r.getAnswer())
                 .orElse(null);
 
+        // 참조한 민원
+        List<ComplaintReferenceResponse> refs = complaint.getReferenceComplaints()
+                .stream()
+                .map(ref -> new ComplaintReferenceResponse(ref.getComplaintId(), ref.getTitle(), ref.getCategory().name(), ref.getContent()))
+                .collect(Collectors.toList());
+
         ComplaintUserDetailResponse userDetailResponse = ComplaintUserDetailResponse.builder()
                 .complaintId(complaint.getComplaintId())
                 .householderEmail(userDetail.getHouseholderEmail())
@@ -103,6 +110,8 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .canEdit(complaint.getStatus() == ComplaintStatus.WAITING)
                 .canDelete(complaint.getStatus() == ComplaintStatus.WAITING)
                 .build();
+
+        userDetailResponse.setReferencedComplaints(refs);
 
         return userDetailResponse;
     }
@@ -151,11 +160,12 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .title(userWrite.getTitle())
                 .category(ComplaintCategory.valueOf((userWrite.getCategory())))
                 .content(userWrite.getContent())
-                .referenceComplaints(reference)
                 .status(ComplaintStatus.WAITING)
                 .householderEmail(email)
                 .house(house)
                 .build();
+
+        reference.forEach(complaint::addReferenceComplaint);
 
         Complaint save = complaintRepository.save(complaint);
 
@@ -206,20 +216,21 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     complaint.setContent(complaintUserUpdate.getContent());
     complaint.setUpdatedAt(LocalDateTime.now());
 
-        if (complaintUserUpdate.getReferenceId() != null) {
-            List<Complaint> references = complaintUserUpdate.getReferenceId().stream()
-                    .map(refId -> {
-                        Complaint c = complaintRepository
-                                .findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(refId, houseId, householderEmail);
-                        if (c == null) {
-                            throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "참조할 민원이 없습니다.");
-                        }
-                        return c;
-                    })
-                    .collect(Collectors.toList());
+    complaint.getReferenceComplaints().clear();
 
-            complaint.setReferenceComplaints(references);
-        }
+    if(complaintUserUpdate.getReferenceId() != null){
+        complaintUserUpdate.getReferenceId().forEach(refId -> {
+            Complaint ref = complaintRepository
+                    .findById(refId)
+                    .orElseThrow(() -> new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND));
+
+            if(ref == null){
+                throw new NotFoundException(ErrorCode.COMPLAINT_NOT_FOUND, "참조할 민원이 없습니다.");
+            }
+
+            complaint.addReferenceComplaint(ref);
+        });
+    }
 
     complaintDAO.update(complaint);
     }

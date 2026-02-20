@@ -17,3 +17,17 @@ backendServer.interceptors.request.use(async (config) => {
 });
 
 export default backendServer;
+
+// 공통 에러 처리
+backendServer.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error?.message || "서버와 통신 중 오류가 발생했습니다.";
+
+      return Promise.reject(new Error(message));
+    }
+
+    return Promise.reject(error);
+  },
+);

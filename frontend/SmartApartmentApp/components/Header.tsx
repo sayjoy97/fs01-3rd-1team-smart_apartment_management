@@ -31,6 +31,7 @@ export default function Header({ title }: HeaderProps) {
         await AsyncStorage.setItem("currentUser", JSON.stringify(data));
       } catch (err: any) {
         console.log("로그인 사용자 정보 가져오기 실패: ", err.message);
+        router.replace("/login");
       }
     };
 

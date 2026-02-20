@@ -1,13 +1,12 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Tabs } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ComplaintScreen from ".";
 import ElevatorScreen from "./elevator";
 import NoticeScreen from "./notice";
 import MyInfoScreen from "./myinfo";
+import ComplaintScreen from ".";
 
 export default function TabLayout() {
   const Tabs = createBottomTabNavigator();

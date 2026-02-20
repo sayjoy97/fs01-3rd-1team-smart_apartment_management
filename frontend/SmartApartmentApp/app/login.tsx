@@ -1,17 +1,7 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  Button,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { changePasswordApi, loginApi } from "../api/authApi";
-import { saveToken } from "@/utils/tokenStorage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Building2, X } from "lucide-react";
 

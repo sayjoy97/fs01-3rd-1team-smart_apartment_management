@@ -25,7 +25,6 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/complaint/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ComplaintAdminController {
 
     private final ComplaintAdminServiceImpl service;

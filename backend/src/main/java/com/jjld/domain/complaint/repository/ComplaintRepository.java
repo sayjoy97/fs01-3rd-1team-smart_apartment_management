@@ -15,7 +15,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
     Complaint findByComplaintId(Long complaintId);
 
     // 로그인한 입주민 기준의 민원 목록 조회
-    List<Complaint> findByHouse_HouseIdAndHouseholderEmail(Long houseId, String email);
+    List<Complaint> findByHouse_HouseIdAndHouseholderEmailOrderByCreatedAtDesc(Long houseId, String email);
 
     // 로그인한 입주민 기준의 민원 상세 조회
     Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId,  String email);
