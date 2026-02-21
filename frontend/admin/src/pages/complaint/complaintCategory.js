@@ -3,5 +3,6 @@ export const CATEGORY_LABEL = {
   PARKING: "주차",
   FACILITY: "시설",
   NOISE: "소음",
-  ETC: "기타",
+  ELEVATOR: "엘리베이터",
+  OTHER: "기타",
 };

@@ -3,6 +3,8 @@ import { getEntranceDoor, getEntranceLog } from "../../api/entranceDoorAPI";
 import "../../App.css";
 import EntranceControlModal from "./modal/EntranceControlModal";
 import useMqtt from "../../hook/useMqtt";
+import "./EntranceDoor.css";
+import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 
 // 공동현관 매핑
 const entraceDoorOptions = [
@@ -21,6 +23,16 @@ const accessTypeOptions = [
   { label: "세대 호출", value: "HOUSE_CALL" },
   { label: "관리자 호출", value: "ADMIN_CALL" },
 ];
+
+// 출입 실패 유무 매핑
+const failReasonTypeMap = {
+  NONE: "정상 출입",
+  WRONG_PASSWORD: "잘못된 비밀번호",
+  INVALID_CARD: "유효하지 않은 카드",
+  LOST_CARD: "분실 카드",
+  EXPIRED_CARD: "만료된 카드",
+  SYSTEM_ERROR: "시스템 에러",
+};
 
 const EntranceDoor = () => {
   const [pageData, setPageData] = useState(null);
@@ -119,11 +131,17 @@ const EntranceDoor = () => {
       <div className="card-grid">
         {doorList.map((e) => (
           <div key={e.doorId} className="component">
-            <div className="card-title">{e.houseDong} 동</div>
-            <div className="card-body">최근 출입 시간: {e.lastAccessTime}</div>
-            <div className={e.status === "CLOSED" ? "badege lock" : "badege open"}>
-              {e.status === "CLOSED" ? "잠김" : "열림"}
+            <div className="row">
+              <div className="card-title">{e.houseDong} 동</div>
+              <div className={e.status === "CLOSED" ? "badge lock" : "badge open"}>
+                {e.status === "CLOSED" ? "잠김" : "열림"}
+              </div>
             </div>
+            <div className="card-body">
+              최근 제어 시간:{" "}
+              {e.lastAccessTime ? new Date(e.lastAccessTime).toLocaleTimeString() : "-"}
+            </div>
+
             <button className="control-btn" onClick={() => setModalEntrance(e)}>
               원격 제어
             </button>
@@ -171,8 +189,7 @@ const EntranceDoor = () => {
                 <thead>
                   <tr>
                     <th>출입 시간</th>
-                    <th>동</th>
-                    <th>호수</th>
+                    <th>동 / 호수</th>
                     <th>출입 유형</th>
                     <th>상태</th>
                   </tr>
@@ -187,11 +204,33 @@ const EntranceDoor = () => {
                   ) : (
                     list.map((l) => (
                       <tr key={l.accessLogId}>
-                        <td>{l.accessedAt}</td>
-                        <td>{l.houseDong}동</td>
-                        <td>{l.houseHo}호실</td>
-                        <td>{l.accessType}</td>
-                        <td>{l.status}</td>
+                        <td>{new Date(l.accessedAt).toLocaleString()}</td>
+                        <td>
+                          {l.houseDong}동 {l.houseHo}호실
+                        </td>
+                        <td>
+                          {accessTypeOptions.find((o) => o.value === l.accessType)?.label || "-"}
+                        </td>
+                        <td
+                          className={
+                            l.failReason && l.failReason !== "NONE"
+                              ? "fail-reason error"
+                              : "fail-reason"
+                          }
+                        >
+                          {l.failReason === "NONE" ? (
+                            <div className="row-icon">
+                              <FiCheckCircle className="icon" />
+                              {failReasonTypeMap[l.failReason]}
+                            </div>
+                          ) : (
+                            <div className="row-icon">
+                              <FiXCircle className="icon" />
+
+                              {failReasonTypeMap[l.failReason] || "-"}
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     ))
                   )}

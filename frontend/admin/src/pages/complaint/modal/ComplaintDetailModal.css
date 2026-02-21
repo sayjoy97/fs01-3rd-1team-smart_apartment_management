@@ -2,36 +2,230 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: auto;
 }
 
 .modal-box {
-  background-color: white;
-  padding: 20px;
-  width: 600px;
+  background-color: #fff;
+  border-radius: 12px;
+  width: 40%;
+  max-width: 800px;
   max-height: 90vh;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
 
-  overflow: hidden;
+.modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 .modal-content {
-  background: #f8f6f2;
-  padding: 12px;
-  border-radius: 1rem;
-  white-space: pre-wrap;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.modal-info-row {
+  display: flex;
+  gap: 24px;
+}
+
+.modal-info-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-info-item label {
+  display: block;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.modal-info-item p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #111827;
+}
+
+.modal-section {
+  margin-bottom: 16px;
+}
+
+.modal-section label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 4px;
+  color: #555;
 }
 
 .modal-text {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  color: #333;
+}
+
+.reference-item {
+  cursor: pointer;
+  color: #3b82f6;
+  margin-right: 8px;
+  display: inline-block;
+  font-weight: bold;
 }
 
 .modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.modal-footer button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #ccc;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.modal-footer button:hover {
+  background-color: #bbb;
+}
+
+.ai-summary {
+  background-color: #f3f6ff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid #b3d4fc;
+}
+
+.ai-summary label {
+  font-weight: bold;
+  color: #0d6efd;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.ai-summary .modal-text {
+  color: #0649ad;
+}
+
+.answer {
+  background-color: #e6f4ff;
+  padding: 12px;
+  border-radius: 6px;
+  color: #0b3d91;
+}
+
+.answer-date {
+  font-size: 0.8rem;
+  color: #0b3d91;
+  margin-top: 12px;
+}
+
+.answer-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+.modal-box::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.reference-modal-box {
+  background-color: "#fff";
+  border-radius: 12px;
+  padding: 20px 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.reference-modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.reference-modal-box p {
+  margin: 6px 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.reference-modal-box button {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: #5a8cb9;
+  color: "#f3f6ff";
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reference-modal-box button:hover {
+  background-color: #4a58a8;
+}
+
+.modal-box p {
+  line-height: 1.5;
+}
+
+.modal-box b {
+  color: #111;
+}
+
+.modal-box button,
+.reference-modal-box button {
+  padding: 8px 16px;
+}
+
+.modal-content button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #aaa;
 }

@@ -50,3 +50,15 @@ export const detailView = async (complaintId) => {
     alert("민원 상세 조회중 에러가 발생했습니다.");
   }
 };
+
+// 민원 요약 요청
+export const summaryRequest = async (complaintId) => {
+  try {
+    const response = await backendServer.post(`/complaint/api/${complaintId}/summary`);
+    console.log("요약 요청 완료", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("요약 요청 실패", error);
+    throw error;
+  }
+};

@@ -3,8 +3,11 @@ package com.jjld.domain.complaint.service;
 import com.jjld.domain.complaint.dao.ComplaintDAO;
 import com.jjld.domain.complaint.dto.user.*;
 import com.jjld.domain.complaint.entity.Complaint;
+import com.jjld.domain.complaint.entity.ComplaintAnalysis;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
+import com.jjld.domain.complaint.entity.Enum.SummaryStatus;
+import com.jjld.domain.complaint.repository.ComplaintAnalysisRepository;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
 import com.jjld.domain.house.entity.Account;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +38,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     private final ModelMapper modelMapper;
     private final HouseRepository houseRepository;
     private final AccountRepository accountRepository;
+    private final ComplaintAnalysisRepository complaintAnalysisRepository;
 
 
     // 세대별 작성한 민원 목록 조회
@@ -160,6 +165,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
                 .title(userWrite.getTitle())
                 .category(ComplaintCategory.valueOf((userWrite.getCategory())))
                 .content(userWrite.getContent())
+                .summaryStatus(SummaryStatus.WAITING)
                 .status(ComplaintStatus.WAITING)
                 .householderEmail(email)
                 .house(house)
@@ -193,6 +199,8 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
         for(Complaint ref : referenceComplaint){
             ref.getReferenceComplaints().remove(complaint);
         }
+
+
         // reference 초기화
         complaint.getReferenceComplaints().clear();
 
@@ -200,6 +208,7 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
     }
 
     // 민원 수정
+    @Transactional
     @Override
     public void updateComplaint(Long houseId, Long complaintId, String householderEmail, ComplaintUserUpdate complaintUserUpdate) {
     Complaint complaint = complaintRepository
@@ -231,6 +240,15 @@ public class ComplaintUserServiceImpl implements ComplaintUserService{
             complaint.addReferenceComplaint(ref);
         });
     }
+
+        // 기존 요약 삭제
+        ComplaintAnalysis analysis = complaint.getComplaintAnalysis();
+        if (analysis != null) {
+            complaint.setComplaintAnalysis(null);
+            complaintAnalysisRepository.delete(analysis);
+        }
+        // 요약 상태 재설정
+        complaint.updateContent(complaintUserUpdate.getContent());
 
     complaintDAO.update(complaint);
     }

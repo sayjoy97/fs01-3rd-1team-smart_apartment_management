@@ -28,6 +28,7 @@ const ComplaintsPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   // 전체 페이지
+  const [reload, setReload] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10;
   // 탭 토글
@@ -57,6 +58,11 @@ const ComplaintsPage = () => {
     }
   };
 
+  // 현재 페이지 다시 가져오기
+  const handleReplyComplete = () => {
+    setReload((r) => r + 1);
+  };
+
   // API 호출
   useEffect(() => {
     // 민원 목록 조회
@@ -68,7 +74,7 @@ const ComplaintsPage = () => {
     })
       .then((res) => setPageData(res))
       .catch((err) => console.log("민원 목록 조회 실패: ", err));
-  }, [filterCategory, filterStatus, currentPage]);
+  }, [filterCategory, filterStatus, currentPage, reload]);
 
   const list = pageData?.content || [];
 
@@ -236,7 +242,13 @@ const ComplaintsPage = () => {
           </>
         )}
         {/* 상세보기 */}
-        {isModalOpen && <ComplaintDetailModal data={selectedComplaint} onClose={closeModal} />}
+        {isModalOpen && (
+          <ComplaintDetailModal
+            data={selectedComplaint}
+            onClose={closeModal}
+            onReplyComplete={handleReplyComplete}
+          />
+        )}
       </div>
     </>
   );

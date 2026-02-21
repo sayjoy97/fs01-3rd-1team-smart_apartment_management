@@ -1,0 +1,145 @@
+.page {
+  padding: 30px;
+  background: #f5f6f8;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h2 {
+  margin: 20px 0 10px;
+}
+
+.card-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.filter {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.card-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 242px;
+  margin-top: 10px;
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  width: fit-content;
+  font-weight: 500;
+}
+
+.lock {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.open {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.control-btn {
+  margin-top: 15px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background-color: #5a8cb9;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.control-btn:hover {
+  background-color: #325578;
+}
+
+.fail-reason {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  width: fit-content;
+  font-weight: 500;
+  color: #16a34a;
+}
+
+.fail-reason.error {
+  color: #dc2626;
+}
+
+.row-icon {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  gap: 8px;
+}
+
+.complaint-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.complaint-table-head {
+  background: var(--background);
+}
+
+.complaint-table th,
+.complaint-table td {
+  border: 1px solid var(--card-border);
+  padding: 10px;
+}
+
+.complaint-table th {
+  font-weight: 600;
+}
+
+.complaint-table tbody tr:hover {
+  background-color: var(--background);
+}
+
+.modal-bg {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inset: 0;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

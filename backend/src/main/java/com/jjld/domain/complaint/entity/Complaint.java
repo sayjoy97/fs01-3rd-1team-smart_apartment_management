@@ -3,6 +3,7 @@ package com.jjld.domain.complaint.entity;
 import com.jjld.domain.complaint.dto.user.ComplaintUserUpdate;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
+import com.jjld.domain.complaint.entity.Enum.SummaryStatus;
 import com.jjld.domain.house.entity.House;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -68,6 +69,10 @@ public class Complaint {
             fetch = FetchType.LAZY)
     private ComplaintReply complaintReply;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SummaryStatus summaryStatus;
+
     @Builder.Default
     @ManyToMany
     @JoinTable(
@@ -79,5 +84,20 @@ public class Complaint {
 
     public void addReferenceComplaint(Complaint ref){
         this.referenceComplaints.add(ref);
+    }
+
+    // 민원 수정 시 상태 재설정
+    public void updateContent(String newContent){
+        this.content = newContent;
+
+        if(newContent.length() < 100){
+            this.summaryStatus = SummaryStatus.NOT_REQUIRED;
+        }else{
+            this.summaryStatus = SummaryStatus.WAITING;
+        }
+    }
+
+    public void summaryCompleted(){
+        this.summaryStatus = SummaryStatus.COMPLETED;
     }
 }

@@ -72,4 +72,14 @@ public class ComplaintAdminController {
         );
     }
 
+
+    // 관리자 요약 요청
+    @PostMapping("/{complaintId}/summary")
+    @Operation(summary = "관리자 민원 요약 요청")
+    public ResponseEntity<?> requestSummary(@PathVariable Long complaintId){
+        service.generateSummary(complaintId);
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK));
+    }
+
 }
