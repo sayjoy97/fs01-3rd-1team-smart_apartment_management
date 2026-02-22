@@ -52,16 +52,16 @@ export const getLogDetail = async ({ cargate_event_log_id }) => {
 // 출입기록 로그별 정보수정
 export const getUpdateLogData = async ({ cargate_event_log_id }, updateData) => {
   try {
-    const params = {};
-    params.cargate_event_log_id = cargate_event_log_id;
+    const response = await backendServer.put(
+      requests.updateLogData,
+      updateData, // body
+      { params: { cargate_event_log_id } }, // params
+    );
 
-    const response = await backendServer.put(requests.updateLogData, { params }, updateData);
-
-    console.log("API응답: ", response);
-
-    return response;
+    console.log("API응답:", response.data);
+    return response.data;
   } catch (error) {
-    console.error(cargate_event_log_id, ": 출입기록 로그별 정보수정 도중 에러발생: ", error);
+    console.error("정보수정 실패:", error);
   }
 };
 

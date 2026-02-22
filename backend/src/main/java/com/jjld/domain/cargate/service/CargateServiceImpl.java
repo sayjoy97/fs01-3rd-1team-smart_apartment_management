@@ -134,6 +134,7 @@ public class CargateServiceImpl implements CargateService {
         return LogDetailByRegisResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -156,6 +157,7 @@ public class CargateServiceImpl implements CargateService {
         return LogDetailByApprovedResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -182,6 +184,7 @@ public class CargateServiceImpl implements CargateService {
         return LogDetailByUnRegisResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -282,8 +285,14 @@ public class CargateServiceImpl implements CargateService {
 
                 break;
             case REGISTERED:
+                String houseInfo = request.getHouseInfo().replace("동", "").replace("호", "");
+                String[] info = houseInfo.split(" ");
+                Integer Dong = Integer.valueOf(info[0]);
+                Integer Ho = Integer.valueOf(info[1]);
+
+
                 RegisteredCar updateEntity = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
-                House findHouse = houseDAO.findHouseId(request.getHouseId());
+                House findHouse = houseDAO.findByHouseInfo(Dong, Ho);
 
                 updateEntity.setVehicleOwner(request.getVehicleOwner());
                 updateEntity.setHouse(findHouse);
@@ -361,16 +370,22 @@ public class CargateServiceImpl implements CargateService {
 
     // 세대 등록차량일 때 필요한 작업내용
     @Override
-    public void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest req) {
+    public void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest request) {
         Vehicle managedVehicle = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
-        if (req.getHouseId() == null) {
+        if (request.getHouseInfo() == null) {
             throw new IllegalArgumentException("세대 정보 필수");
         }
 
+        String houseInfo = request.getHouseInfo().replace("동", "").replace("호", "");
+        String[] info = houseInfo.split(" ");
+        Integer Dong = Integer.valueOf(info[0]);
+        Integer Ho = Integer.valueOf(info[1]);
+        House findHouse = houseDAO.findByHouseInfo(Dong, Ho);
+
         RegisteredCar registeredCar = RegisteredCar.builder()
                 .vehicle(managedVehicle)
-                .house(houseDAO.findHouseId(req.getHouseId()))
-                .vehicleOwner(req.getVehicleOwner())
+                .house(findHouse)
+                .vehicleOwner(request.getVehicleOwner())
                 .build();
 
         registeredDAO.createRegisteredCar(registeredCar);

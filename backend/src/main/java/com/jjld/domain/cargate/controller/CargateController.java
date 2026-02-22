@@ -17,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/cargate/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class CargateController {
     private final CargateService cargateService;
 

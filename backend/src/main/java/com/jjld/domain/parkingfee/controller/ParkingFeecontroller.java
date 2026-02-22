@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/parkingfee/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ParkingFeecontroller {
     private final ParkingFeeService parkingFeeService;
 
@@ -64,7 +65,7 @@ public class ParkingFeecontroller {
     }
 
     // 주차 요금 설정 수정
-    @PostMapping("/charge/setting")
+    @PostMapping("/charge/setting/update")
     ResponseEntity<?> updateChargeSetting(@RequestBody FeeSettingRequest request){
         parkingFeeService.createFeeSetting(request);
         return ResponseEntity.ok(ApiResponse.success("주차요금 수정 성공"));
