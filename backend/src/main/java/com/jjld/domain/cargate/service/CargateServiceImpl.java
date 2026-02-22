@@ -14,7 +14,6 @@ import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.global.mqtt.MqttPublish;
 import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -46,8 +45,6 @@ public class CargateServiceImpl implements CargateService {
     private final HouseDAO houseDAO;
 
     private final MqttPublish mqttPublish;
-
-    private final ModelMapper modelMapper;
 
     // 최근 7일 차량 출입현황 리스트 조회
     @Override
@@ -400,27 +397,21 @@ public class CargateServiceImpl implements CargateService {
 
     // 세대 등록차량 조회
     @Override
-    public List<RegisCarResponse> getRegisteredCars() {
-        List<RegisteredCar> registeredList = registeredDAO.findRegisteredList();
+    public Page<RegisCarListResponse> getRegisteredCars(int size, int page) {
 
-        List<RegisCarResponse> result = new ArrayList<>();
-        for (RegisteredCar car : registeredList) {
-            result.add(RegisCarResponse.builder()
-                    .id(car.getId())
-                    .plateNumber(car.getVehicle().getPlateNumber())
-                    .vehicleOwner(car.getVehicleOwner())
-                    .houseDong(car.getHouse().getHouseDong())
-                    .houseHo(car.getHouse().getHouseHo())
-                    .vehicleType(car.getVehicle().getVehicleType())
-                    .createdAt(car.getCreatedAt())
-                    .build()
-            );
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        // 최신순으로 정렬
-        return result.stream()
-                .sorted(Comparator.comparing(RegisCarResponse::getCreatedAt).reversed())
-                .toList();
+        return registeredDAO.findRegisteredList(pageable).map(
+                entity -> RegisCarListResponse.builder()
+                        .id(entity.getId())
+                        .plateNumber(entity.getVehicle().getPlateNumber())
+                        .vehicleOwner(entity.getVehicleOwner())
+                        .houseDong(entity.getHouse().getHouseDong())
+                        .houseHo(entity.getHouse().getHouseHo())
+                        .vehicleType(entity.getVehicle().getVehicleType())
+                        .createdAt(entity.getCreatedAt())
+                        .build()
+        );
     }
 
     // 세대 등록차량 상세정보 조회
@@ -464,16 +455,17 @@ public class CargateServiceImpl implements CargateService {
 
     // 관리자 승인차량 조회 리스트
     @Override
-    public List<ApprovedCarResponse> ApprovedCarList() {
+    public Page<ApprovedCarListResponse> ApprovedCarList(int size, int page) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        return approvedDAO.ApprovedCarList().stream()
-                .map(car -> ApprovedCarResponse.builder()
-                        .id(car.getId())
-                        .plateNumber(car.getVehicle().getPlateNumber())
-                        .currentStatus(car.getCurrentStatus())
-                        .craetedAt(car.getCreatedAt())
-                        .build())
-                .toList();
+        return approvedDAO.ApprovedCarList(pageable).map(
+                entity -> ApprovedCarListResponse.builder()
+                .id(entity.getId())
+                .plateNumber(entity.getVehicle().getPlateNumber())
+                .currentStatus(entity.getCurrentStatus())
+                .craetedAt(entity.getCreatedAt())
+                .build()
+        );
     }
 
     // 관리자 승인차량 상세정보 조회
@@ -537,7 +529,7 @@ public class CargateServiceImpl implements CargateService {
         // 처리결과 : 시간
         LocalDateTime resultTime = LocalDateTime.parse(timeStr, formatter);
 
-        // 처리결과 : 차량번호
+        // 처리결과 : 차량번호.jpg에서 차량번호만 추출
         String plateNumber = payload.split("_")[3].split("\\.")[0];
 
         // 차량 유형별로 찾기
@@ -566,8 +558,10 @@ public class CargateServiceImpl implements CargateService {
 
             topic = "jjld/cargate/entry/gate_command";
 
+            // 게이트 오픈 메세지 브로커로 pub
             mqttPublish.sandToMqtt(message, topic);
 
+            // parking_session 엔티티에 입차내용 등록
             ParkingSession sessionInfo = parkingSessionDAO.createSessionInfo(ParkingSession.builder()
                     .vehicle(findVehicle)
                     .entryCargate(cg)
@@ -588,38 +582,78 @@ public class CargateServiceImpl implements CargateService {
             );
 
         }
+
         // 출차시
         else if (cg.getCargateId() == 2){
             topic = "jjld/cargate/exit/gate_command";
 
+            // 유형에 따라 요금부여를 위해
             switch (findVehicle.getVehicleType()){
+                // 세대등록 및 관리자 승인차량은 게이트 오픈명령 보내고 출차기록 데이터 추가
                 case REGISTERED, ADMIN_APPROVED:
                     message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
+
+                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
+                    ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+
+                    psEntity.exit(cg, resultTime);
+
+                    // 출차기록 추가
+                    parkingSessionDAO.exitVehicleStatus(psEntity);
+
+                    // cargate_event_log 엔티티에 출차기록 추가
+                    CargateEventLog logEntity = CargateEventLog.builder()
+                            .carGate(cg)
+                            .vehicle(findVehicle)
+                            .parkingSession(psEntity)
+                            .gateType(GateType.EXIT)
+                            .eventAt(resultTime)
+                            .imagePath(imgPath)
+                            .build();
+
+                    cargateEventLogDAO.createCargateLog(logEntity);
+
                     break;
+
+                // 미등록 차량은 요금정산 요청 메세지 보내기
                 case UNREGISTERED:
-                    message = "request_payment_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
+                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
+                    ParkingSession psEntity1 = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+
+                    // 출차요청 시간과 입차시간 비교
+                    LocalTime entry = psEntity1.getEntryAt().toLocalTime();
+                    int entryMinuite = entry.getHour()*60 + entry.getMinute();
+                    int resultMinuite = resultTime.toLocalTime().getHour()*60 + resultTime.toLocalTime().getMinute();
+                    int result = resultMinuite-entryMinuite;
+                    if (result <= 30){
+                        message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType()+ "_" + result;
+                    }
+                    else{
+                        message = "request_payment_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
+                    }
+
             }
 
+            // 각 유형별 다른 메세지를 담은 토픽 브로커로 pub
             mqttPublish.sandToMqtt(message, topic);
-
-            ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
-
-            psEntity.exit(cg, resultTime);
-
-            parkingSessionDAO.exitVehicleStatus(psEntity);
-
-            CargateEventLog logEntity = CargateEventLog.builder()
-                    .carGate(cg)
-                    .vehicle(findVehicle)
-                    .parkingSession(psEntity)
-                    .gateType(GateType.EXIT)
-                    .eventAt(resultTime)
-                    .imagePath(imgPath)
-                    .build();
-
-            cargateEventLogDAO.createCargateLog(logEntity);
         }
 
+    }
+
+    private long FeeCount(LocalTime entryAt, LocalTime endAt){
+
+        // 현재 활성화상태인 요금정산 찾기
+        ParkingFeeSetting byFirstActive = parkingFeeDAO.findByFirstActive();
+
+        // 입차시간 출차시간 "분"으로 바꾸기
+        int entryM = entryAt.getHour()*60 + entryAt.getMinute();
+        int endM = endAt.getHour()*60 + endAt.getMinute();
+
+        if (byFirstActive.getPeakEnabled()){
+            return 0;
+        } else{
+            return 0;
+        }
     }
 
     // 요금 정산완료시 처리
@@ -634,7 +668,7 @@ public class CargateServiceImpl implements CargateService {
         // log엔티티에서 해당정보 찾기
         cargateEventLogDAO.findVehicleByType(findVehicle.getVehicleId(), GateType.EXIT);
 
-        // 현재 활성화상태인 요금정산 찾기
-        ParkingFeeSetting byFirstActive = parkingFeeDAO.findByFirstActive();
+
+
     }
 }

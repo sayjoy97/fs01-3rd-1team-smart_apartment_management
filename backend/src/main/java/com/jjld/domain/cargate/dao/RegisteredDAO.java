@@ -1,8 +1,8 @@
 package com.jjld.domain.cargate.dao;
 
 import com.jjld.domain.cargate.entity.RegisteredCar;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface RegisteredDAO {
 
@@ -10,7 +10,7 @@ public interface RegisteredDAO {
     RegisteredCar createRegisteredCar(RegisteredCar registeredCar);
 
     // 세대 등록차량 조회
-    List<RegisteredCar> findRegisteredList();
+    Page<RegisteredCar> findRegisteredList(Pageable pageable);
 
     // 세대 등록차량 상세조회
     RegisteredCar findByVehicle_VehicleId(Long vehicle_id);

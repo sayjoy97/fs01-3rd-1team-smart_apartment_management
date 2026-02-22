@@ -1,0 +1,79 @@
+.detail-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+}
+
+.detail-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+}
+
+/* 상단 */
+.detail-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.right-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* 제목 */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.title-input {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* 메타 */
+.meta {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+/* 내용 */
+.content {
+  min-height: 200px;
+  line-height: 1.6;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px;
+}
+
+/* 버튼 */
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background: white;
+}
+
+.btn-blue {
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+}

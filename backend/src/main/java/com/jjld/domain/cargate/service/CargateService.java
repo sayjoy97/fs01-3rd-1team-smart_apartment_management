@@ -7,7 +7,6 @@ import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 public interface CargateService {
@@ -22,7 +21,7 @@ public interface CargateService {
     LogDetailBaseResponse getLogDetail(Long logId);
 
     // 로그기록 내 정보수정
-    void updateVehicleByLog( Long cargateEventId, VehicleRelatedRequest req);
+    void updateVehicleByLog(Long cargateEventId, VehicleRelatedRequest req);
 
     // 차량정보 등록(세대 차량등록과 관리자 승인차량 한번에 관리)
     Long registerVehicle(VehicleRelatedRequest req);
@@ -34,7 +33,7 @@ public interface CargateService {
     void registerApprovedVehicle(Vehicle vehicle, VehicleRelatedRequest req);
 
     // 세대 등록차량 조회
-    List<RegisCarResponse> getRegisteredCars();
+    Page<RegisCarListResponse> getRegisteredCars(int size, int page);
 
     // 세대 등록차량 상세정보 조회
     RegisCarDetailResponse getRegisCarDetail(Long vehicle_id);
@@ -45,7 +44,7 @@ public interface CargateService {
     boolean deleteRegisCar(Long vehicle_id);
 
     // 관리자 승인차량 조회 리스트
-    List<ApprovedCarResponse> ApprovedCarList();
+    Page<ApprovedCarListResponse> ApprovedCarList(int size, int page);
 
     // 관리자 승인차량 상세정보 조회
     ApprovedCarDetailResponse getApprovedCarDetail(Long vehicle_id);

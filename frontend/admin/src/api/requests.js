@@ -27,6 +27,20 @@ const requests = {
 
   // -------- 출입·보안 --------
 
+  // 3) 차량 출입관리
+  lastWeekByTypeList: "cargate/api/lastweek", // 최근 7일 유형별 카운트 조회
+  cargateRecordList: "cargate/api/gateRecord/list", // 백엔드 페이지네이션을 이용한 차량출입기록 전체기록 조회
+  entryExitLogDetail: "cargate/api/update", // 차량 출입기록 상세정보 조회
+  updateLogData: "cargate/api/update", // 출입기록 로그별 정보수정
+  carRegisterByType: "cargate/api/register", // 차량 유형별 등록
+  registeredCarList: "cargate/api/registeredCar/list", // 세대 등록차량 조회
+  registeredCarDetail: "cargate/api/registeredCar/detail", // 세대 등록차량 상세정보 조회
+  deleteRegisteredCar: "cargate/api/registeredCar/delete", // 세대 등록차량 정보삭제
+  approvedCarList: "cargate/api/approvedCar/list", // 관리자 승인차량 조회
+  approvedCarDetail: "cargate/api/approvedCar/detail", // 관리자 승인차량 상세정보 조회
+  updateApprovedCar: "cargate/api/approvedCar/update", // 관리자 승인차량 수정
+  deleteApprovedCar: "cargate/api/approvedCar/delete", // 관리자 승인차량 삭제
+
   // -------- 시설 --------
 
   // -------- 환경·에너지 --------

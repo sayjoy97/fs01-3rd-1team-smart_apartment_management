@@ -34,17 +34,15 @@ export const fixedNoticeList = async () => {
 };
 
 // 타입별 리스트 조회
-export const searchNocticeList = async ({ search_type, keyword }) => {
+export const searchNocticeList = async ({ search_type, keyword, page, size }) => {
   try {
-    const params = {};
-    params.search_type = search_type;
-    params.keyword = keyword;
+    const params = { search_type, keyword, page, size };
 
     const response = await backendServer.get(requests.noticeBySearch, { params });
 
     console.log("API응답: ", response.data);
 
-    return response.data;
+    return response;
   } catch (error) {
     console.error("타입별 공지사항 리스트 호출 도중 에러발생: ", error);
     return [];
@@ -52,12 +50,11 @@ export const searchNocticeList = async ({ search_type, keyword }) => {
 };
 
 // 공지사항 상세조회
-export const noticeDetail = async ({ notice_id }) => {
+export const noticeDetail = async (notice_id) => {
   try {
-    const params = {};
-    params.notice_id = notice_id;
-
-    const response = await backendServer.get(requests.noticeDetail, { params });
+    const response = await backendServer.get(requests.noticeDetail, {
+      params: { notice_id: notice_id },
+    });
 
     console.log("API응답: ", response.data);
 
@@ -83,7 +80,7 @@ export const noticeWrite = async (writeData) => {
 // 공지사항 수정
 export const noticeUpdate = async (updateData) => {
   try {
-    const response = await backendServer.put(requests.noticeWrite, updateData);
+    const response = await backendServer.put(requests.noticeUpdate, updateData);
 
     return response;
   } catch (error) {
@@ -98,7 +95,7 @@ export const noticeDelete = async ({ notice_id }) => {
     const params = {};
     params.notice_id = notice_id;
 
-    const response = await backendServer.delete(requests.noticeWrite, params);
+    const response = await backendServer.delete(requests.noticeDelete, { params });
 
     return response;
   } catch (error) {
@@ -110,10 +107,11 @@ export const noticeDelete = async ({ notice_id }) => {
 // 공지사항 고정 상태변화
 export const noticeFixedChange = async ({ notice_id }) => {
   try {
-    const params = {};
-    params.notice_id = notice_id;
+    console.log("공지사항 고정 상태변화 API 호출, notice_id: ", notice_id);
 
-    const response = await backendServer.put(requests.noticeChangeFixStatus, params);
+    const response = await backendServer.put(requests.noticeChangeFixStatus, null, {
+      params: { notice_id: notice_id },
+    });
 
     return response;
   } catch (error) {
