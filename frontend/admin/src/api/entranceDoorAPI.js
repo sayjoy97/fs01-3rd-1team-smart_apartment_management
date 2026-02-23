@@ -12,6 +12,19 @@ export const getEntranceDoor = async () => {
   }
 };
 
+// 공동현관 상태 변경
+export const changeStatusDoor = async (doorId, status) => {
+  try {
+    const url = request.entranceStatusChange.replace("{doorId}", doorId);
+
+    const response = await backendServer.patch(url, { status });
+    return response.data;
+  } catch (error) {
+    console.error("에러발생: ", error);
+    return [];
+  }
+};
+
 // 공동현관 출입기록
 export const getEntranceLog = async ({ houseDong, accessType, page, size }) => {
   try {

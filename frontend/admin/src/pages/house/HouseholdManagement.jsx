@@ -5,6 +5,7 @@ import { houseHoFilter } from "./houseHoFilter";
 import { Replace, SearchCheckIcon } from "lucide-react";
 import { hoouseManagement, houseAllList, houseDetail } from "../../api/houseAPI";
 import HouseholdDetailModal from "./modal/HouseholdDetailModal";
+import useMqtt from "../../hook/useMqtt";
 
 // 아파트 동 매핑
 const houseDongOptions = [
@@ -48,6 +49,8 @@ const HouseholdMangement = () => {
   // 에러 표시
   const [errorMsg, setErrorMsg] = useState("");
 
+  const { connectStatus, rfidUid, publish } = useMqtt("ws://localhost:9001");
+
   const handleHouseHoChange = (e) => {
     setFilterHouseHo(e.target.value);
     setCurrentPage(1);
@@ -82,6 +85,13 @@ const HouseholdMangement = () => {
   // 현재 페이지 데이터
   const currentItems = list.slice(startIndex, startIndex + itemsPerPage);
 
+  // 제어 함수
+  const controlHouseDevice = (device, command) => {
+    if (connectStatus !== "connected") return;
+
+    const topic = `jjld/house/000/${device}/control`;
+    publish(topic, command);
+  };
   // 모달 열기
   const openDetailModal = async (houseId) => {
     try {
@@ -89,6 +99,8 @@ const HouseholdMangement = () => {
       setErrorMsg("");
       setSelectedHouse(res.data.data);
       setIsModalOpen(true);
+
+      controlHouseDevice("card", "start");
     } catch (e) {
       console.log("세대 상세조회 실패", e);
     }
@@ -96,6 +108,8 @@ const HouseholdMangement = () => {
 
   // 모달 닫기
   const closeModal = () => {
+    controlHouseDevice("card", "stop");
+
     setIsModalOpen(false);
     setSelectedHouse(null);
   };
@@ -113,12 +127,18 @@ const HouseholdMangement = () => {
   };
 
   console.log("값", list);
+
+  const falseCnt = list ? list.filter((item) => item.houseStatus === false).length : 0;
+  const trueCnt = list ? list.filter((item) => item.houseStatus === true).length : 0;
+
   return (
     <>
       <div className="component">
         <div className="title">
           <h2>세대 목록</h2>
-          <p className="info">총 세대 (거주중: , 공실: )</p>
+          <p className="info">
+            총 세대 (거주중: {trueCnt} | 공실: {falseCnt})
+          </p>
         </div>
         <div className="filter">
           <div className="check">
@@ -247,7 +267,8 @@ const HouseholdMangement = () => {
           <HouseholdDetailModal
             data={selectedHouse}
             onSave={handleSave}
-            onClose={() => setIsModalOpen(false)}
+            onClose={closeModal}
+            rfidUid={rfidUid}
             errorMsg={errorMsg}
           />
         )}

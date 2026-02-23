@@ -1,5 +1,6 @@
 package com.jjld.domain.entrancedoor.controller;
 
+import com.jjld.domain.entrancedoor.dto.DoorStatusRequest;
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogSearchCond;
 import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
@@ -8,6 +9,7 @@ import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,21 @@ public class EntranceController {
 
         return ResponseEntity.ok(
                 ApiResponse.success(dongList)
+        );
+    }
+
+    // 세대 동 상태 변경
+    @PatchMapping("/doors/{doorId}/status")
+    public ResponseEntity<?> updateDoorStatus(
+            @PathVariable Long doorId,
+            @RequestBody DoorStatusRequest request
+            ){
+        String status = request.getStatus();
+
+        service.updateDoorStatus(doorId, status);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK)
         );
     }
 

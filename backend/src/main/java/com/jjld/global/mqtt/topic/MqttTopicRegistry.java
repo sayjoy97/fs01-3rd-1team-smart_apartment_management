@@ -21,7 +21,10 @@ public class MqttTopicRegistry {
         topicMap = Map.of(
                 // 예시 - MqttServiceType.[본인 기능], properties.get[본인 기능](),
                 MqttServiceType.GARDEN, properties.getGarden(),
-                MqttServiceType.ELEVATOR, properties.getElevator()
+                MqttServiceType.ELEVATOR, properties.getElevator(),
+
+                MqttServiceType.ENTRANCE, properties.getEntrance()
+
 
 
                 // 작성 후 handler 패키지에 본인 기능 패키지를 만듦

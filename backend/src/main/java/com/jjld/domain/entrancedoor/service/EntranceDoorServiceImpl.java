@@ -1,5 +1,6 @@
 package com.jjld.domain.entrancedoor.service;
 
+import com.jjld.domain.admin.dao.AdminDAOImpl;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
@@ -8,6 +9,8 @@ import com.jjld.domain.entrancedoor.dto.EntranceGateResponse;
 import com.jjld.domain.entrancedoor.entity.EntranceDoor;
 import com.jjld.domain.entrancedoor.entity.EntranceGateLog;
 import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
+import com.jjld.domain.entrancedoor.entity.Enum.FailReason;
+import com.jjld.domain.entrancedoor.entity.Enum.FrontDoorStatus;
 import com.jjld.domain.entrancedoor.repository.EntranceDoorRepository;
 import com.jjld.domain.entrancedoor.repository.EntranceGateLogRepository;
 import com.jjld.global.exception.ErrorCode;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +34,7 @@ public class EntranceDoorServiceImpl implements EntranceDoorService{
     private final EntranceDoorRepository doorRepository;
     private final EntranceGateLogRepository gateLogRepository;
     private final AdminRepository adminRepository;
+    private final AdminDAOImpl adminDAOImpl;
 
     // 세대 동 조회
     @Override
@@ -39,7 +44,8 @@ public class EntranceDoorServiceImpl implements EntranceDoorService{
         return doors.stream()
                 .map(door -> {
                     // 최근 출입시간 조회
-                    LocalDateTime lastAccess = gateLogRepository.findTopByHouse_HouseDongAndOutcomeTrueOrderByAccessedAtDesc(door.getHouseDong())
+                    LocalDateTime lastAccess =
+                            gateLogRepository.findTopByHouseDongAndOutcomeTrueOrderByAccessedAtDesc(door.getHouseDong())
                             .map(EntranceGateLog::getAccessedAt)
                             .orElse(null);
 
@@ -51,6 +57,29 @@ public class EntranceDoorServiceImpl implements EntranceDoorService{
                     );
                 })
                 .toList();
+    }
+
+    // 공동현관 상태 변경
+    @Override
+    @Transactional
+    public void updateDoorStatus(Long doorId, String status) {
+        EntranceDoor door = doorRepository.findById(doorId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.DOOR_GATE_NOT_FOUND, "세대 동을 찾을 수 없습니다."));
+
+
+
+        FrontDoorStatus newStatus = FrontDoorStatus.valueOf(status);
+        door.changeStatus(newStatus);
+
+        if(newStatus == FrontDoorStatus.OPEN){EntranceGateLog log = EntranceGateLog.builder()
+                .houseDong(door.getHouseDong())
+                .accessType(AccessType.REMOTE_CONTROL)
+                .outcome(true)
+                .failReason(FailReason.NONE)
+                .build();
+
+        gateLogRepository.save(log);
+        }
     }
 
     // 공동현관 출입 로그 페이징 조회

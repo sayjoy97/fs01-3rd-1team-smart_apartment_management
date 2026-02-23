@@ -25,8 +25,8 @@ public class EntranceGateLogResponse {
 
     public EntranceGateLogResponse(EntranceGateLog log, String adminName) {
         this.accessLogId = log.getAccessLogId();
-        this.houseDong = log.getHouse().getHouseDong();
-        this.houseHo = log.getHouse().getHouseHo();
+        this.houseDong = log.getHouseDong();
+        this.houseHo = log.getHouseHo();
         this.accessedAt = log.getAccessedAt();
         this.adminName = adminName;
         this.accessType = log.getAccessType().name();

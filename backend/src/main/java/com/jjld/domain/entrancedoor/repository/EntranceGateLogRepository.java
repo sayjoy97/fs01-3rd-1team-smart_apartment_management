@@ -10,6 +10,5 @@ import java.util.Optional;
 
 public interface EntranceGateLogRepository extends JpaRepository<EntranceGateLog, Long>, JpaSpecificationExecutor<EntranceGateLog> {
     // 동의 가장 최근 성공 출입
-    Optional<EntranceGateLog> findTopByHouse_HouseDongAndOutcomeTrueOrderByAccessedAtDesc(Integer dong);
-
+    Optional<EntranceGateLog> findTopByHouseDongAndOutcomeTrueOrderByAccessedAtDesc(Integer houseDong);
 }

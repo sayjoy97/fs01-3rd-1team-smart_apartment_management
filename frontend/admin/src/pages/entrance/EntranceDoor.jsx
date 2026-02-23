@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getEntranceDoor, getEntranceLog } from "../../api/entranceDoorAPI";
+import { changeStatusDoor, getEntranceDoor, getEntranceLog } from "../../api/entranceDoorAPI";
 import "../../App.css";
 import EntranceControlModal from "./modal/EntranceControlModal";
 import useMqtt from "../../hook/useMqtt";
@@ -22,6 +22,7 @@ const accessTypeOptions = [
   { label: "공동현관 비밀번호", value: "RESIDENT_PASSWORD" },
   { label: "세대 호출", value: "HOUSE_CALL" },
   { label: "관리자 호출", value: "ADMIN_CALL" },
+  { label: "관리자 원격 제어", value: "REMOTE_CONTROL" },
 ];
 
 // 출입 실패 유무 매핑
@@ -52,10 +53,10 @@ const EntranceDoor = () => {
   const [filterAccessType, setFilterAccessType] = useState("");
 
   const [doorList, setDoorList] = useState([]);
+
   const [logList, setLogList] = useState([]);
 
-  const { connectStatus, imageSrc, publish } = useMqtt();
-
+  const { connectStatus, imageSrc, setImageState, publish } = useMqtt("ws://localhost:9001");
   // 필터 조회 시 페이지 1로 초기화
   const handleHouseDongChange = (e) => {
     setFilterHouseDong(e.target.value);
@@ -79,13 +80,6 @@ const EntranceDoor = () => {
 
   // 모달
   const [modalEntrance, setModalEntrance] = useState(null);
-  const doorControl = (doorId) => {
-    setEntrances((prev) =>
-      prev.map((e) =>
-        e.doorId === doorId ? { ...e, status: e.status === "CLOSED" ? "OPENED" : "CLOSED" } : e,
-      ),
-    );
-  };
 
   useEffect(() => {
     getEntranceDoor()
@@ -110,19 +104,59 @@ const EntranceDoor = () => {
       .catch((err) => console.log("공동현관 출입 기록 조회중 오류 발생", err));
   }, [filterHouseDong, filterAccessType, currentPage]);
 
+  const controlDevice = (dong, device, command) => {
+    if (connectStatus !== "connected") return;
+
+    const topic = `jjld/entrance/${dong}/${device}/control`;
+    publish(topic, command);
+  };
+
   // 모달 열기
   const openModal = (entrance) => {
+    setImageState("");
     setModalEntrance(entrance);
-    if (connectStatus === "connected") {
-      publish("jjld/entrance/door/gate_command/cam", "start");
-    }
+    controlDevice(entrance.houseDong, "cam", "start");
   };
 
   // 모달 닫기
   const closeModal = () => {
+    if (modalEntrance) {
+      console.log(modalEntrance);
+      controlDevice(modalEntrance.houseDong, "cam", "stop");
+    }
+
+    setImageState("");
     setModalEntrance(null);
-    if (connectStatus === "connected") {
-      publish("jjld/entrance/door/gate_command/cam", "stop");
+  };
+
+  const handleDoorStatusChange = async (doorId, newStatus) => {
+    try {
+      await changeStatusDoor(doorId, newStatus);
+
+      const [doorRes, logRes] = await Promise.all([
+        getEntranceDoor(),
+        getEntranceLog({
+          houseDong: filterHouseDong,
+          accessType: filterAccessType,
+          page: currentPage,
+          size: itemsPerPage,
+        }),
+      ]);
+
+      setDoorList(doorRes.data || []);
+
+      setPageData({ ...logRes });
+
+      const doorArray = doorRes.data || [];
+      setModalEntrance((prev) => {
+        if (!prev) return null;
+        const updated = doorArray.find((e) => String(e.doorId) === String(doorId));
+        return updated ? { ...prev, ...updated } : prev;
+      });
+
+      alert("원격 제어를 성공했습니다.");
+    } catch (err) {
+      console.error("제어 에러:", err);
     }
   };
 
@@ -138,11 +172,10 @@ const EntranceDoor = () => {
               </div>
             </div>
             <div className="card-body">
-              최근 제어 시간:{" "}
-              {e.lastAccessTime ? new Date(e.lastAccessTime).toLocaleTimeString() : "-"}
+              최근 open: {e.lastAccessTime ? new Date(e.lastAccessTime).toLocaleString() : "-"}
             </div>
 
-            <button className="control-btn" onClick={() => setModalEntrance(e)}>
+            <button className="control-btn" onClick={() => openModal(e)}>
               원격 제어
             </button>
           </div>
@@ -206,7 +239,7 @@ const EntranceDoor = () => {
                       <tr key={l.accessLogId}>
                         <td>{new Date(l.accessedAt).toLocaleString()}</td>
                         <td>
-                          {l.houseDong}동 {l.houseHo}호실
+                          {l.houseDong}동 {!l.houseHo ? "" : `${l.houseHo} 호실`}
                         </td>
                         <td>
                           {accessTypeOptions.find((o) => o.value === l.accessType)?.label || "-"}
@@ -267,10 +300,9 @@ const EntranceDoor = () => {
           <EntranceControlModal
             entrance={modalEntrance}
             imageSrc={imageSrc}
-            onConfirm={(doorId) => {
-              doorControl(doorId);
-            }}
-            onClose={() => setModalEntrance(null)}
+            publish={publish}
+            onConfirm={handleDoorStatusChange}
+            onClose={closeModal}
           />
         )}
       </div>

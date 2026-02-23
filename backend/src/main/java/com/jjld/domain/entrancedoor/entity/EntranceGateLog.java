@@ -25,9 +25,8 @@ public class EntranceGateLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accessLogId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_id", nullable = false)
-    private House house;
+    private Integer houseDong;
+    private Integer houseHo;
 
     @ManyToOne
     @JoinColumn(name = "card_id")

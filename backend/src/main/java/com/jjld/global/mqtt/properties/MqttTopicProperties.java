@@ -13,6 +13,8 @@ public class MqttTopicProperties {
     private String garden;
     private String elevator;
 
+    private String entrance;
+
 
 
     // 작성 후 topic - MqttTopicRegistry로 이동

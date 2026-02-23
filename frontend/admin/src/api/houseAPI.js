@@ -45,7 +45,7 @@ export const hoouseManagement = async (houseId, inputData) => {
 
     return response.data;
   } catch (error) {
-    const serverMsg = error.response?.data?.message;
+    const serverMsg = error?.response?.data?.error?.message;
     console.error("세대 관리 중 에러발생: ", serverMsg);
 
     throw new Error(serverMsg || "세대 등록 중 오류 발생");

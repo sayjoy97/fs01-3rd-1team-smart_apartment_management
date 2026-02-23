@@ -11,7 +11,10 @@ public interface EntranceDoorService {
     // 세대 동 조회
     List<EntranceGateResponse> findAll();
 
+    // 세대 동 상태 변경
+    void updateDoorStatus(Long doorId, String status);
+
     // 공동현관 출입 로그 페이징 조회
     Page<EntranceGateLogResponse> search(EntranceGateLogSearchCond cond, int page, int size);
-    
+
 }

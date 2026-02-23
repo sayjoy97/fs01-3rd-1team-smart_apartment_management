@@ -9,7 +9,7 @@ public class EntranceGateLogSpecification {
     public static Specification<EntranceGateLog> equalHouseDong(Integer houseDong){
         return (root, query, cb) ->
                 houseDong == null ? null:
-                        cb.equal(root.join("house").get("houseDong"), houseDong);
+                        cb.equal(root.get("houseDong"), houseDong);
     }
 
     // 출입 유형으로 조회

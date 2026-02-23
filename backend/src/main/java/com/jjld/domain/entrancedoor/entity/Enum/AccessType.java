@@ -5,5 +5,6 @@ public enum AccessType {
     RESIDENT_PASSWORD,
     HOUSE_CALL,
     ADMIN_CALL,
-    VISITOR
+    VISITOR,
+    REMOTE_CONTROL,
 }

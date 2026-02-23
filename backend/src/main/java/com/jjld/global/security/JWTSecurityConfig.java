@@ -42,7 +42,7 @@ public class JWTSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/account/api/login","/complaint/api/**","/entrance/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/account/api/login","/house/api/**","/complaint/api/**","/entrance/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
@@ -64,11 +64,10 @@ public class JWTSecurityConfig {
                 "http://localhost:5173",
                 "http://192.168.14.59:5173",
                 "http://localhost:8081",
-                "http://localhost:8082",
                 "http://localhost:9600"
         ));
 
-        configurationSource.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configurationSource.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configurationSource.setAllowedHeaders(List.of("*"));
         configurationSource.setAllowCredentials(true);
         configurationSource.addExposedHeader("Authorization");
@@ -78,15 +77,4 @@ public class JWTSecurityConfig {
         return source;
     }
 
-    //스프링에서 인식하는 정적 리소스가 저장된 폴더를 스프링 시큐리티에서 제외하기
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
-        return web -> {
-            web.ignoring()
-                    .requestMatchers(
-                            PathRequest.toStaticResources().atCommonLocations()
-                    );
-        };
-    }
 }
