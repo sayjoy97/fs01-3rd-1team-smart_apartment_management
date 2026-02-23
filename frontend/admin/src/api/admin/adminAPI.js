@@ -3,10 +3,12 @@ import requests from "../requests";
 
 // 관리자 로그인 API
 export const login = async (loginForm) => {
+  console.log("api 호출전");
   try {
     const response = await backendServer.post(requests.login, loginForm);
+    console.log("api 호출후");
 
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.log("에러 발생:", error.response.data);
     throw error;
