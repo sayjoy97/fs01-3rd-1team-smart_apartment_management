@@ -7,6 +7,10 @@ import LoginPage from "./pages/auth/LoginPage";
 import Dashboard from "./pages/dashboard/Dashboard";
 import HouseholdMangement from "./pages/house/HouseholdMangement";
 import ComplaintsPage from "./pages/complaint/ComplaintsPage";
+import MyPage from "./pages/mypage/MyPage";
+import AdminsPage from "./pages/admins/AdminsPage";
+import ElevatorPage from "./pages/elevator/ElevatorPage";
+import {toast} from "sonner";
 import NoisePage from "./pages/noise/NoisePage";
 import HabitualPage from "./pages/noise/HabitualPage";
 import EnergyPage from "./pages/energy/EnergyPage";
@@ -19,10 +23,26 @@ import { FeeDetailPage } from "./pages/cargate/FeeDetailPage";
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
 // PrivateRoute 컴포넌트
-function PrivateRoute({ children }) {
-  const token = localStorage.getItem("accessToken"); // 🔥 이걸로 체크해야 함
+function PrivateRoute({children}) {
+  const token = localStorage.getItem("accessToken");
 
   return token ? children : <Navigate to="/login" replace />;
+}
+
+// RoleRoute 컴포넌트
+function RoleRoute({children}) {
+  const userRole = localStorage.getItem("roles");
+
+  if (!userRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (userRole.includes("SUPER_ADMIN") || userRole.includes("ACTING_ADMIN")) {
+    return children;
+  }
+
+  toast.error("접근 권한이 없습니다");
+  return <Navigate to="/" replace />;
 }
 
 export default function App() {
@@ -47,9 +67,19 @@ export default function App() {
           </PrivateRoute>
         }
       >
+        <Route path="/mypage" element={<MyPage />} />
         <Route index element={<Dashboard />} />
         <Route path="/house" element={<HouseholdMangement />} />
         <Route path="/complaint" element={<ComplaintsPage />} />
+        <Route path="/elevator" element={<ElevatorPage />} />
+        <Route
+          path="/admins"
+          element={
+            <RoleRoute>
+              <AdminsPage />
+            </RoleRoute>
+          }
+        />
         <Route path="/noise" element={<NoisePage />} />
         <Route path="/noise/habitual" element={<HabitualPage />} />
         <Route path="/energy" element={<EnergyPage />} />

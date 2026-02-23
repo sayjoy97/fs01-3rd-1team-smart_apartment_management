@@ -1,5 +1,6 @@
 package com.jjld.global.security;
 
+import com.jjld.domain.admin.service.AdminDetailsService;
 import com.jjld.domain.house.service.AccountDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,8 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
@@ -24,28 +27,50 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
     private final AccountDetailsService service;
+    private final AdminDetailsService adminDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("Authorization 헤더: " + request.getHeader("Authorization"));
 
         String jwtToken = getToken(request);
-        log.info("[JWT] resolved token = {}", jwtToken);
-        if(StringUtils.hasText(jwtToken) && tokenProvider.validatorToken(jwtToken)){
-            Authentication auth = tokenProvider.getAuthentication(jwtToken);
+
+        if (StringUtils.hasText(jwtToken) && tokenProvider.validatorToken(jwtToken)) {
+
+            String role = tokenProvider.getRole(jwtToken);
+            String username = tokenProvider.getUsername(jwtToken);
+
+            UserDetails userDetails;
+
+            if (role.contains("ADMIN")) {
+                userDetails = adminDetailsService.loadUserByUsername(username);
+            } else {
+                userDetails = service.loadUserByUsername(username);
+            }
+
+            Authentication auth =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
             SecurityContextHolder.getContext().setAuthentication(auth);
-            log.info("JWT 인증 성공: "+ auth.getName());
+
+            log.info("JWT 인증 성공: " + auth.getName());
             log.info("JWT 권한 목록: {}", auth.getAuthorities());
+        } else {
+            log.info("JWT 없음 또는 만료됨");
         }
 
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getServletPath();
-        return path.equals("/admin/api/login") || path.equals("/account/api/login");
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) {
+//        String path = request.getServletPath();
+//        return path.equals("/admin/api/login") || path.equals("/account/api/login");
+//    }
 
     // 클라이언트와 요청정보에서 토큰을 꺼내 리턴
     private String getToken(HttpServletRequest rq) {

@@ -60,3 +60,5 @@ jwt:
   header: ${JWT_HEADER}
   secret: ${JWT_SECRET}
   token-valid-in-second: 3600000
+#  token-valid-in-second: 120000
+  refresh-token-valid-in-second: 604800000  # 7일

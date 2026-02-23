@@ -23,7 +23,7 @@ public class History {
     private Long historyId;  // PK
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "admin_id")
     private Admin admin;  // 관리자와 다대일 관계 (한 관리자가 여러 번 로그인 가능)
 
     @Column(nullable = false, length = 45)

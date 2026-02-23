@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class JwtTokenProvider {
+    @Value("${jwt.refresh-token-valid-in-second}") long REFRESH_TOKEN_VALID_TIME;
     private final String secret;
     private final long tokenExTime;
     private final AccountDetailsService accountDetailsService;
@@ -118,6 +119,18 @@ public class JwtTokenProvider {
 //        return jwtToken;
 //    }
 
+    public String createRefreshToken(Authentication authentication) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + REFRESH_TOKEN_VALID_TIME);
+
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     // 토큰 유효성 검증
     public boolean validatorToken(String token){
         try{
@@ -183,5 +196,21 @@ public class JwtTokenProvider {
 //
 //        return new UsernamePasswordAuthenticationToken(accountUserDetail, token, authorityList);
 //    }
+    }
+
+    public String getUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public String getRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

@@ -1,34 +1,37 @@
 package com.jjld.domain.elevator.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
+import com.jjld.domain.admin.dto.DeleteReq;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.admin.entity.Enum.AdminRole;
 import com.jjld.domain.elevator.dao.ElevatorDAO;
 import com.jjld.domain.elevator.dao.ElevatorEventLogDAO;
-import com.jjld.domain.elevator.dto.ElevatorDetailRes;
-import com.jjld.domain.elevator.dto.ElevatorEventLogRes;
-import com.jjld.domain.elevator.dto.ElevatorReq;
-import com.jjld.domain.elevator.dto.ElevatorRes;
+import com.jjld.domain.elevator.dto.*;
 import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.ElevatorEventLog;
 import com.jjld.domain.elevator.entity.Enum.Direction;
 import com.jjld.domain.elevator.entity.Enum.DoorStatus;
 import com.jjld.domain.elevator.entity.Enum.ElevatorEventType;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
+import com.jjld.domain.elevator.specification.ElevatorEventLogSpecification;
+import com.jjld.domain.elevator.specification.ElevatorSpecification;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.ConflictException;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import com.jjld.global.mqtt.MqttPublish;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.Pageable;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,7 @@ public class ElevatorServiceImpl implements ElevatorService {
     private final ElevatorEventLogDAO elevatorEventLogDAO;
     private final MqttPublish mqttPublish;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder encoder;
 
     // 엘리베이터 생성
     @Override
@@ -70,11 +74,11 @@ public class ElevatorServiceImpl implements ElevatorService {
 
     // 엘리베이터 목록 조회
     @Override
-    public List<ElevatorRes> getElevators() {
-        List<Elevator> elevators = elevatorDAO.getElevators();
+    public Page<ElevatorRes> getElevators(ElevatorSearchCondition cond, Pageable pageable) {
+        Specification<Elevator> spec = ElevatorSpecification.withCondition(cond);
+        Page<Elevator> elevators = elevatorDAO.getElevators(spec, pageable);
 
-        List<ElevatorRes> response = elevators
-                .stream()
+        Page<ElevatorRes> response = elevators
                 .map(elevator -> {
                     ElevatorRes elevatorRes = new ElevatorRes(
                             elevator.getElevatorId(),
@@ -83,27 +87,26 @@ public class ElevatorServiceImpl implements ElevatorService {
                             elevator.getState()
                     );
                     return elevatorRes;
-                })
-                .collect(Collectors.toList());
+                });
 
         return response;
     }
 
     // 엘리베이터 상태 변경
     @Override
-    public void updateElevatorState(Long elevatorId, ElevatorState elevatorState) {
+    public void updateElevatorState(Long elevatorId, ElevatorState state) {
         Elevator elevator = elevatorDAO.getElevator(elevatorId).orElse(null);
 
         if (elevator == null) {
             throw new NotFoundException(ErrorCode.ELEVATOR_NOT_FOUND, "엘리베이터를 찾을 수 없습니다.");
         }
 
-        elevator.setState(elevatorState);
+        elevator.setState(state);
 
         ElevatorEventType eventType = null;
         String message = null;
 
-        switch (elevatorState) {
+        switch (state) {
             case ERROR -> {
                 eventType = ElevatorEventType.ERROR;
                 message = "엘리베이터가 고장났습니다.";
@@ -113,7 +116,7 @@ public class ElevatorServiceImpl implements ElevatorService {
                 message = "엘리베이터 점검을 시작합니다.";
             }
             case IDLE -> {
-                eventType = ElevatorEventType.REPAIRED;
+                eventType = ElevatorEventType.IDLE;
                 message = "엘리베이터 수리가 완료됐습니다.";
             }
         }
@@ -134,7 +137,7 @@ public class ElevatorServiceImpl implements ElevatorService {
 
     // 엘리베이터 삭제
     @Override
-    public void deleteElevator(Long elevatorId, Long adminId) {
+    public void deleteElevator(Long elevatorId, Long adminId, DeleteReq deleteReq) {
         Admin admin = adminDAO.getAdmin(adminId).orElse(null);
 
         if (admin == null) {
@@ -143,6 +146,10 @@ public class ElevatorServiceImpl implements ElevatorService {
 
         if (admin.getAdminRole().equals(AdminRole.ADMIN)) {
             throw new ForbiddenException(ErrorCode.SUPER_ADMIN_ONLY, "총 관리자만 접근할 수 있는 기능입니다.");
+        }
+
+        if (!encoder.matches(deleteReq.getAdminPass(), admin.getAdminPass())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_CREDENTIALS, "비밀번호가 일치하지 않습니다.");
         }
 
         if (elevatorDAO.getElevator(elevatorId).isEmpty()) {
@@ -154,20 +161,21 @@ public class ElevatorServiceImpl implements ElevatorService {
 
     // 엘리베이터 상세 조회
     @Override
-    public ElevatorDetailRes getElevatorDetailInfo(Long elevatorId) {
+    public ElevatorDetailRes getElevatorDetailInfo(Long elevatorId, ElevatorEventLogSearchCondition cond, Pageable pageable) {
         Elevator elevator = elevatorDAO.getElevator(elevatorId).orElse(null);
 
         if (elevator == null) {
             throw new NotFoundException(ErrorCode.ELEVATOR_NOT_FOUND, "엘리베이터를 찾을 수 없습니다.");
         }
 
-        Pageable pageable = PageRequest.of(0, 5);  // 최근 5개만
-        List<ElevatorEventLog> entityLogs = elevatorEventLogDAO.getLogs(elevator, pageable);
+
+        Specification<ElevatorEventLog> spec = ElevatorEventLogSpecification.withCondition(elevator, cond);
+
+        Page<ElevatorEventLog> entityLogs = elevatorEventLogDAO.getLogs(spec, pageable);
 
         ElevatorRes elevatorRes = modelMapper.map(elevator, ElevatorRes.class);
 
-        List<ElevatorEventLogRes> dtoLogs = entityLogs
-                .stream()
+        Page<ElevatorEventLogRes> dtoLogs = entityLogs
                 .map(elevatorEventLog -> ElevatorEventLogRes
                         .builder()
                         .logId(elevatorEventLog.getLogId())
@@ -176,8 +184,7 @@ public class ElevatorServiceImpl implements ElevatorService {
                         .floor(elevatorEventLog.getFloor())
                         .message(elevatorEventLog.getMessage())
                         .createdAt(elevatorEventLog.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
+                        .build());
 
         ElevatorDetailRes response = new ElevatorDetailRes(elevatorRes, dtoLogs);
 
@@ -189,5 +196,17 @@ public class ElevatorServiceImpl implements ElevatorService {
         log.info("elevatorId: {}", elevatorId);
         log.info("payload: {}", payload);
         mqttPublish.sendToMqtt("test", "jjld/command/elevator");
+    }
+
+    // 엘리베이터 통계 조회
+    @Override
+    public ElevatorsStatsRes getStats() {
+        long totalElevators = elevatorDAO.countTotalElevators();
+        long errorElevators = elevatorDAO.countByState(ElevatorState.ERROR);
+        long repairElevators = elevatorDAO.countByState(ElevatorState.REPAIR);
+
+        ElevatorsStatsRes response = new ElevatorsStatsRes(totalElevators,  errorElevators, repairElevators);
+
+        return response;
     }
 }

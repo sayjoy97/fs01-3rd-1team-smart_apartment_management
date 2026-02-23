@@ -1,22 +1,25 @@
 package com.jjld.domain.elevator.service;
 
-import com.jjld.domain.elevator.dto.ElevatorDetailRes;
-import com.jjld.domain.elevator.dto.ElevatorReq;
-import com.jjld.domain.elevator.dto.ElevatorRes;
+import com.jjld.domain.admin.dto.DeleteReq;
+import com.jjld.domain.elevator.dto.*;
 import com.jjld.domain.elevator.entity.Enum.ElevatorState;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ElevatorService {
     void createElevator(Long adminId, ElevatorReq elevatorReq);
 
-    List<ElevatorRes> getElevators();
+    Page<ElevatorRes> getElevators(ElevatorSearchCondition cond, Pageable pageable);
 
-    void updateElevatorState(Long elevatorId, ElevatorState elevatorState);
+    void updateElevatorState(Long elevatorId, ElevatorState state);
 
-    void deleteElevator(Long elevatorId, Long adminId);
+    void deleteElevator(Long elevatorId, Long adminId, DeleteReq deleteReq);
 
-    ElevatorDetailRes getElevatorDetailInfo(Long elevatorId);
+    ElevatorDetailRes getElevatorDetailInfo(Long elevatorId, ElevatorEventLogSearchCondition cond, Pageable pageable);
 
     void testMqtt(Long elevatorId, String payload);
+
+    ElevatorsStatsRes getStats();
 }

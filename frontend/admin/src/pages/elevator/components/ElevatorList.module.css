@@ -1,0 +1,238 @@
+/* 기존 AdminList.module.css 내용 포함 */
+.mainCard {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.cardHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+}
+
+.filterContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+}
+
+.filterLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  background-color: #64748b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.filterInput,
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1e293b;
+  outline: none;
+  background-color: white;
+  transition: all 0.2s;
+}
+
+.filterInput:focus,
+.filterSelect:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.searchButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tableContainer {
+  padding: 0 1.5rem;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 12px;
+  background-color: #f8fafc;
+  color: #475569;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* 컬럼별 너비 지정 */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 17%;
+  text-align: center;
+}
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 17%;
+  text-align: center;
+}
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 17%;
+  text-align: center;
+}
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 17%;
+  text-align: center;
+}
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 16%;
+  text-align: center;
+}
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 16%;
+  text-align: center;
+}
+
+.buildingCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* 뱃지 스타일 확장 */
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.activeBadge {
+  background-color: #ecfdf5;
+  color: #10b981;
+  border: 1px solid #d1fae5;
+}
+
+.warningBadge {
+  background-color: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fef3c7;
+}
+
+.dangerBadge {
+  background-color: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+}
+
+.inactiveBadge {
+  background-color: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.iconBtn {
+  padding: 6px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.editBtn:hover {
+  color: #2563eb;
+  background: #eff6ff;
+}
+.deleteBtn:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.pagination {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid #eee;
+  background-color: white;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+  color: #2563eb;
+}
+
+.pagination button:disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+  background-color: #fcfcfc;
+}
+
+.pagination span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: #94a3b8;
+}

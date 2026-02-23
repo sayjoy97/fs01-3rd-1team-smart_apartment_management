@@ -34,4 +34,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
     // 아이디로 상세내역 조회
     Notice findByNoticeId(Long noticeId);
 
+    // 마이페이지에서 관리자가 작성한 공지의 수를 조회
+    long countByAdmin_AdminId(Long adminId);
 }
