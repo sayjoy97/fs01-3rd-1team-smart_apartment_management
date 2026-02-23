@@ -13,4 +13,6 @@ public interface NoisePolicyRepository extends JpaRepository<NoisePolicy, Long> 
 
     // 현재 활성 정책 존재 여부 체크 (정책 교체 시 사용)
     boolean existsByIsActiveTrue();
+
+    boolean existsByPolicyName(String policyName);
 }

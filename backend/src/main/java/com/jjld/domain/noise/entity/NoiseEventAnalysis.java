@@ -42,6 +42,10 @@ public class NoiseEventAnalysis {
 
     // 정책 위반 의심 여부
     @Column(nullable = false)
+    private Boolean vibrationDetected;
+
+    // 정책 위반 의심 여부
+    @Column(nullable = false)
     private Boolean policyBreak;
 
     // 분석 요약 설명

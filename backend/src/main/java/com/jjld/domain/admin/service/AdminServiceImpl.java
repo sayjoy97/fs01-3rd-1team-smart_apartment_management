@@ -25,10 +25,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +60,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminDetailsService adminDetailsService;
     private final AdminRepository adminRepository;
     private final AdminAuthenticationProvider adminAuthenticationProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     // adminId를 이용해 관리자 조회
     @Override

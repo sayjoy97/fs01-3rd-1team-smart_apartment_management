@@ -17,6 +17,6 @@ public class NoticeDetailResponse {
     private String noticeTitle;
     private String noticeContent;
     private Boolean fixStatus;
-    private LocalDateTime createAt;
-    private LocalDateTime updateAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

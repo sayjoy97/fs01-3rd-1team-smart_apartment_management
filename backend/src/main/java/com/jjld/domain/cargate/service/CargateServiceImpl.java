@@ -3,14 +3,19 @@ package com.jjld.domain.cargate.service;
 import com.jjld.domain.cargate.dao.*;
 import com.jjld.domain.cargate.dto.*;
 import com.jjld.domain.cargate.entity.*;
+import com.jjld.domain.cargate.entity.Enum.GateType;
+import com.jjld.domain.cargate.entity.Enum.ParkingStatus;
 import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
+import com.jjld.domain.parkingfee.dao.ParkingFeeSettingDAO;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
-import lombok.Builder;
+import com.jjld.global.mqtt.MqttPublish;
+import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,21 +27,24 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Builder
 public class CargateServiceImpl implements CargateService {
+    private static final Logger log = LoggerFactory.getLogger(CargateServiceImpl.class);
     private final CargateEventLogDAO cargateEventLogDAO;
     private final VehicleDAO vehicleDAO;
     private final ParkingSessionDAO parkingSessionDAO;
     private final RegisteredDAO registeredDAO;
     private final ApprovedDAO approvedDAO;
     private final ParkingFeeDAO parkingFeeDAO;
+    private final CargateDAO cargateDAO;
+    private final ParkingFeeSettingDAO parkingFeeSettingDAO;
     private final HouseDAO houseDAO;
 
-    private final ModelMapper modelMapper;
+    private final MqttPublish mqttPublish;
 
     // 최근 7일 차량 출입현황 리스트 조회
     @Override
@@ -126,7 +134,9 @@ public class CargateServiceImpl implements CargateService {
         return LogDetailByRegisResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
                 .parkingStatus(ps.getStatus())
+                .image_path(log.getImagePath())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
                 .stayMinutes(stayMinutes)
@@ -148,6 +158,8 @@ public class CargateServiceImpl implements CargateService {
         return LogDetailByApprovedResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
+                .image_path(log.getImagePath())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -166,13 +178,16 @@ public class CargateServiceImpl implements CargateService {
         Vehicle vehicle = log.getVehicle();
         ParkingSession ps = log.getParkingSession();
 
-        ParkingFeeSetting setting = parkingFeeDAO.findByFirstActive();
+
+        ParkingFeeSetting setting = parkingFeeSettingDAO.findAppliedSetting(ps.getEntryAt());
 
         int fee = calculateFee(stayMinutes, setting, ps.getEntryAt());
 
         return LogDetailByUnRegisResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
+                .vehicleId(vehicle.getVehicleId())
+                .image_path(log.getImagePath())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -199,12 +214,10 @@ public class CargateServiceImpl implements CargateService {
         // 피크 요금 적용
         if (s.getPeakEnabled()) {
             LocalTime entryTime = entryAt.toLocalTime();
-            if (!entryTime.isBefore(s.getPeakStartTime())
-                    && !entryTime.isAfter(s.getPeakEndTime())) {
+            if (!entryTime.isBefore(s.getPeakStartTime()) && !entryTime.isAfter(s.getPeakEndTime())) {
 
-                long peakUnits = (long) Math.ceil(
-                        (double) extra / s.getPeakUnitMinutes()
-                );
+                long peakUnits = (long) Math.ceil((double) extra / s.getPeakUnitMinutes());
+
                 fee = s.getBaseCharge() + (int) peakUnits * s.getPeakUnitCharge();
             }
         }
@@ -227,7 +240,7 @@ public class CargateServiceImpl implements CargateService {
         }
 
         if (request.getVehicleType() == VehicleType.UNREGISTERED) {
-            updateToUnregistered(vehicle);
+            updateToUnregistered(vehicle, request);
 
         } else if (request.getVehicleType() == VehicleType.REGISTERED) {
             updateToRegistered(vehicle, request);
@@ -239,7 +252,7 @@ public class CargateServiceImpl implements CargateService {
     }
 
     // -> 미등록차량으로 변경
-    private void updateToUnregistered(Vehicle vehicle) {
+    private void updateToUnregistered(Vehicle vehicle, VehicleRelatedRequest request) {
         Vehicle byVehicleId = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
 
         switch (vehicle.getVehicleType()) {
@@ -261,7 +274,7 @@ public class CargateServiceImpl implements CargateService {
 
     // -> 세대등록 차량으로 변경
     private void updateToRegistered(Vehicle vehicleEntity, VehicleRelatedRequest request) {
-        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(request.getPlateNumber())
                 .orElseGet(() -> vehicleDAO.newVehicle(
                                 request.getPlateNumber(),
                                 request.getVehicleType()
@@ -275,8 +288,14 @@ public class CargateServiceImpl implements CargateService {
 
                 break;
             case REGISTERED:
+                String houseInfo = request.getHouseInfo().replace("동", "").replace("호", "");
+                String[] info = houseInfo.split(" ");
+                Integer Dong = Integer.valueOf(info[0]);
+                Integer Ho = Integer.valueOf(info[1]);
+
+
                 RegisteredCar updateEntity = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
-                House findHouse = houseDAO.findHouseId(request.getHouseId());
+                House findHouse = houseDAO.findByHouseInfo(Dong, Ho);
 
                 updateEntity.setVehicleOwner(request.getVehicleOwner());
                 updateEntity.setHouse(findHouse);
@@ -300,7 +319,7 @@ public class CargateServiceImpl implements CargateService {
 
     // -> 관리자 승인차량으로 변경
     private void updateToApproved(Vehicle vehicleEntity, VehicleRelatedRequest request) {
-        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(request.getPlateNumber())
                 .orElseGet(() -> vehicleDAO.newVehicle(
                                 request.getPlateNumber(),
                                 request.getVehicleType()
@@ -354,16 +373,22 @@ public class CargateServiceImpl implements CargateService {
 
     // 세대 등록차량일 때 필요한 작업내용
     @Override
-    public void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest req) {
+    public void registerHouseVehicle(Vehicle vehicle, VehicleRelatedRequest request) {
         Vehicle managedVehicle = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
-        if (req.getHouseId() == null) {
+        if (request.getHouseInfo() == null) {
             throw new IllegalArgumentException("세대 정보 필수");
         }
 
+        String houseInfo = request.getHouseInfo().replace("동", "").replace("호", "");
+        String[] info = houseInfo.split(" ");
+        Integer Dong = Integer.valueOf(info[0]);
+        Integer Ho = Integer.valueOf(info[1]);
+        House findHouse = houseDAO.findByHouseInfo(Dong, Ho);
+
         RegisteredCar registeredCar = RegisteredCar.builder()
                 .vehicle(managedVehicle)
-                .house(houseDAO.findHouseId(req.getHouseId()))
-                .vehicleOwner(req.getVehicleOwner())
+                .house(findHouse)
+                .vehicleOwner(request.getVehicleOwner())
                 .build();
 
         registeredDAO.createRegisteredCar(registeredCar);
@@ -390,27 +415,21 @@ public class CargateServiceImpl implements CargateService {
 
     // 세대 등록차량 조회
     @Override
-    public List<RegisCarResponse> getRegisteredCars() {
-        List<RegisteredCar> registeredList = registeredDAO.findRegisteredList();
+    public Page<RegisCarListResponse> getRegisteredCars(int size, int page) {
 
-        List<RegisCarResponse> result = new ArrayList<>();
-        for (RegisteredCar car : registeredList) {
-            result.add(RegisCarResponse.builder()
-                    .id(car.getId())
-                    .plateNumber(car.getVehicle().getPlateNumber())
-                    .vehicleOwner(car.getVehicleOwner())
-                    .houseDong(car.getHouse().getHouseDong())
-                    .houseHo(car.getHouse().getHouseHo())
-                    .vehicleType(car.getVehicle().getVehicleType())
-                    .createdAt(car.getCreatedAt())
-                    .build()
-            );
-        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        // 최신순으로 정렬
-        return result.stream()
-                .sorted(Comparator.comparing(RegisCarResponse::getCreatedAt).reversed())
-                .toList();
+        return registeredDAO.findRegisteredList(pageable).map(
+                entity -> RegisCarListResponse.builder()
+                        .id(entity.getId())
+                        .plateNumber(entity.getVehicle().getPlateNumber())
+                        .vehicleOwner(entity.getVehicleOwner())
+                        .houseDong(entity.getHouse().getHouseDong())
+                        .houseHo(entity.getHouse().getHouseHo())
+                        .vehicleType(entity.getVehicle().getVehicleType())
+                        .createdAt(entity.getCreatedAt())
+                        .build()
+        );
     }
 
     // 세대 등록차량 상세정보 조회
@@ -454,16 +473,17 @@ public class CargateServiceImpl implements CargateService {
 
     // 관리자 승인차량 조회 리스트
     @Override
-    public List<ApprovedCarResponse> ApprovedCarList() {
+    public Page<ApprovedCarListResponse> ApprovedCarList(int size, int page) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
-        return approvedDAO.ApprovedCarList().stream()
-                .map(car -> ApprovedCarResponse.builder()
-                        .id(car.getId())
-                        .plateNumber(car.getVehicle().getPlateNumber())
-                        .currentStatus(car.getCurrentStatus())
-                        .craetedAt(car.getCreatedAt())
-                        .build())
-                .toList();
+        return approvedDAO.ApprovedCarList(pageable).map(
+                entity -> ApprovedCarListResponse.builder()
+                .id(entity.getId())
+                .plateNumber(entity.getVehicle().getPlateNumber())
+                .currentStatus(entity.getCurrentStatus())
+                .craetedAt(entity.getCreatedAt())
+                .build()
+        );
     }
 
     // 관리자 승인차량 상세정보 조회
@@ -515,5 +535,160 @@ public class CargateServiceImpl implements CargateService {
         byVehicleId.setVehicleType(VehicleType.UNREGISTERED);
 
         return approvedDAO.deleteByApprovedCar(vehicle_id);
+    }
+
+    // 입출차 처리
+    @Override
+    public void AddToTheAccessLog(String payload, CargateServiceType serviceType) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmmss");
+
+        String timeStr = payload.split("_")[0];
+
+        // 처리결과 : 시간
+        LocalDateTime resultTime = LocalDateTime.parse(timeStr, formatter);
+
+        // 처리결과 : 차량번호.jpg에서 차량번호만 추출
+        String plateNumber = payload.split("_")[3].split("\\.")[0];
+
+        // 차량 유형별로 찾기
+        Vehicle findVehicle = vehicleDAO.findByPlateNumber(plateNumber)
+                .orElse(vehicleDAO.newVehicle(plateNumber, VehicleType.UNREGISTERED)); // 없으면 새로 추가(미등록)
+
+        // 엔티티가 있다면 로그 출력
+        if(findVehicle != null){
+            log.info("vehicle Type : {}", findVehicle.getVehicleType());
+            log.info("plate number : {}", findVehicle.getPlateNumber());
+        }
+
+        // 게이트 타입 찾기
+        Cargate cg = cargateDAO.findByCargateType(GateType.valueOf(serviceType.toString()));
+
+        String imgFile = payload.replace(" ", "_");
+
+        // 저장 이미지 경로
+        String imgPath = "cargate_image/" + imgFile;
+
+        String message = "";
+        String topic = "";
+
+        // 입차시
+        if(cg.getCargateId() == 1){
+
+            message = "open_"+ findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType().toString();
+
+            topic = "jjld/cargate/entry/gate_command";
+
+            // 게이트 오픈 메세지 브로커로 pub
+            mqttPublish.sendToMqtt(message, topic);
+
+            // parking_session 엔티티에 입차내용 등록
+            ParkingSession sessionInfo = parkingSessionDAO.createSessionInfo(ParkingSession.builder()
+                    .vehicle(findVehicle)
+                    .entryCargate(cg)
+                    .entryAt(resultTime)
+                    .status(ParkingStatus.IN)
+                    .build());
+
+            // 로그 엔티티에 데이터 추가
+            cargateEventLogDAO.createCargateLog(
+                    CargateEventLog.builder()
+                            .carGate(cg)
+                            .vehicle(findVehicle)
+                            .parkingSession(sessionInfo)
+                            .gateType(GateType.ENTRY)
+                            .eventAt(resultTime)
+                            .imagePath(imgPath)
+                            .build()
+            );
+
+        }
+
+        // 출차시
+        else if (cg.getCargateId() == 2){
+            topic = "jjld/cargate/exit/gate_command";
+
+            // 유형에 따라 요금부여를 위해
+            switch (findVehicle.getVehicleType()){
+                // 세대등록 및 관리자 승인차량은 게이트 오픈명령 보내고 출차기록 데이터 추가
+                case REGISTERED, ADMIN_APPROVED:
+                    message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
+
+                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
+                    ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+
+                    psEntity.exit(cg, resultTime);
+
+                    // 출차기록 추가
+                    parkingSessionDAO.exitVehicleStatus(psEntity);
+
+                    // cargate_event_log 엔티티에 출차기록 추가
+                    CargateEventLog logEntity = CargateEventLog.builder()
+                            .carGate(cg)
+                            .vehicle(findVehicle)
+                            .parkingSession(psEntity)
+                            .gateType(GateType.EXIT)
+                            .eventAt(resultTime)
+                            .imagePath(imgPath)
+                            .build();
+
+                    cargateEventLogDAO.createCargateLog(logEntity);
+
+                    break;
+
+                // 미등록 차량은 요금정산 요청 메세지 보내기
+                case UNREGISTERED:
+                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
+                    ParkingSession psEntity1 = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+
+                    // 출차요청 시간과 입차시간 비교
+                    LocalTime entry = psEntity1.getEntryAt().toLocalTime();
+                    int entryMinuite = entry.getHour()*60 + entry.getMinute();
+                    int resultMinuite = resultTime.toLocalTime().getHour()*60 + resultTime.toLocalTime().getMinute();
+                    int result = resultMinuite-entryMinuite;
+                    if (result <= 30){
+                        message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType()+ "_" + result;
+                    }
+                    else{
+                        message = "request_payment_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
+                    }
+
+            }
+
+            // 각 유형별 다른 메세지를 담은 토픽 브로커로 pub
+            mqttPublish.sendToMqtt(message, topic);
+        }
+
+    }
+
+    private long FeeCount(LocalTime entryAt, LocalTime endAt){
+
+        // 현재 활성화상태인 요금정산 찾기
+        ParkingFeeSetting byFirstActive = parkingFeeDAO.findByFirstActive();
+
+        // 입차시간 출차시간 "분"으로 바꾸기
+        int entryM = entryAt.getHour()*60 + entryAt.getMinute();
+        int endM = endAt.getHour()*60 + endAt.getMinute();
+
+        if (byFirstActive.getPeakEnabled()){
+            return 0;
+        } else{
+            return 0;
+        }
+    }
+
+    // 요금 정산완료시 처리
+    @Override
+    public void FeeSettlement(String payload, CargateServiceType serviceType) {
+        String plateNumber = payload.split("_")[1];
+
+        // 차량번호로 차량 찾기
+        Vehicle findVehicle = vehicleDAO.findByPlateNumber(plateNumber  )
+                .orElseThrow(() -> new IllegalStateException("Not Found"));
+
+        // log엔티티에서 해당정보 찾기
+        cargateEventLogDAO.findVehicleByType(findVehicle.getVehicleId(), GateType.EXIT);
+
+
+
     }
 }

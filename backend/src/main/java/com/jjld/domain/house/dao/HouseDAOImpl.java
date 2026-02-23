@@ -14,4 +14,10 @@ public class HouseDAOImpl implements HouseDAO{
     public House findHouseId(Long houseId) {
         return houseRepository.findByHouseId(houseId);
     }
+
+    // 동호수로 세대아이디 찾아오기
+    @Override
+    public House findByHouseInfo(Integer houseDong, Integer houseHo) {
+        return houseRepository.findByHouseInfo(houseDong, houseHo);
+    }
 }

@@ -58,6 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             log.info("JWT 인증 성공: " + auth.getName());
+            log.info("JWT 권한 목록: {}", auth.getAuthorities());
         } else {
             log.info("JWT 없음 또는 만료됨");
         }

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import styles from "./LoginPage.module.css";
-import {Building2, LogIn} from "lucide-react";
+import { Building2, LogIn } from "lucide-react";
 
 import {initialSetupAdmin, login, logout, findPass, changePass} from "../../api/admin/adminAPI";
 
@@ -42,11 +42,11 @@ export default function LoginPage() {
   });
 
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setAdminForm((prev) => ({...prev, [name]: value}));
+    const { name, value } = e.target;
+    setAdminForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     login(adminform)

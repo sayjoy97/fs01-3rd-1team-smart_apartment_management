@@ -1,10 +1,11 @@
 package com.jjld.domain.cargate.dao;
 
 import com.jjld.domain.cargate.entity.ApprovedCar;
-import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.repository.ApprovedCarRepository;
 import com.jjld.domain.cargate.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +26,8 @@ public class ApprovedDAOImpl implements ApprovedDAO {
     // 관리자 승인차량 조회
     @Transactional
     @Override
-    public List<ApprovedCar> ApprovedCarList() {
-        List<ApprovedCar> approvedList = approvedCarRepository.findAll();
+    public Page<ApprovedCar> ApprovedCarList(Pageable pageable) {
+        Page<ApprovedCar> approvedList = approvedCarRepository.findAll(pageable);
 
         approvedList.forEach(ApprovedCar::refreshCurrentStatus);
 

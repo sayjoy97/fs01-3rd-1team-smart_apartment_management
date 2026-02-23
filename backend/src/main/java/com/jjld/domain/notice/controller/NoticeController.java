@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/notices/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class NoticeController {
     private final NoticeService noticeService;
 
@@ -44,10 +45,12 @@ public class NoticeController {
     @GetMapping("/search")
     @Operation( summary = "타입별 리스트 조회 API")
     public ResponseEntity<?> searchNoticeList(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "search_type") String searchType,
             @RequestParam(name = "keyword") String keyword
     ){
-        List<NoticeListResponse> findByTypeList = noticeService.findByTypeList(searchType, keyword);
+        Page<NoticeListResponse> findByTypeList = noticeService.findByTypeList(searchType, keyword, size, page-1);
         return ResponseEntity.ok(ApiResponse.success(findByTypeList));
     }
 
@@ -84,9 +87,9 @@ public class NoticeController {
     }
 
     // 게시글 고정으로 바꾸기
-    @PutMapping("/{notice_id}/fixStatus/change")
+    @PutMapping("/fixStatus/change")
     @Operation( summary = "게시글 고정상태 변화")
-    public ResponseEntity<?> noticeChangeFixStatus(@PathVariable Long notice_id ){
+    public ResponseEntity<?> noticeChangeFixStatus(@RequestParam(name = "notice_id") Long notice_id ){
         noticeService.fixStatusChange(notice_id);
 
         return ResponseEntity.ok(ApiResponse.success("true"));

@@ -17,7 +17,7 @@ public class VehicleRelatedRequest {
     private VehicleType vehicleType;
 
     // 세대 등록용
-    private Long houseId;
+    private String houseInfo;
     private String vehicleOwner;
 
     // 관리자 승인용

@@ -12,6 +12,8 @@ public class MqttTopicProperties {
     // 예시 - private String [본인 기능];
     private String garden;
     private String elevator;
+    private String energy;
+    private String cargate;
 
 
 

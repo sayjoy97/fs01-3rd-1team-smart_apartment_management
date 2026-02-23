@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  Home,
   Users,
   FileText,
   MessageSquare,
@@ -38,7 +39,7 @@ export const menuStructure = [
     items: [
       { id: "residents", label: "세대 관리", icon: Users, path: "/house" },
       { id: "complaints", label: "민원 관리", icon: MessageSquare, path: "/complaint" },
-      { id: "notices", label: "공지사항", icon: FileText },
+      { id: "notices", label: "공지사항", icon: FileText, path: "/notices" },
     ],
   },
   {
@@ -48,7 +49,7 @@ export const menuStructure = [
     type: "dropdown",
     items: [
       { id: "accesscontrol", label: "출입 관리", icon: DoorOpen },
-      { id: "vehicles", label: "방문차량 관리", icon: Car },
+      { id: "vehicles", label: "방문차량 관리", icon: Car, path: "/cargate" },
     ],
   },
   {

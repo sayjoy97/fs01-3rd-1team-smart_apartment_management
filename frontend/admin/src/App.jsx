@@ -1,4 +1,4 @@
-import {Routes, Route, Navigate, Outlet} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -11,6 +11,14 @@ import MyPage from "./pages/mypage/MyPage";
 import AdminsPage from "./pages/admins/AdminsPage";
 import ElevatorPage from "./pages/elevator/ElevatorPage";
 import {toast} from "sonner";
+import NoisePage from "./pages/noise/NoisePage";
+import HabitualPage from "./pages/noise/HabitualPage";
+import EnergyPage from "./pages/energy/EnergyPage";
+import { NoticesPage } from "./pages/notice/NoticesPage";
+import { NoticeDetailPage } from "./pages/notice/NoticeDetailPage";
+import { NoticeCreatePage } from "./pages/notice/NoticeCreatePage";
+import { CargatePage } from "./pages/cargate/CargatePage";
+import { FeeDetailPage } from "./pages/cargate/FeeDetailPage";
 
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
@@ -72,6 +80,14 @@ export default function App() {
             </RoleRoute>
           }
         />
+        <Route path="/noise" element={<NoisePage />} />
+        <Route path="/noise/habitual" element={<HabitualPage />} />
+        <Route path="/energy" element={<EnergyPage />} />
+        <Route path="/notices" element={<NoticesPage />} />
+        <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
+        <Route path="/notice/write" element={<NoticeCreatePage />} />
+        <Route path="/cargate" element={<CargatePage />} />
+        <Route path="/cargate/feeDetail" element={<FeeDetailPage />} />
       </Route>
 
       {/* 그 외 전부 로그인으로 */}

@@ -6,7 +6,7 @@ export const login = async (loginForm) => {
   try {
     const response = await backendServer.post(requests.login, loginForm);
 
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.log("에러 발생:", error.response.data);
     throw error;
