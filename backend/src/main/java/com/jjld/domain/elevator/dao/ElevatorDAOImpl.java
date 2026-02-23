@@ -2,8 +2,12 @@ package com.jjld.domain.elevator.dao;
 
 import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.Enum.Dong;
+import com.jjld.domain.elevator.entity.Enum.ElevatorState;
 import com.jjld.domain.elevator.repository.ElevatorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,8 +32,8 @@ public class ElevatorDAOImpl implements ElevatorDAO {
 
     // 엘리베이터 목록 조회
     @Override
-    public List<Elevator> getElevators() {
-        return elevatorRepository.findAll();
+    public Page<Elevator> getElevators(Specification<Elevator> spec, Pageable pageable) {
+        return elevatorRepository.findAll(spec, pageable);
     }
 
     // elevatorId를 이용해서 엘리베이터 조회
@@ -43,4 +47,15 @@ public class ElevatorDAOImpl implements ElevatorDAO {
     public void deleteElevator(Long elevatorId) {
         elevatorRepository.deleteById(elevatorId);
     }
+
+    @Override
+    public long countTotalElevators() {
+        return elevatorRepository.count();
+    }
+
+    @Override
+    public long countByState(ElevatorState state) {
+        return elevatorRepository.countByState(state);
+    }
+
 }

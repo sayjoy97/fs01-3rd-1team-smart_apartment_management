@@ -185,7 +185,7 @@ export default function Header() {
 
             {/* 마이페이지 */}
             <button
-              onClick={() => go("/mypage")}
+              onClick={() => navigate("/mypage")}
               className="h-10 px-3 rounded-lg hover:bg-accent flex items-center gap-2 text-foreground"
             >
               <UserCircle className="size-4" />

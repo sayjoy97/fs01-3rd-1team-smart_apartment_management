@@ -1,0 +1,87 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 통계 그리드 */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.statsCard {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statsCard:hover {
+  transform: translateY(-2px);
+}
+
+.label {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+}
+
+.value {
+  font-size: 15px;
+  color: #334155;
+  font-weight: 500;
+  margin: 0;
+}
+
+.number {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-right: 2px;
+}
+
+/* 버튼 역할을 하는 카드 스타일 */
+.actionCard {
+  cursor: pointer;
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1; /* 클릭 가능함을 암시하는 대시 보더 */
+  transition: all 0.2s ease;
+}
+
+.actionCard:hover {
+  background-color: #eff6ff;
+  border: 1px solid #3b82f6;
+  transform: translateY(-2px);
+}
+
+.actionCard .label {
+  color: #475569;
+}
+
+.actionText {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2563eb;
+  margin: 0;
+}
+
+/* 반응형 설정 */
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr); /* 화면 좁아지면 2줄로 */
+  }
+}
+
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr; /* 모바일은 1줄 */
+  }
+}

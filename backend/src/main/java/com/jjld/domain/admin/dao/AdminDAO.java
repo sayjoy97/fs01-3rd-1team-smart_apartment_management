@@ -1,13 +1,13 @@
 package com.jjld.domain.admin.dao;
 
-import com.jjld.domain.admin.dto.AdminRes;
-import com.jjld.domain.admin.dto.AdminSearchCondition;
 import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.admin.entity.History;
+import com.jjld.domain.elevator.entity.Advertisement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +27,10 @@ public interface AdminDAO {
     void updateAdminAuthority(Admin targetAdmin);
 
     void updateAdmin(Admin admin);
+
+    long countTotalAdmins();
+
+    long countActiveAdmins();
+
+    long countNewAdmins(LocalDateTime startOfMonth);
 }

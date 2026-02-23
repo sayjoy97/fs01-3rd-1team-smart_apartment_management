@@ -1,0 +1,132 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+/* 헤더 섹션 */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.addButton {
+  background-color: #2563eb !important;
+  color: white !important;
+  transition: transform 0.2s;
+}
+
+.addButton:hover {
+  background-color: #1d4ed8 !important;
+  transform: translateY(-2px);
+}
+
+/* 메인 리스트 카드 */
+.mainCard {
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: white !important;
+}
+
+.searchWrapper {
+  position: relative;
+  margin-top: 16px;
+  max-width: 400px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  color: #94a3b8;
+}
+
+.searchInput {
+  padding-left: 36px !important;
+  border-radius: 8px !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* 테이블 스타일 */
+.tableContainer {
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+}
+
+.userIdCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.roleBadge {
+  border-color: #2563eb !important;
+  color: #2563eb !important;
+}
+
+.activeBadge {
+  background-color: #e6f9f1 !important;
+  color: #10b981 !important;
+  border: none !important;
+}
+
+/* 액션 버튼 */
+.actionButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.editBtn:hover {
+  color: #2563eb !important;
+  background-color: #eff6ff !important;
+}
+
+.deleteBtn:hover {
+  color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

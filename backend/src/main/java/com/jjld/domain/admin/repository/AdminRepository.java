@@ -6,10 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.awt.print.Pageable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface AdminRepository extends JpaRepository<Admin, Long>, JpaSpecificationExecutor<Admin> {
     // adminLoginId를 이용해 관리자 조회
     Optional<Admin> findByAdminLoginId(String adminLoginId);
+
+    // 활동 중인 관리자 수 조회
+    long countByStateTrue();
+
+    // 신규 관리자 수 조회
+    long countByCreatedAtAfter(LocalDateTime startOfMonth);
 }

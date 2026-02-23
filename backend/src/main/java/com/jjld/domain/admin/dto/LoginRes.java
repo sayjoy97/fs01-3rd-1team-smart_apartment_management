@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 public class LoginRes {
     private String accessToken;
+    private String refreshToken;
     private String username;
     private List<String> roles;
     private LoginAdminRes loginAdminRes;
