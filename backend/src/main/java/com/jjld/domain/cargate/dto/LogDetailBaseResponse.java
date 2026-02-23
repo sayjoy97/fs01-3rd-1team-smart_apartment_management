@@ -14,6 +14,7 @@ public class LogDetailBaseResponse {
     String plateNumber;
     Long vehicleId;
     ParkingStatus parkingStatus;
+    String image_path;
     LocalDateTime entryAt;
     LocalDateTime exitAt;
     long stayMinutes;

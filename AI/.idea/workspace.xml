@@ -5,36 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/controller/ParkingFeecontroller.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeSettingDAO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeSettingDAOImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/AllInOneChargeViewResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/Daily30TotalResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/FeeSettingRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/FeeSettingResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/MonthlyTotalResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/SelectedStat.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dto/YearTotalResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/service/ParkingFeeService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/service/ParkingFeeServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dao/ParkingSessionDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/repository/ParkingSessionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/LogDetailBaseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/LogDetailBaseResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/controller/VehicleFeecontroller.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/dao/ParkingFeeDAOImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/entity/ParkingFeeHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/entity/ParkingFeeHistory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/entity/ParkingFeeSetting.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/entity/ParkingFeeSetting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/repository/ParkingFeeHistoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/repository/ParkingFeeHistoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/repository/ParkingFeeSettingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/repository/ParkingFeeSettingRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/service/VehicleFeeService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/parkingfee/service/VehicleFeeServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/api/noticeAPI.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/api/noticeAPI.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/api/requests.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/api/requests.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/constants/menu.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/constants/menu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/dao/HouseDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/dao/HouseDAO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/dao/HouseDAOImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/dao/HouseDAOImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/repository/HouseRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/house/repository/HouseRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/CargatePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/CargatePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,35 +48,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.mymqtt.executor": "Run",
-    "Python.ocr_test.executor": "Run",
-    "Python.start.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.tset.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/ai-59 병합 중",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.mymqtt.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ocr_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.start.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tset.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/fe-203&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Workspace\fs01-3rd-1team-smart_apartment_management\AI\license_plate" />
@@ -111,7 +93,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
         <env name="AI_BROKER" value="192.168.14.68" />
-        <env name="AI_IMAGE_PATH" value="C:\Users\Admin\Desktop\image_result" />
+        <env name="AI_IMAGE_PATH" value="C:\Users\Admin\Desktop\cargate_image" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/license_plate" />

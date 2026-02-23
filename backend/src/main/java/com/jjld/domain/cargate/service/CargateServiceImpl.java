@@ -136,6 +136,7 @@ public class CargateServiceImpl implements CargateService {
                 .plateNumber(vehicle.getPlateNumber())
                 .vehicleId(vehicle.getVehicleId())
                 .parkingStatus(ps.getStatus())
+                .image_path(log.getImagePath())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
                 .stayMinutes(stayMinutes)
@@ -158,6 +159,7 @@ public class CargateServiceImpl implements CargateService {
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
                 .vehicleId(vehicle.getVehicleId())
+                .image_path(log.getImagePath())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -185,6 +187,7 @@ public class CargateServiceImpl implements CargateService {
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
                 .vehicleId(vehicle.getVehicleId())
+                .image_path(log.getImagePath())
                 .parkingStatus(ps.getStatus())
                 .entryAt(ps.getEntryAt())
                 .exitAt(ps.getExitAt())
@@ -237,7 +240,7 @@ public class CargateServiceImpl implements CargateService {
         }
 
         if (request.getVehicleType() == VehicleType.UNREGISTERED) {
-            updateToUnregistered(vehicle);
+            updateToUnregistered(vehicle, request);
 
         } else if (request.getVehicleType() == VehicleType.REGISTERED) {
             updateToRegistered(vehicle, request);
@@ -249,7 +252,7 @@ public class CargateServiceImpl implements CargateService {
     }
 
     // -> 미등록차량으로 변경
-    private void updateToUnregistered(Vehicle vehicle) {
+    private void updateToUnregistered(Vehicle vehicle, VehicleRelatedRequest request) {
         Vehicle byVehicleId = vehicleDAO.findByVehicleId(vehicle.getVehicleId());
 
         switch (vehicle.getVehicleType()) {
@@ -271,7 +274,7 @@ public class CargateServiceImpl implements CargateService {
 
     // -> 세대등록 차량으로 변경
     private void updateToRegistered(Vehicle vehicleEntity, VehicleRelatedRequest request) {
-        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(request.getPlateNumber())
                 .orElseGet(() -> vehicleDAO.newVehicle(
                                 request.getPlateNumber(),
                                 request.getVehicleType()
@@ -316,7 +319,7 @@ public class CargateServiceImpl implements CargateService {
 
     // -> 관리자 승인차량으로 변경
     private void updateToApproved(Vehicle vehicleEntity, VehicleRelatedRequest request) {
-        Vehicle vehicle = vehicleDAO.findByPlateNumber(vehicleEntity.getPlateNumber())
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(request.getPlateNumber())
                 .orElseGet(() -> vehicleDAO.newVehicle(
                                 request.getPlateNumber(),
                                 request.getVehicleType()
@@ -560,8 +563,10 @@ public class CargateServiceImpl implements CargateService {
         // 게이트 타입 찾기
         Cargate cg = cargateDAO.findByCargateType(GateType.valueOf(serviceType.toString()));
 
+        String imgFile = payload.replace(" ", "_");
+
         // 저장 이미지 경로
-        String imgPath = "/cargate_image/entry" + payload;
+        String imgPath = "cargate_image/" + imgFile;
 
         String message = "";
         String topic = "";

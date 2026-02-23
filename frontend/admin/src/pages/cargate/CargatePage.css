@@ -210,3 +210,68 @@ h3 {
   background-color: #f8d7da;
   color: #721c24;
 }
+
+/* ===== 요금 카드 ===== */
+.fee-card {
+  padding: 18px 20px 22px;
+}
+
+/* 헤더 */
+.fee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.btn-fee-all {
+  background: #f1f5f9;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-fee-all:hover {
+  background: #e5e7eb;
+}
+
+/* KPI 2개 박스 */
+.fee-box-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.fee-box {
+  border-radius: 12px;
+  padding: 18px;
+  font-weight: 600;
+}
+
+.fee-box.blue {
+  background: #eef4ff;
+  border: 1px solid #c7d7ff;
+}
+
+.fee-box.green {
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+}
+
+.fee-label {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.fee-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.no-fee {
+  color: #888;
+  padding: 10px 0;
+}

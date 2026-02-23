@@ -7,9 +7,13 @@ import {
   getApproCarDetail,
 } from "../../api/cargateAPI";
 
+const BASE_IMAGE_URL = "http://localhost:9600"; // 이미지 서버 주소
+
 export function LogDetailModal({ open, setOpen, cargateEventId }) {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [imagePath, setImagePath] = useState(null);
 
   const [formData, setFormData] = useState({
     plateNumber: "",
@@ -22,7 +26,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
   });
 
   // ==============================
-  // 상세 조회 + 유형별 추가 조회
+  // 상세 조회
   // ==============================
   useEffect(() => {
     if (!open || !cargateEventId) return;
@@ -31,7 +35,6 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
       try {
         setLoading(true);
 
-        // 1️⃣ 출입기록 상세 조회
         const res = await getLogDetail({
           cargate_event_log_id: cargateEventId,
         });
@@ -40,42 +43,44 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
 
         const data = res.data;
 
+        // 이미지 경로 저장 (백엔드 필드명에 맞게 수정 가능)
+        setImagePath(data.image_path || null);
+
+        console.log(`${BASE_IMAGE_URL}${encodeURI(imagePath)}`);
+
         let extraData = null;
 
-        // 2️⃣ 차량 유형에 따른 추가 조회
+        // REGISTERED
         if (data.vehicleType === "REGISTERED" && data.vehicleId) {
           const regRes = await getRegisCarDetail({
             vehicle_id: data.vehicleId,
           });
-
-          if (regRes?.success) {
-            extraData = regRes.data;
-          }
+          if (regRes?.success) extraData = regRes.data;
         }
 
+        // ADMIN_APPROVED
         if (data.vehicleType === "ADMIN_APPROVED" && data.vehicleId) {
           const appRes = await getApproCarDetail({
             vehicle_id: data.vehicleId,
           });
-
-          if (appRes?.success) {
-            extraData = appRes.data;
-          }
+          if (appRes?.success) extraData = appRes.data;
         }
 
-        // 3️⃣ formData 세팅
+        // houseDong + houseHo 조합
+        const houseInfoText =
+          extraData?.houseDong && extraData?.houseHo
+            ? `${extraData.houseDong}동 ${extraData.houseHo}호`
+            : null;
+
         setFormData({
           plateNumber: data.plateNumber || "",
           vehicleType: data.vehicleType || "REGISTERED",
 
-          // REGISTERED 채움
-          houseInfo: extraData?.houseInfo || null,
+          houseInfo: houseInfoText,
           vehicleOwner: extraData?.vehicleOwner || "",
 
-          // ADMIN_APPROVED 채움
           approvalReason: extraData?.approvalReason || "",
 
-          // 공통 시간
           startAt: data.entryAt?.slice(0, 16) || "",
           endAt: data.exitAt?.slice(0, 16) || "",
         });
@@ -89,9 +94,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
     fetchDetail();
   }, [open, cargateEventId]);
 
-  // ==============================
   // 차량 유형 변경
-  // ==============================
   const handleTypeChange = (type) => {
     setFormData({
       ...formData,
@@ -102,9 +105,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
     });
   };
 
-  // ==============================
   // 저장
-  // ==============================
   const handleSave = async () => {
     try {
       const payload = {
@@ -129,9 +130,6 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
     }
   };
 
-  // ==============================
-  // 닫기
-  // ==============================
   const handleClose = () => {
     if (isEditMode) {
       const ok = window.confirm("수정을 취소하겠습니까?");
@@ -145,115 +143,122 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
 
   return (
     <div className="modal-backdrop" onClick={handleClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <h2>차량 상세</h2>
+      <div className="modal-card horizontal" onClick={(e) => e.stopPropagation()}>
+        {/* ================= 왼쪽 이미지 ================= */}
+        <div className="modal-image">
+          {imagePath ? (
+            <img src={`${BASE_IMAGE_URL}/${encodeURI(imagePath)}`} />
+          ) : (
+            <div className="no-image">이미지 없음</div>
+          )}
+        </div>
 
-        {loading ? (
-          <p>로딩중...</p>
-        ) : (
-          <>
-            {/* 번호판 */}
-            <div className="modal-field">
-              <label>번호판</label>
-              <input
-                value={formData.plateNumber}
-                disabled={!isEditMode}
-                onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
-              />
-            </div>
+        {/* ================= 오른쪽 정보 ================= */}
+        <div className="modal-content">
+          <h2>차량 상세</h2>
 
-            {/* 차량 유형 */}
-            <div className="modal-field">
-              <label>차량 유형</label>
-              <select
-                value={formData.vehicleType}
-                disabled={!isEditMode}
-                onChange={(e) => handleTypeChange(e.target.value)}
-              >
-                <option value="REGISTERED">세대차량</option>
-                <option value="UNREGISTERED">미등록차량</option>
-                <option value="ADMIN_APPROVED">관리자 승인차량</option>
-              </select>
-            </div>
+          {loading ? (
+            <p>로딩중...</p>
+          ) : (
+            <>
+              {/* 번호판 */}
+              <div className="modal-field">
+                <label>번호판</label>
+                <input
+                  value={formData.plateNumber}
+                  disabled={!isEditMode}
+                  onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
+                />
+              </div>
 
-            {/* 공통 시간 */}
-            <div className="modal-field">
-              <label>입차시간</label>
-              <input
-                type="datetime-local"
-                value={formData.startAt}
-                disabled={!isEditMode}
-                onChange={(e) => setFormData({ ...formData, startAt: e.target.value })}
-              />
-            </div>
+              {/* 차량 유형 */}
+              <div className="modal-field">
+                <label>차량 유형</label>
+                <select
+                  value={formData.vehicleType}
+                  disabled={!isEditMode}
+                  onChange={(e) => handleTypeChange(e.target.value)}>
+                  <option value="REGISTERED">세대차량</option>
+                  <option value="UNREGISTERED">미등록차량</option>
+                  <option value="ADMIN_APPROVED">관리자 승인차량</option>
+                </select>
+              </div>
 
-            <div className="modal-field">
-              <label>출차시간</label>
-              <input
-                type="datetime-local"
-                value={formData.endAt}
-                disabled={!isEditMode}
-                onChange={(e) => setFormData({ ...formData, endAt: e.target.value })}
-              />
-            </div>
+              {/* 시간 */}
+              <div className="modal-field">
+                <label>입차시간</label>
+                <input
+                  type="datetime-local"
+                  value={formData.startAt}
+                  disabled={!isEditMode}
+                  onChange={(e) => setFormData({ ...formData, startAt: e.target.value })}
+                />
+              </div>
 
-            {/* REGISTERED */}
-            {formData.vehicleType === "REGISTERED" && (
-              <>
+              <div className="modal-field">
+                <label>출차시간</label>
+                <input
+                  type="datetime-local"
+                  value={formData.endAt}
+                  disabled={!isEditMode}
+                  onChange={(e) => setFormData({ ...formData, endAt: e.target.value })}
+                />
+              </div>
+
+              {/* REGISTERED */}
+              {formData.vehicleType === "REGISTERED" && (
+                <>
+                  <div className="modal-field">
+                    <label>세대 정보</label>
+                    <input value={formData.houseInfo || ""} disabled />
+                  </div>
+
+                  <div className="modal-field">
+                    <label>차량 소유주</label>
+                    <input
+                      value={formData.vehicleOwner}
+                      disabled={!isEditMode}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          vehicleOwner: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* ADMIN_APPROVED */}
+              {formData.vehicleType === "ADMIN_APPROVED" && (
                 <div className="modal-field">
-                  <label>세대 정보</label>
+                  <label>승인 사유</label>
                   <input
-                    value={formData.houseInfo || ""}
-                    disabled={!isEditMode}
-                    onChange={(e) => setFormData({ ...formData, houseInfo: e.target.value })}
-                  />
-                </div>
-
-                <div className="modal-field">
-                  <label>차량 소유주</label>
-                  <input
-                    value={formData.vehicleOwner}
+                    value={formData.approvalReason}
                     disabled={!isEditMode}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        vehicleOwner: e.target.value,
+                        approvalReason: e.target.value,
                       })
                     }
                   />
                 </div>
-              </>
-            )}
-
-            {/* ADMIN_APPROVED */}
-            {formData.vehicleType === "ADMIN_APPROVED" && (
-              <div className="modal-field">
-                <label>승인 사유</label>
-                <input
-                  value={formData.approvalReason}
-                  disabled={!isEditMode}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      approvalReason: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            )}
-
-            <div className="modal-buttons">
-              {!isEditMode ? (
-                <button onClick={() => setIsEditMode(true)}>수정</button>
-              ) : (
-                <button className="primary" onClick={handleSave}>
-                  저장
-                </button>
               )}
-              <button onClick={handleClose}>닫기</button>
-            </div>
-          </>
-        )}
+
+              <div className="modal-buttons">
+                {!isEditMode ? (
+                  <button onClick={() => setIsEditMode(true)}>수정</button>
+                ) : (
+                  <button className="primary" onClick={handleSave}>
+                    저장
+                  </button>
+                )}
+                <button onClick={handleClose}>닫기</button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

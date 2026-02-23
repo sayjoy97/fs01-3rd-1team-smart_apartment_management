@@ -2,6 +2,7 @@ import React from "react";
 import backendServer from "./backendServer";
 import requests from "./requests";
 
+// 차량 출입관리 페이지 간단 요금저보 조회
 export const getSimpleCharge = async () => {
   try {
     const response = await backendServer.get(requests.getSimpleCharge);
@@ -15,6 +16,7 @@ export const getSimpleCharge = async () => {
   }
 };
 
+// 요금관련 종합정보
 export const getTotalChargeInfo = async () => {
   try {
     const response = await backendServer.get(requests.getTotalList);
@@ -28,6 +30,7 @@ export const getTotalChargeInfo = async () => {
   }
 };
 
+// 최근 30일 일별 요금정보 호출
 export const getDailyList = async () => {
   try {
     const response = await backendServer.get(requests.getDaily30TotalList);
@@ -41,6 +44,7 @@ export const getDailyList = async () => {
   }
 };
 
+// 최근 12개월 월별 요금정보 호출
 export const getMonthlyList = async () => {
   try {
     const response = await backendServer.get(requests.getMonthlyTotalList);
@@ -54,6 +58,7 @@ export const getMonthlyList = async () => {
   }
 };
 
+// 최근 3년 연간 요금정보 호출
 export const getYearlyList = async () => {
   try {
     const response = await backendServer.get(requests.getYearlyTotalList);
@@ -67,6 +72,7 @@ export const getYearlyList = async () => {
   }
 };
 
+// 요금 설정정보 호출
 export const getChargeSettingInfo = async () => {
   try {
     const response = await backendServer.get(requests.getChargeSetting);
@@ -80,9 +86,10 @@ export const getChargeSettingInfo = async () => {
   }
 };
 
+// 요금 설정정보 수정
 export const chargeSettingUpdate = async (updateDate) => {
   try {
-    const response = await backendServer.post(requests.updateChargeSetting, {
+    const response = await backendServer.put(requests.updateChargeSetting, {
       data: updateDate,
     });
 

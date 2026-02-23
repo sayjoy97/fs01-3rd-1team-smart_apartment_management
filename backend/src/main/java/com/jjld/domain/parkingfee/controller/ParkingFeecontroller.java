@@ -65,7 +65,7 @@ public class ParkingFeecontroller {
     }
 
     // 주차 요금 설정 수정
-    @PostMapping("/charge/setting/update")
+    @PutMapping("/charge/setting/update")
     ResponseEntity<?> updateChargeSetting(@RequestBody FeeSettingRequest request){
         parkingFeeService.createFeeSetting(request);
         return ResponseEntity.ok(ApiResponse.success("주차요금 수정 성공"));
