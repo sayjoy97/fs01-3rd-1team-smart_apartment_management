@@ -28,13 +28,18 @@ public class NoticeDAOImpl implements NoticeDAO {
     }
 
     @Override
-    public List<Notice> findByNoticeTitle(String noticeTitle) {
-        return noticeRepository.findByNoticeTitleContaining(noticeTitle);
+    public Page<Notice> searchAll(String keyword, Pageable pageable) {
+        return noticeRepository.searchAll(keyword, pageable);
     }
 
     @Override
-    public List<Notice> findByAdminName(String adminName) {
-        return noticeRepository.findByAdmin_AdminNameContaining(adminName);
+    public Page<Notice> findByNoticeTitle(String noticeTitle, Pageable pageable) {
+        return noticeRepository.findByNoticeTitleContaining(noticeTitle, pageable);
+    }
+
+    @Override
+    public Page<Notice> findByAdminName(String adminName, Pageable pageable) {
+        return noticeRepository.findByAdmin_AdminNameContaining(adminName, pageable);
     }
 
     // 공지사항 등록

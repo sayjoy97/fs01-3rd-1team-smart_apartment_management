@@ -16,7 +16,7 @@ public interface NoticeService {
     List<NoticeListResponse> getFixedNoticeList();
 
     // 제목 또는 작성자로 공지사항 리스트 조회
-    List<NoticeListResponse> findByTypeList(String searchType, String keyword);
+    Page<NoticeListResponse> findByTypeList(String searchType, String keyword, int size, int page);
 
     // 공지사항 등록
     void noticeWrite(NoticeDetailRequest writeRequest);

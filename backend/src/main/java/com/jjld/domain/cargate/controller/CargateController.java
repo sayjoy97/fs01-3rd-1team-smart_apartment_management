@@ -12,12 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/cargate/api")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class CargateController {
     private final CargateService cargateService;
 
@@ -41,18 +41,18 @@ public class CargateController {
     }
 
     // 차량 출입기록 상세정보 조회
-    @GetMapping("/{cargate_event_log_id}/detail")
+    @GetMapping("/detail")
     @Operation(summary = "출입기록 로그별 상세조회")
-    ResponseEntity<?> getDetail(@PathVariable("cargate_event_log_id") Long cargate_event_log_id) {
+    ResponseEntity<?> ByLogDetail(@RequestParam("cargate_event_log_id") Long cargate_event_log_id) {
         LogDetailBaseResponse logDetail = cargateService.getLogDetail(cargate_event_log_id);
         return ResponseEntity.ok(ApiResponse.success(logDetail));
     }
 
     // 출입기록 로그별 정보수정
-    @PutMapping("/{cargate_event_log_id}/update")
+    @PutMapping("/update")
     @Operation(summary = "출입기록 로그별 정보수정")
     ResponseEntity<?> updateDetailByLogId(
-            @PathVariable("cargate_event_log_id") Long cargateEventLogId,
+            @RequestParam("cargate_event_log_id") Long cargateEventLogId,
             @RequestBody VehicleRelatedRequest request) {
         cargateService.updateVehicleByLog(cargateEventLogId, request);
         return ResponseEntity.ok(ApiResponse.success("success"));
@@ -70,15 +70,18 @@ public class CargateController {
     // 세대 등록차량 조회
     @GetMapping("/registeredCar/list")
     @Operation(summary = "세대 등록차량 조회")
-    public ResponseEntity<?> registeredCarList(){
-        List<RegisCarResponse> registeredCars = cargateService.getRegisteredCars();
+    public ResponseEntity<?> registeredCarList(
+            @RequestParam(name = "size", defaultValue = "10")int size,
+            @RequestParam(name = "page", defaultValue = "1") int page
+    ){
+        Page<RegisCarListResponse> registeredCars = cargateService.getRegisteredCars(size, page-1);
         return ResponseEntity.ok(ApiResponse.success(registeredCars));
     }
 
     // 세대 등록차량 상세정보 조회
-    @GetMapping("/registeredCar/{vehicle_id}/detail")
+    @GetMapping("/registeredCar/detail")
     @Operation(summary = "세대 등록차량 상세정보 조회")
-    public ResponseEntity<?> registeredCarDetail(@PathVariable("vehicle_id") Long vehicle_id){
+    public ResponseEntity<?> registeredCarDetail(@RequestParam("vehicle_id") Long vehicle_id){
         RegisCarDetailResponse regisCarDetail = cargateService.getRegisCarDetail(vehicle_id);
         return ResponseEntity.ok(ApiResponse.success(regisCarDetail));
     }
@@ -99,25 +102,27 @@ public class CargateController {
     // 관리자 승인차량 조회
     @GetMapping("/approvedCar/list")
     @Operation(summary = "관리자 승인차량 조회")
-    public ResponseEntity<?> getApprovedCarList(){
-        List<ApprovedCarResponse> approvededCarList = cargateService.ApprovedCarList();
+    public ResponseEntity<?> getApprovedCarList(
+            @RequestParam(name = "size", defaultValue = "10")int size,
+            @RequestParam(name = "page", defaultValue = "1") int page
+    ){
+        Page<ApprovedCarListResponse> approvededCarList = cargateService.ApprovedCarList(size, page-1);
         
         return ResponseEntity.ok(ApiResponse.success(approvededCarList));
     }
-    
 
     // 관리자 승인차량 상세정보 조회
-    @GetMapping("/approvedCar/{vehicle_id}/detail")
+    @GetMapping("/approvedCar/detail")
     @Operation(summary = "관리자 승인차량 상세정보 조회")
-    public ResponseEntity<?> getApprovedCarDetail(@PathVariable("vehicle_id") Long vehicle_id){
+    public ResponseEntity<?> getApprovedCarDetail(@RequestParam("vehicle_id") Long vehicle_id){
         ApprovedCarDetailResponse approvedCarDetail = cargateService.getApprovedCarDetail(vehicle_id);
         return ResponseEntity.ok(ApiResponse.success(approvedCarDetail));
     }
 
     // 관리자 승인차량 수정
-    @PutMapping("/approvedCar/{vehicle_id}/update")
+    @PutMapping("/approvedCar/update")
     @Operation(summary = "관리자 승인차량 수정")
-    public ResponseEntity<?> updateApprovedCar(@PathVariable("vehicle_id") Long vehicle_id, @RequestBody ApprovedCarRequest request) {
+    public ResponseEntity<?> updateApprovedCar(@RequestParam("vehicle_id") Long vehicle_id, @RequestBody ApprovedCarRequest request) {
         cargateService.updateApprovedCar(vehicle_id, request);
         return ResponseEntity.ok(ApiResponse.success("수정완료"));
     }

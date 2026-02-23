@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CarGate {
+public class Cargate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -59,24 +59,28 @@ public class NoticeServiceImpl implements NoticeService {
 
     // 제목 또는 작성자로 공지사항 리스트 조회
     @Override
-    public List<NoticeListResponse> findByTypeList(String searchType, String keyword) {
+    public Page<NoticeListResponse> findByTypeList(String searchType, String keyword, int size, int page) {
 
-        List<Notice> noticeList;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Notice> noticePage;
 
-        switch (searchType){
-            case "admin_name" -> noticeList = noticeDAO.findByAdminName(keyword);
-            case "notice_title" -> noticeList = noticeDAO.findByNoticeTitle(keyword);
+        if (searchType == null || searchType.isBlank()) {
+            searchType = "all";
+        }
+
+        switch (searchType) {
+            case "admin_name" -> noticePage = noticeDAO.findByAdminName(keyword, pageable);
+            case "notice_title" -> noticePage = noticeDAO.findByNoticeTitle(keyword, pageable);
+            case "all" -> noticePage = noticeDAO.searchAll(keyword, pageable);
             default -> throw new IllegalArgumentException("지원하지 않는 검색 타입입니다.");
         }
 
-        return noticeList.stream()
-                .map(entity -> new NoticeListResponse(
-                        entity.getNoticeId(),
-                        entity.getAdmin().getAdminName(),
-                        entity.getNoticeTitle(),
-                        entity.getCreateAt()
-                ))
-                .collect(Collectors.toList());
+        return noticePage.map(entity -> new NoticeListResponse(
+                entity.getNoticeId(),
+                entity.getAdmin().getAdminName(),
+                entity.getNoticeTitle(),
+                entity.getCreateAt()
+        ));
     }
 
     // 공지사항 등록
@@ -106,8 +110,8 @@ public class NoticeServiceImpl implements NoticeService {
                 .noticeTitle(entity.getNoticeTitle())
                 .noticeContent(entity.getNoticeContent())
                 .fixStatus(entity.getFixStatus())
-                .createAt(entity.getCreateAt())
-                .updateAt(entity.getUpdateAt())
+                .createdAt(entity.getCreateAt())
+                .updatedAt(entity.getUpdateAt())
                 .build();
     }
 

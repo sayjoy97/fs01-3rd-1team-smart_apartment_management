@@ -1,6 +1,8 @@
 package com.jjld.domain.cargate.dao;
 
 import com.jjld.domain.cargate.entity.ApprovedCar;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface ApprovedDAO {
     ApprovedCar createApprovedCar(ApprovedCar approvedCar);
 
     // 관리자 승인차량 조회
-    List<ApprovedCar> ApprovedCarList();
+    Page<ApprovedCar> ApprovedCarList(Pageable pageable);
 
     // 관리자 승인차량 상세정보 조회
     ApprovedCar findByVehicle_VehicleId(Long vehicle_id);
