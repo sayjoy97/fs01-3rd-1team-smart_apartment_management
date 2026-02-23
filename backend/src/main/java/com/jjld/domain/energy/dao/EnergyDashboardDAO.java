@@ -15,4 +15,6 @@ public interface EnergyDashboardDAO {
     long countCheckRequiredDevices();
 
     long countCheckingDevices();
+
+    long countNormalDevices();
 }

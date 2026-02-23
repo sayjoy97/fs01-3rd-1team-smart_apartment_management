@@ -1,6 +1,7 @@
 package com.jjld.domain.energy.repository;
 
 import com.jjld.domain.energy.entity.EnergyAnalysis;
+import com.jjld.domain.energy.entity.EnergyDevice;
 import com.jjld.domain.energy.entity.Enum.AnalysisStatus;
 import com.jjld.domain.energy.entity.Enum.DeviceStatus;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface EnergyAnalysisRepository extends JpaRepository<EnergyAnalysis, Long> {
     // 오늘 점검 필요 건수
@@ -68,5 +71,13 @@ public interface EnergyAnalysisRepository extends JpaRepository<EnergyAnalysis, 
     Page<EnergyAnalysis> findLatestAnalysisByStatus(
             @Param("status") DeviceStatus status,
             Pageable pageable
+    );
+
+    List<EnergyAnalysis> findByEnergyDeviceAndAnalyzedAtAfter(EnergyDevice energyDevice, LocalDateTime analyzedAtAfter);
+
+    List<EnergyAnalysis> findByEnergyDeviceAndAnalyzedAtBetweenOrderByAnalyzedAtAsc(
+            EnergyDevice energyDevice,
+            LocalDateTime start,
+            LocalDateTime end
     );
 }

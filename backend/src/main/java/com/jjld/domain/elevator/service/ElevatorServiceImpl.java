@@ -188,6 +188,6 @@ public class ElevatorServiceImpl implements ElevatorService {
     public void testMqtt(Long elevatorId, String payload) {
         log.info("elevatorId: {}", elevatorId);
         log.info("payload: {}", payload);
-        mqttPublish.sandToMqtt("test", "jjld/command/elevator");
+        mqttPublish.sendToMqtt("test", "jjld/command/elevator");
     }
 }

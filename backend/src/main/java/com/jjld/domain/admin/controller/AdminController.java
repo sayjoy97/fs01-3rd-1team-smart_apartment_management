@@ -79,7 +79,7 @@ public class AdminController {
     }
 
     // 관리자 로그인
-    @PostMapping("admin/login")
+    @PostMapping("/login")
     public ResponseEntity<?> loginAdmin(
             @Valid @RequestBody LoginAdminReq loginAdminReq,
             HttpServletRequest servletRequest

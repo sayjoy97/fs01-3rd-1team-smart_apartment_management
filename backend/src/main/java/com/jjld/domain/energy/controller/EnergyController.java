@@ -1,8 +1,6 @@
 package com.jjld.domain.energy.controller;
 
-import com.jjld.domain.energy.dto.EnergyMeasurementCreateRequest;
-import com.jjld.domain.energy.dto.EnergyPolicyCreateRequest;
-import com.jjld.domain.energy.dto.EnergyUsageSummaryCreateRequest;
+import com.jjld.domain.energy.dto.*;
 import com.jjld.domain.energy.entity.Enum.DeviceStatus;
 import com.jjld.domain.energy.service.*;
 import com.jjld.global.response.ApiResponse;
@@ -12,8 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "energy-controller", description = "에너지 관리 API")
 @RestController
@@ -25,6 +27,9 @@ public class EnergyController {
     private final EnergyDeviceService energyDeviceService;
     private final EnergyUsageSummaryService energyUsageSummaryService;
     private final EnergyMeasurementService energyMeasurementService;
+    private final EnergyChartService energyChartService;
+
+    // 1) 소비패턴
 
     // 월간사용량.오늘점검필요건수.점검대기설비수
     @GetMapping("/dashboard")
@@ -121,5 +126,27 @@ public class EnergyController {
 
         energyMeasurementService.createMeasurement(request);
         return ResponseEntity.ok(ApiResponse.success());
+    }
+
+
+    // 1) 소비패턴
+    @GetMapping("/pattern")
+    public ApiResponse<List<PatternPointDTO>> pattern(
+            @RequestParam String period, // TIME_SLOT | DAILY | MONTHLY
+            @RequestParam(required = false) Long deviceId,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate baseDate
+    ) {
+        return ApiResponse.success(energyChartService.getPattern(period, deviceId, baseDate));
+    }
+
+    // 2) 유형분포(월간)
+    @GetMapping("/category")
+    public ApiResponse<List<CategorySliceDTO>> category(
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate month,
+            @RequestParam(required = false) Long deviceId
+    ) {
+        return ApiResponse.success(energyChartService.getCategory(month, deviceId));
     }
 }

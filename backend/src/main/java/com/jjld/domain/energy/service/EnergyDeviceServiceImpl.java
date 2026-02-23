@@ -1,22 +1,29 @@
 package com.jjld.domain.energy.service;
 
+import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.repository.AdminRepository;
 import com.jjld.domain.energy.dao.EnergyDeviceDAO;
 import com.jjld.domain.energy.dto.*;
 import com.jjld.domain.energy.entity.*;
 import com.jjld.domain.energy.entity.Enum.AnalysisStatus;
 import com.jjld.domain.energy.entity.Enum.DeviceStatus;
 import com.jjld.domain.energy.entity.Enum.PeriodType;
+import com.jjld.domain.energy.mqtt.EnergyControlEvent;
 import com.jjld.domain.energy.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +35,9 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
     private final EnergyControlLogRepository energyControlLogRepository;
     private final EnergyUsageSummaryRepository energyUsageSummaryRepository;
     private final EnergySavingResultRepository energySavingResultRepository;
+    private final AdminRepository adminRepository;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Override
     public Page<EnergyCheckRequiredDeviceResponse> getCheckRequiredDevices(Pageable pageable) {
@@ -36,6 +46,7 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void startCheck(Long deviceId) {
         EnergyDevice device = energyDeviceRepository.findById(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 설비를 찾을 수 없습니다."));
@@ -47,6 +58,7 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void completeCheck(Long deviceId) {
         EnergyDevice device = energyDeviceRepository.findById(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 설비를 찾을 수 없습니다."));
@@ -97,6 +109,7 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
                 .recommendedAction(recommendedAction)
                 .expectedEffectMessage(expectedEffectMessage)
                 .analyzedAt(latest != null ? latest.getAnalyzedAt() : null)
+                .isOperating(device.getIsOperating())
                 .build();
     }
 
@@ -123,24 +136,29 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void controlDevice(Long deviceId, Boolean operate, String reason) {
+        // 0) 로그인 관리자 꺼내기
+        Admin admin = getCurrentAdmin();
         // 1. 설비 조회
         EnergyDevice device = energyDeviceRepository.findById(deviceId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 설비를 찾을 수 없습니다."));
         Boolean beforeState = device.getIsOperating();
         // 2. 동일 상태면 종료
-        if (beforeState.equals(operate)) {
+        if (Objects.equals(beforeState, operate)) {
             return;
         }
+        LocalDateTime now = LocalDateTime.now();
         // 3. 상태 변경
         device.setIsOperating(operate);
         // 4. 제어 로그 저장
         EnergyControlLog log = EnergyControlLog.builder()
                 .energyDevice(device)
+                .admin(admin)
                 .beforeState(beforeState)
                 .afterState(operate)
                 .reason(reason)
-                .controlledAt(LocalDateTime.now())
+                .controlledAt(now)
                 .build();
         energyControlLogRepository.save(log);
         // 5. 제어 전 낭비량 조회 (절감 시작 기준의 기록만 저장)
@@ -149,19 +167,22 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
                 .stream()
                 .findFirst()
                 .orElse(null);
-
-        if (latest != null) {
+        if (latest == null) return;
+        // 이미 미완료 절감 레코드가 있으면 중복 생성 방지
+        if (!energySavingResultRepository.existsByEnergyDeviceAndAfterKwhIsNull(device)) {
             EnergySavingResult saving = EnergySavingResult.builder()
                     .energyDevice(device)
                     .controlLog(log)
                     .beforeKwh(latest.getEstimatedWasteKwh())
-                    .afterKwh(null) // 아직 모름
-                    .savedKwh(null) // 아직 계산 안함
-                    .savedCost(null) // 아직 계산 안함
-                    .evaluatedAt(LocalDateTime.now())
+                    .evaluatedAt(now)
+                    .afterKwh(null)
+                    .savedKwh(null)
+                    .savedCost(null)
                     .build();
             energySavingResultRepository.save(saving);
         }
+        // 커밋 후 MQTT publish 하도록 이벤트만 던짐
+        eventPublisher.publishEvent(new EnergyControlEvent(deviceId, operate, reason));
     }
 
     @Override
@@ -257,5 +278,15 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
                 + Math.round(analysis.getEstimatedWasteCost())
                 + " (" + Math.round(analysis.getEstimatedWasteKwh())
                 + " kWh)를 절감할 가능성이 있습니다.";
+    }
+
+    private Admin getCurrentAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("로그인 정보가 없습니다.");
+        }
+        String adminLoginId = authentication.getName();
+        return adminRepository.findByAdminLoginId(adminLoginId)
+                .orElseThrow(() -> new IllegalArgumentException("관리자를 찾을 수 없습니다: " + adminLoginId));
     }
 }

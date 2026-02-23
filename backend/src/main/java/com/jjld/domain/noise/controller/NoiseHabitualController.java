@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import org.springframework.data.domain.Pageable;
 
@@ -29,9 +30,10 @@ public class NoiseHabitualController {
     @Operation(summary = "상습 구간 수동 등록", description = "소음 이벤트 처리(Process)를 기준으로 상습 구간을 수동 등록한다.")
     public ResponseEntity<?> registerHabitualZone(
             @RequestParam Long noiseEventProcessId,
-            @RequestParam Long adminId,
-            @RequestParam(required = false) String memo) {
-        habitualService.registerZone(noiseEventProcessId, adminId, memo);
+            @RequestParam(required = false) String memo,
+            Authentication authentication) {
+        String adminLoginId = authentication.getName();
+        habitualService.registerZone(noiseEventProcessId, adminLoginId, memo);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -40,10 +42,10 @@ public class NoiseHabitualController {
     @Operation(summary = "상습 구간 모니터링 종료", description = "상습 구간을 종료(CLOSED) 처리한다.")
     public ResponseEntity<?> closeHabitualZone(
             @PathVariable Long zoneId,
-            @RequestParam Long adminId,
-            @RequestParam(required = false) String memo
-    ) {
-        habitualService.closeZone(zoneId, adminId, memo);
+            @RequestParam(required = false) String memo,
+            Authentication authentication) {
+        String adminLoginId = authentication.getName();
+        habitualService.closeZone(zoneId, adminLoginId, memo);
         return ResponseEntity.ok(ApiResponse.success());
     }
 
@@ -83,6 +85,17 @@ public class NoiseHabitualController {
                 )
         );
     }
+
+//    @PostMapping("/zones/{zoneId}/notify")
+//    public ResponseEntity<?> notifyHabitualZone(
+//            @PathVariable Long zoneId,
+//            @RequestParam(required = false) String memo,
+//            Authentication authentication
+//    ) {
+//        String adminLoginId = authentication.getName();
+//        habitualService.notify(zoneId, adminLoginId, memo);
+//        return ResponseEntity.ok(ApiResponse.success());
+//    }
     // 내부 DTO (카운트용)
     private record HabitualZoneCountResponse(long monitoringCount, long closedCount) {
     }

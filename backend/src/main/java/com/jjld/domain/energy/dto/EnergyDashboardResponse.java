@@ -19,6 +19,9 @@ public class EnergyDashboardResponse {
     // 점검 중 설비 수 (CHECKING)
     private Long checkingCount;
 
+    // 정상 설비 수 (NORMAL)
+    private Long normalCount;
+
     // 예상 절감 가능 비용 (월간 추정)
     private Double possibleSavingCost;
 }

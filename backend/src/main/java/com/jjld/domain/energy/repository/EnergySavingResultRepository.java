@@ -17,4 +17,7 @@ public interface EnergySavingResultRepository extends JpaRepository<EnergySaving
     // 절감 결과 조회
     Page<EnergySavingResult> findByEnergyDeviceDeviceIdOrderByEvaluatedAtDesc(
             Long deviceId, Pageable pageable);
+
+    // 미완료 존재 여부 (중복 방지)
+    boolean existsByEnergyDeviceAndAfterKwhIsNull(EnergyDevice energyDevice);
 }

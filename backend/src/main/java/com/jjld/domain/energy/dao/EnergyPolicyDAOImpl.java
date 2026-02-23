@@ -16,7 +16,7 @@ public class EnergyPolicyDAOImpl implements EnergyPolicyDAO {
 
     @Override
     public Optional<EnergyPolicy> findActivePolicy() {
-        return energyPolicyRepository.findByIsActiveTrue();
+        return energyPolicyRepository.findTopByIsActiveTrueOrderByCreatedAtDesc();
     }
 
     @Override

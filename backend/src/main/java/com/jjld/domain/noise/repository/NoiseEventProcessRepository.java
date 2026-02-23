@@ -6,6 +6,7 @@ import com.jjld.domain.noise.entity.NoiseEventProcess;
 import com.jjld.domain.noise.entity.NoiseSensor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -48,4 +49,11 @@ public interface NoiseEventProcessRepository extends JpaRepository<NoiseEventPro
             NoiseSensor sensor,
             LocalDateTime after
     );
+
+    // ✅ 주/야 필터 + 페이지네이션을 서비스에서 "수동"으로 하려면,
+    // Pageable로 DB에서 잘라오면 필터 후 페이지가 깨짐.
+    // 그래서 일단 정렬된 List로 가져온 뒤, 서비스에서 필터+페이징 한다.
+    List<NoiseEventProcess> findAll(Sort sort);
+
+    List<NoiseEventProcess> findByStatus(ProcessStatus status, Sort sort);
 }

@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -20,6 +22,7 @@ public class EnergyPolicyServiceImpl implements EnergyPolicyService {
 
     @Override
     public EnergyPolicyResponse getActivePolicy() {
+        // active가 여러 개여도 최신 1개 반환
         EnergyPolicy policy = energyPolicyDAO.findActivePolicy()
                 .orElseThrow(() -> new IllegalStateException("활성화된 에너지 정책이 없습니다."));
         return toResponse(policy);
@@ -32,12 +35,14 @@ public class EnergyPolicyServiceImpl implements EnergyPolicyService {
     }
 
     @Override
+    @Transactional
     public EnergyPolicyResponse createPolicy(EnergyPolicyCreateRequest request) {
-        // 기존 활성 정책이 있으면 비활성화
-        energyPolicyDAO.findActivePolicy().ifPresent(active -> {
-            active.setIsActive(false);
-            energyPolicyRepository.save(active);
-        });
+        // 기존 활성 정책이 여러 개여도 전부 비활성화
+        List<EnergyPolicy> actives = energyPolicyRepository.findAllByIsActiveTrue();
+        for (EnergyPolicy p : actives) {
+            p.setIsActive(false);
+        }
+        energyPolicyRepository.saveAll(actives);
 
         // 새 정책 생성 (항상 활성화)
         EnergyPolicy newPolicy = EnergyPolicy.builder()

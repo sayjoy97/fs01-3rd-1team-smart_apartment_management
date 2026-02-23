@@ -50,4 +50,9 @@ public class EnergyDashboardDAOImpl implements EnergyDashboardDAO {
     public long countCheckingDevices() {
         return deviceRepository.countByDeviceStatus(DeviceStatus.CHECKING);
     }
+
+    @Override
+    public long countNormalDevices() {
+        return deviceRepository.countByDeviceStatus(DeviceStatus.NORMAL);
+    }
 }

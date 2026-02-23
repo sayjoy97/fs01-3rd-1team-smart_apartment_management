@@ -25,7 +25,7 @@ public class NoiseHabitualServiceImpl implements NoiseHabitualService{
     private final AdminRepository adminRepository;
 
     @Override
-    public void registerZone(Long noiseEventProcessId, Long adminId, String memo) {
+    public void registerZone(Long noiseEventProcessId, String adminLoginId, String memo) {
         // 1. Process 조회
         NoiseEventProcess process = processRepository.findById(noiseEventProcessId)
                 .orElseThrow(() ->
@@ -39,10 +39,8 @@ public class NoiseHabitualServiceImpl implements NoiseHabitualService{
         }
 
         // 3. 관리자 조회
-        Admin admin = adminRepository.findById(adminId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 관리자입니다.")
-                );
+        Admin admin = adminRepository.findByAdminLoginId(adminLoginId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
         // 4. 상습 구간 생성
         NoiseHabitualZone zone = NoiseHabitualZone.builder()
@@ -71,7 +69,7 @@ public class NoiseHabitualServiceImpl implements NoiseHabitualService{
     }
 
     @Override
-    public void closeZone(Long zoneId, Long adminId, String memo) {
+    public void closeZone(Long zoneId, String adminLoginId, String memo) {
         // 1. 상습 구간 조회
         NoiseHabitualZone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() ->
@@ -84,10 +82,8 @@ public class NoiseHabitualServiceImpl implements NoiseHabitualService{
         }
 
         // 3. 관리자 조회
-        Admin admin = adminRepository.findById(adminId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 관리자입니다.")
-                );
+        Admin admin = adminRepository.findByAdminLoginId(adminLoginId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
 
         // 4. 상태 변경
         zone.close(); // status = CLOSED, endedAt 세팅

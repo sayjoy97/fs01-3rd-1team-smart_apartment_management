@@ -40,6 +40,7 @@ spring:
       garden: "jjld/garden/#"
       elevator: "jjld/elevator/#"
       energy: "jjld/energy/#"
+      noise: "jjld/noise/#"
 
   springdoc:
     cache:

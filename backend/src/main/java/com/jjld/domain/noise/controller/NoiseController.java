@@ -1,6 +1,8 @@
 package com.jjld.domain.noise.controller;
 
 import com.jjld.domain.noise.dto.*;
+import com.jjld.domain.noise.entity.Enum.ProcessStatus;
+import com.jjld.domain.noise.entity.NoisePolicy;
 import com.jjld.domain.noise.service.*;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +25,9 @@ public class NoiseController {
     private final NoiseDashboardService noiseDashboardService;
     private final NoiseEventService noiseEventService;
     private final NoiseStatisticsService noiseStatisticsService;
+    private final NoisePolicyService noisePolicyService;
+
+
     // 소음 이벤트 수신 API - 센서에서 소음발생시 호출
     @PostMapping("/event/add")
     @Operation(summary = "층간소음 이벤트 등록", description = "센서에서 감지된 소음 이벤트를 등록한다.")
@@ -77,5 +82,51 @@ public class NoiseController {
     public ResponseEntity<?> getNoiseStatistics(@RequestParam(required = false) LocalDate date) {
         // date가 없으면 서비스에서 오늘 기준 처리
         return ResponseEntity.ok(ApiResponse.success(noiseStatisticsService.getStatistics(date)));
+    }
+    @GetMapping("/events")
+    @Operation(summary = "소음 이벤트 목록 조회", description = "status(선택) + viewMode(all/day/night)(선택)로 목록을 조회한다.")
+    public ResponseEntity<?> getNoiseEvents(
+            @RequestParam(required = false) ProcessStatus status,
+            @RequestParam(required = false, defaultValue = "all") String viewMode,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        noiseEventService.getNoiseEventListResponses(status, viewMode, pageable)
+                )
+        );
+    }
+
+    @GetMapping("/policy/active")
+    @Operation(summary = "현재 소음 정책 조회", description = "")
+    public ResponseEntity<?> getActivePolicy() {
+        NoisePolicy p = noisePolicyService.findActiveNoisePolicy();
+        NoisePolicyResponse res = NoisePolicyResponse.builder()
+                .policyId(p.getPolicyId())
+                .policyName(p.getPolicyName())
+                .dayStartTime(p.getDayStartTime())
+                .nightStartTime(p.getNightStartTime())
+                .soundLimit(p.getSoundLimit())
+                .repeatLimit(p.getRepeatLimit())
+                .timeThreshold(p.getTimeThreshold())
+                .isActive(p.getIsActive())
+                .createdAt(p.getCreatedAt())
+                .build();
+        return ResponseEntity.ok(ApiResponse.success(res));
+    }
+
+    @PostMapping("/policy")
+    @Operation(summary = "새로운 소음 정책 생성", description = "")
+    public ResponseEntity<?> createPolicy(@RequestBody NoisePolicyCreateRequest req) {
+        NoisePolicy policy = NoisePolicy.builder()
+                .policyName(req.getPolicyName())
+                .dayStartTime(req.getDayStartTime())
+                .nightStartTime(req.getNightStartTime())
+                .soundLimit(req.getSoundLimit())
+                .repeatLimit(req.getRepeatLimit())
+                .timeThreshold(req.getTimeThreshold())
+                .build();
+
+        noisePolicyService.createNoisePolicy(policy);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 }

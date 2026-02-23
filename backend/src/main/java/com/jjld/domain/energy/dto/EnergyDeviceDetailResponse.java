@@ -35,4 +35,6 @@ public class EnergyDeviceDetailResponse {
     private String expectedEffectMessage;
 
     private LocalDateTime analyzedAt;
+
+    private Boolean isOperating;
 }

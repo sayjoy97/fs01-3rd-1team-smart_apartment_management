@@ -14,6 +14,8 @@ public class NoiseEventDetailResponse {
     // 소음 이벤트 ID
     private Long noiseEventId;
 
+    private Long noiseEventProcessId;
+
     // 위치 정보
     private Integer upperHouseDong;
     private Integer upperHouseHo;

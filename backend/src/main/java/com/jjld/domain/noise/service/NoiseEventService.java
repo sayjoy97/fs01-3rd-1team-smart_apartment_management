@@ -27,6 +27,15 @@ public interface NoiseEventService {
     Page<NoiseUrgentEventResponse> getUrgentNoiseEventResponses(Pageable pageable);
 
     // 이벤트 목록 (전체/상태별/페이지네이션)
-    Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, Pageable pageable
+    Page<NoiseEventListResponse> getNoiseEventListResponses(
+            ProcessStatus status,
+            String viewMode, // all | day | night
+            Pageable pageable
+    );
+
+    Page<NoiseEventListResponse> getNoiseEventList(
+            ProcessStatus status,
+            String timeZone,
+            Pageable pageable
     );
 }

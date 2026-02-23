@@ -20,11 +20,13 @@ public class EnergyDashboardServiceImpl implements EnergyDashboardService {
         double monthlyUsage = energyDashboardDAO.findMonthlyUsage(now);
         long checkRequired = energyDashboardDAO.countCheckRequiredDevices();
         long checking = energyDashboardDAO.countCheckingDevices();
+        long normal = energyDashboardDAO.countNormalDevices();
         double possibleSaving = energyDashboardDAO.sumPossibleSavingCost();
         return EnergyDashboardResponse.builder()
                 .monthlyUsageKwh(monthlyUsage)
                 .checkRequiredCount(checkRequired)
                 .checkingCount(checking)
+                .normalCount(normal)
                 .possibleSavingCost(possibleSaving)
                 .build();
     }

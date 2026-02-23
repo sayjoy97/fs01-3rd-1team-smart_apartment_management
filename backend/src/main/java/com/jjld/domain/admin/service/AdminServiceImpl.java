@@ -13,12 +13,15 @@ import com.jjld.global.exception.businessexceptions.BadRequestException;
 import com.jjld.global.exception.businessexceptions.ConflictException;
 import com.jjld.global.exception.businessexceptions.ForbiddenException;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,7 @@ public class AdminServiceImpl implements AdminService {
     private final HistoryDAO historyDAO;
     private final ModelMapper modelMapper;
     private final PasswordEncoder encoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // adminId를 이용해 관리자 조회
     @Override
@@ -174,6 +178,7 @@ public class AdminServiceImpl implements AdminService {
             throw new NotFoundException(ErrorCode.INVALID_CREDENTIALS, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
 
+        // 로그인 성공 로그
         History history = History.builder()
                 .admin(admin)
                 .ipAddress(ipAddress)
@@ -186,9 +191,23 @@ public class AdminServiceImpl implements AdminService {
         admin.setState(true);
         adminDAO.updateAdmin(admin);
 
-        LoginAdminRes response = modelMapper.map(admin, LoginAdminRes.class);
+        List<String> roles = List.of("ROLE_" + admin.getAdminRole().name());
 
-        return response;
+        // JWT 생성
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        admin.getAdminLoginId(),
+                        null,
+                        roles.stream().map(SimpleGrantedAuthority::new).toList()
+                );
+        String accessToken = jwtTokenProvider.createToken(authenticationToken);
+        // 응답 DTO 생성
+        return LoginAdminRes.builder()
+                .adminId(admin.getAdminId())
+                .isFirstLogin(admin.getIsFirstLogin())
+                .accessToken(accessToken)
+                .adminRole(admin.getAdminRole())
+                .build();
     }
 
     // 관리자 최초 로그인 처리
