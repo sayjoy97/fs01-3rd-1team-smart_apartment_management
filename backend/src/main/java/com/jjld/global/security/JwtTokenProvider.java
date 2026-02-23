@@ -49,35 +49,39 @@ public class JwtTokenProvider {
 
     // 토큰 생성
     public String createToken(Authentication authentication) {
+        // 1. 초기값 설정
         String userId = authentication.getName();
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        String role = "";
 
-        Object principal = userInfo.getPrincipal();
+        // 2. Principal 객체 추출 (authentication에서 직접 꺼냅니다)
+        Object principal = authentication.getPrincipal();
 
-        if(principal instanceof UserLoginRequest userLoginRequest){
+        // 3. 타입에 따른 분기 처리
+        if (principal instanceof UserLoginRequest userLoginRequest) {
             userId = userLoginRequest.getHouseholderEmail();
             role = "ROLE_USER";
-        }else if(principal instanceof AdminReq adminReq){
+        } else if (principal instanceof AdminReq adminReq) {
             userId = adminReq.getAdminLoginId();
+            // adminRole이 Enum이라면 .name()을, String이라면 그대로 사용합니다.
             role = adminReq.getAdminRole().name();
-        }else{
-            userId = userInfo.getName();
-            role = userInfo.getAuthorities().stream()
+        } else {
+            // 일반적인 경우 authentication 객체에서 정보를 가져옵니다.
+            userId = authentication.getName();
+            role = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .findFirst()
                     .orElse("ROLE_USER");
         }
 
-        // 토큰 만료 시간
+        // 4. 토큰 만료 시간 설정
         Date now = new Date();
         Date exDate = new Date(now.getTime() + this.tokenExTime);
 
+        // 5. JWT 빌드
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setSubject(userId)
-                .claim("roles", roles)
+                .claim("role", role) // ✅ "roles" 대신 "role"로 변경 (필터와 이름 맞추기)
                 .setIssuedAt(now)
                 .setExpiration(exDate)
                 .signWith(key, SignatureAlgorithm.HS256)
