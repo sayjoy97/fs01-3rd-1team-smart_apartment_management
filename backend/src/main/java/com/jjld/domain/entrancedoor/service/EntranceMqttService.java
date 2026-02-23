@@ -41,7 +41,7 @@ public class EntranceMqttService implements EntranceMqttServiceImpl{
 
         // MQTT 발행
         String topic = String.format("jjld/entrance/door/%d/%d/%s", houseDong, houseHo, topicSuffix);
-        mqttPublish.sandToMqtt(outcome ? "OK" : "FAIL", topic);
+        mqttPublish.sendToMqtt(outcome ? "OK" : "FAIL", topic);
 
         log.info("MQTT publish: {} | outcome: {} | failReason: {}", topic, outcome, failReason);
     }

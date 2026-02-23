@@ -52,8 +52,7 @@ public class JWTSecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/account/api/login","/house/api/**","/complaint/api/**","/entrance/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/account/api/login", "/admin/api/login", "/admin/api/find-pass", "/admin/api/change-pass", "/admin/api/refresh", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -74,6 +73,7 @@ public class JWTSecurityConfig {
         configurationSource.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://192.168.14.59:5173",
+                "http://localhost:8000/summarize",
                 "http://localhost:8081",
                 "http://localhost:9600"
         ));

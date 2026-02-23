@@ -30,7 +30,7 @@ import java.util.Map;
 @RequestMapping("/account/api")
 @RequiredArgsConstructor
 public class AccountController {
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final AccountService accountService;
     private final PasswordEncoder passwordEncoder;
@@ -45,9 +45,7 @@ public class AccountController {
 
         // 인증 수행
         Authentication authentication =
-                authenticationManagerBuilder
-                        .getObject()
-                        .authenticate(token);
+                authenticationManager.authenticate(token);
 
         AccountUserDetail accountUserDetail =
                 (AccountUserDetail) authentication.getPrincipal();
