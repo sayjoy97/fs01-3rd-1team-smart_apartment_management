@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 public class LogDetailBaseResponse {
     Long cargateEventId;
     String plateNumber;
+    Long vehicleId;
     ParkingStatus parkingStatus;
+    String image_path;
     LocalDateTime entryAt;
     LocalDateTime exitAt;
     long stayMinutes;

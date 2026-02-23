@@ -1,14 +1,13 @@
 package com.jjld.domain.cargate.dao;
 
-import com.jjld.domain.cargate.entity.Enum.VehicleType;
 import com.jjld.domain.cargate.entity.RegisteredCar;
 import com.jjld.domain.cargate.repository.RegisteredCarRepository;
 import com.jjld.domain.cargate.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,8 +23,8 @@ public class RegisteredDAOImpl implements RegisteredDAO {
 
     // 세대 등록차량 조회
     @Override
-    public List<RegisteredCar> findRegisteredList() {
-        return registeredCarRepository.findAll();
+    public Page<RegisteredCar> findRegisteredList(Pageable pageable) {
+        return registeredCarRepository.findAll(pageable);
     }
 
     // 세대 등록차량 상세조회

@@ -13,6 +13,7 @@ public class MqttTopicProperties {
     private String garden;
     private String elevator;
     private String energy;
+    private String cargate;
 
 
 

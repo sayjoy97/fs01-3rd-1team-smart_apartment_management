@@ -12,6 +12,8 @@ import com.jjld.domain.noise.entity.NoiseEventProcess;
 import com.jjld.domain.noise.entity.NoiseSensor;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
 import com.jjld.domain.noise.repository.NoiseHabitualZoneRepository;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,15 +35,55 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     //-----목록-------
     @Override
     @Transactional(readOnly = true)
-    public Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, Pageable pageable) {
-        // 상태 조건이 있으면 필터, 없으면 전체
+    public Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, String viewMode, Pageable pageable) {
+        // 1) DB에서 정렬된 "전체 List" 조회 (status 있으면 status 조건 적용)
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+
+        List<NoiseEventProcess> processes = (status == null)
+                ? noiseEventProcessRepository.findAll(sort)
+                : noiseEventProcessRepository.findByStatus(status, sort);
+
+        // 2) Entity -> DTO 변환
+        List<NoiseEventListResponse> dtos = processes.stream()
+                .map(this::toListResponse)
+                .toList();
+
+        // 3) 주/야(viewMode) 필터 (all/day/night)
+        List<NoiseEventListResponse> filtered = dtos.stream()
+                .filter(d -> {
+                    if (viewMode == null || viewMode.isBlank() || "all".equalsIgnoreCase(viewMode)) return true;
+                    if ("day".equalsIgnoreCase(viewMode)) return "주간".equals(d.getTimeZone());
+                    if ("night".equalsIgnoreCase(viewMode)) return "야간".equals(d.getTimeZone());
+                    return true;
+                })
+                .toList();
+
+        // 4) 수동 페이지네이션 (정상 Page 타입 유지)
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+        List<NoiseEventListResponse> pageContent =
+                (start >= filtered.size()) ? List.of() : filtered.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<NoiseEventListResponse> getNoiseEventList(ProcessStatus status, String timeZone, Pageable pageable) {
+        // 1) DB에서 Page<NoiseEventProcess> 가져오기 (기존 그대로)
         Page<NoiseEventProcess> processPage =
                 (status == null)
                         ? noiseEventDAO.findAllNoiseEvent(pageable)
                         : noiseEventDAO.findNoiseEventByStatus(status, pageable);
-        // Entity → DTO 변환
-        return processPage.map(this::toListResponse);
+
+        // 2) Page -> DTO 변환 (Page 유지)
+        Page<NoiseEventListResponse> dtoPage = processPage.map(this::toListResponse);
+        // (지금은 viewMode 파라미터가 메서드에 없으니 "전체"만 반환)
+        // 나중에 viewMode 파라미터 추가하면 아래 필터 부분만 활성화하면 됨.
+        return dtoPage;
     }
+
     //  ------ 즉시처리 -------
     @Override
     @Transactional(readOnly = true)
@@ -153,6 +196,7 @@ public class NoiseEventServiceImpl implements NoiseEventService {
 
         return NoiseEventDetailResponse.builder()
                 .noiseEventId(noiseEvent.getNoiseEventId())
+                .noiseEventProcessId(process.getProcessId())
                 // 위치 정보
                 .upperHouseDong(upper.getHouseDong())
                 .upperHouseHo(upper.getHouseHo())

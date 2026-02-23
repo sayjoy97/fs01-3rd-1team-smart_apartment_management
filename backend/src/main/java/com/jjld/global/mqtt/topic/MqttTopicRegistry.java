@@ -23,6 +23,8 @@ public class MqttTopicRegistry {
                 MqttServiceType.GARDEN, properties.getGarden(),
                 MqttServiceType.ELEVATOR, properties.getElevator(),
                 MqttServiceType.ENERGY, properties.getEnergy()
+                MqttServiceType.CARGATE, properties.getCargate()
+
 
                 // 작성 후 handler 패키지에 본인 기능 패키지를 만듦
                 // 예시
