@@ -1,16 +1,22 @@
 package com.jjld.global.security;
 
+import com.jjld.domain.admin.security.AdminAuthenticationProvider;
 import com.jjld.domain.house.service.AccountAuthenticationProvider;
 import com.jjld.domain.house.service.AccountDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -26,21 +32,61 @@ import java.util.List;
 public class JWTSecurityConfig {
 
     private final AccountAuthenticationProvider accountAuthenticationProvider;
+    private final AdminAuthenticationProvider adminAuthenticationProvider;
     private final JwtTokenProvider tokenProvider;
     private final AccountDetailsService accountDetailsService;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.authenticationProvider(accountAuthenticationProvider);
+        authBuilder.authenticationProvider(accountAuthenticationProvider)
+                   .authenticationProvider(adminAuthenticationProvider);
         return authBuilder.build();
     }
 
     @Bean
+    public AuthenticationManager adminAuthenticationManager(
+            AdminAuthenticationProvider adminAuthenticationProvider) {
+
+        return new ProviderManager(adminAuthenticationProvider);
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain adminLoginFilterChain(
+            HttpSecurity http,
+            AuthenticationManager adminAuthenticationManager
+    ) throws Exception {
+        AdminLoginAuthenticationFilter adminLoginFilter =
+                new AdminLoginAuthenticationFilter(
+//                        http.getSharedObject(AuthenticationManager.class),
+                        adminAuthenticationManager,
+                        customAuthenticationFailureHandler,
+                        customLoginSuccessHandler
+                );
+//        adminLoginFilter.setFilterProcessesUrl("/admin/api/login");
+
+        http
+//                .securityMatcher("/admin/api/login")
+                .securityMatcher("/admin/api/login", "POST")
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .addFilterAt(adminLoginFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())

@@ -41,6 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.equals("/admin/api/login") || path.equals("/account/api/login");
+    }
+
     // 클라이언트와 요청정보에서 토큰을 꺼내 리턴
     private String getToken(HttpServletRequest rq) {
         String bearerToken = rq.getHeader("Authorization");

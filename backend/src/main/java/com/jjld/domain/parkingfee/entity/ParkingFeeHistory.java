@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,26 +22,28 @@ public class ParkingFeeHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** 어떤 주차 세션의 요금인가 */
+    // 어떤 주차 세션의 요금인가
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parking_session_id", nullable = false)
     private ParkingSession parkingSession;
 
-    /** 어떤 요금 정책을 사용했는가 */
+    // 어떤 요금 정책을 사용했는가
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fee_setting_id", nullable = false)
     private ParkingFeeSetting feeSetting;
 
-    /** 총 주차 시간 (분) */
+    // 총 주차 시간(분)
     private Integer totalMinutes;
 
-    /** 최종 요금 */
+    // 최종 요금
     private Integer totalCharge;
 
-    /** 결제 여부 */
+    // 결제 여부
     private Boolean paid;
 
-    /** 정산 시각 */
+    // 정산 시각
+    @CreationTimestamp
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime chargedAt;
 }
 

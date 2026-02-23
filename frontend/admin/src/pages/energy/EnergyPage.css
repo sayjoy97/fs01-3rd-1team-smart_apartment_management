@@ -1,0 +1,201 @@
+/* src/pages/energy/EnergyPage.css */
+
+.energy-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.energy-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.energy-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.energy-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.energy-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* filter */
+.status-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* table */
+.table-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.energy-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 980px;
+  background: white;
+}
+
+.energy-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #374151;
+  text-align: left;
+  padding: 12px 12px;
+  white-space: nowrap;
+}
+
+.energy-table tbody td {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 12px 12px;
+  font-size: 13px;
+  color: #111827;
+  vertical-align: middle;
+}
+
+.energy-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.col-title {
+  min-width: 220px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.page-indicator {
+  font-size: 13px;
+  color: #374151;
+}
+
+/* 목록 상단 바(탭 + 우측 버튼) */
+.list-topbar {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: -10px;
+}
+
+/* 피그마 느낌 pill 바 */
+.pillbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+/* pill 버튼 */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #111827;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.pill:hover {
+  background: #ffffff;
+  border-color: #e5e7eb;
+}
+
+.pill.active {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+}
+
+.pill-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.pill-count {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.pill.active .pill-count {
+  color: #111827;
+}
+
+/* 우측 정책 버튼(캡쳐처럼 pill 옆에 붙게) */
+.policy-btn {
+  border-radius: 999px !important;
+  white-space: nowrap;
+}

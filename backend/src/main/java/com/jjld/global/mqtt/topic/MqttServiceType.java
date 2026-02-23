@@ -8,7 +8,8 @@ import java.util.Arrays;
 public enum MqttServiceType {
     GARDEN,
     ELEVATOR,
-    ENERGY;
+    ENERGY,
+    CARGATE;
 
     public static MqttServiceType from(String value) {
         return Arrays.stream(values())
