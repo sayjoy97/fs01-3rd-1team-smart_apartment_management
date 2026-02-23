@@ -19,6 +19,7 @@ const requests = {
   // -------- 세대·입주민 --------
   // 1) 세대 관리
   houseList: "/house/api/list", // 세대 목록 조회
+  houseDetail: "/house/api/detail/${houseId}", // 세대 상세 조회
   houseInsert: "/house/api/insert", // 세대 관리 (등록, 수정, 초기화)
 
   // 2) 민원 관리
@@ -37,6 +38,10 @@ const requests = {
   noticeChangeFixStatus: "notices/api/fixStatus/change", // 공지사항 고정 상태변화
 
   // -------- 출입·보안 --------
+  // 1) 출입 관리
+  entranceLog: "/entrance/api/log", // 공동현관 출입기록
+  entranceStatusChange: "/entrance/api/doors/{doorId}/status",
+  entraceDoorList: "/entrance/api/dong/list", // 세대별 공동 현관
 
   // 3-1) 차량 출입관리
   lastWeekByTypeList: "cargate/api/lastweek", // 최근 7일 유형별 카운트 조회

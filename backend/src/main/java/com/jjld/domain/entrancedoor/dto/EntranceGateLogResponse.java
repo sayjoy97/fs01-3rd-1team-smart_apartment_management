@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EntranceGateLogResponse {
-
+    private Long accessLogId;
     private Integer houseDong;
     private Integer houseHo;
     private LocalDateTime accessedAt;
@@ -24,8 +24,9 @@ public class EntranceGateLogResponse {
     private String failReason;
 
     public EntranceGateLogResponse(EntranceGateLog log, String adminName) {
-        this.houseDong = log.getHouse().getHouseDong();
-        this.houseHo = log.getHouse().getHouseHo();
+        this.accessLogId = log.getAccessLogId();
+        this.houseDong = log.getHouseDong();
+        this.houseHo = log.getHouseHo();
         this.accessedAt = log.getAccessedAt();
         this.adminName = adminName;
         this.accessType = log.getAccessType().name();

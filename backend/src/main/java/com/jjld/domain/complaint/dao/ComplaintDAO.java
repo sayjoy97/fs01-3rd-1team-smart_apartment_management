@@ -2,6 +2,7 @@ package com.jjld.domain.complaint.dao;
 
 import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
 import com.jjld.domain.complaint.entity.Complaint;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 public interface ComplaintDAO {
 
@@ -12,6 +13,7 @@ public interface ComplaintDAO {
     void updateAnswer(Complaint complaint);
 
     // 입주민의 민원 상세 조회
+    @EntityGraph(attributePaths = {"referenceComplaints"})
     Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId, String email);
 
     // 입주민 민원 삭제

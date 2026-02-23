@@ -5,8 +5,9 @@ import AuthLayout from "./layouts/AuthLayout";
 
 import LoginPage from "./pages/auth/LoginPage";
 import Dashboard from "./pages/dashboard/Dashboard";
-import HouseholdMangement from "./pages/house/HouseholdMangement";
+import HouseholdManagement from "./pages/house/HouseholdManagement";
 import ComplaintsPage from "./pages/complaint/ComplaintsPage";
+import EntranceDoor from "./pages/entrance/EntranceDoor";
 import MyPage from "./pages/mypage/MyPage";
 import AdminsPage from "./pages/admins/AdminsPage";
 import ElevatorPage from "./pages/elevator/ElevatorPage";
@@ -69,8 +70,9 @@ export default function App() {
       >
         <Route path="/mypage" element={<MyPage />} />
         <Route index element={<Dashboard />} />
-        <Route path="/house" element={<HouseholdMangement />} />
+        <Route path="/house" element={<HouseholdManagement />} />
         <Route path="/complaint" element={<ComplaintsPage />} />
+        <Route path="/entrance" element={<EntranceDoor />} />
         <Route path="/elevator" element={<ElevatorPage />} />
         <Route
           path="/admins"

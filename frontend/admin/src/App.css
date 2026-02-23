@@ -42,13 +42,14 @@
 }
 
 .component {
-  background-color: white;
+  background-color: var(--popover);
   padding: 1.5rem;
   border-radius: 1.2rem;
-  border: 1px solid #e1e1e1;
+  border: 1px solid var(--card-border);
 }
 
 .info {
   font-size: 18px;
   color: #6b6b6b;
+  padding-bottom: 20px;
 }

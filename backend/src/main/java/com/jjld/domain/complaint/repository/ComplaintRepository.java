@@ -1,6 +1,7 @@
 package com.jjld.domain.complaint.repository;
 
 import com.jjld.domain.complaint.entity.Complaint;
+import com.jjld.domain.complaint.entity.Enum.SummaryStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
     Complaint findByComplaintId(Long complaintId);
 
     // 로그인한 입주민 기준의 민원 목록 조회
-    List<Complaint> findByHouse_HouseIdAndHouseholderEmail(Long houseId, String email);
+    List<Complaint> findByHouse_HouseIdAndHouseholderEmailOrderByCreatedAtDesc(Long houseId, String email);
 
     // 로그인한 입주민 기준의 민원 상세 조회
     Complaint findByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaintId, Long houseId,  String email);
@@ -31,4 +32,6 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long>, Jpa
     List<Complaint> findAllByReferenceComplaintsContainsAndHouse_HouseIdAndHouseholderEmail(Complaint complaint, Long houseId, String email);
     void deleteByComplaintIdAndHouse_HouseIdAndHouseholderEmail(Long complaint, Long houseId, String email);
 
+    // 요약 대기 상태 민원만 조회
+    List<Complaint> findBySummaryStatus(SummaryStatus status);
 }

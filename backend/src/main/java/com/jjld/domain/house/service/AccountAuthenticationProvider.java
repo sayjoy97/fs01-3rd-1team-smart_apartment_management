@@ -56,11 +56,14 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, "비활성 계정은 로그인할 수 없습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(accountDetail, null, accountDetail.getAuthorities());
+        return new UsernamePasswordAuthenticationToken
+                (accountDetail,
+                        null,
+                        accountDetail.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UserAuthenticationToken.class.isAssignableFrom(authentication);
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

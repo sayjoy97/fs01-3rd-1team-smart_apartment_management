@@ -1,6 +1,7 @@
 package com.jjld.domain.house.service;
 
 import com.jjld.domain.house.dao.HouseDAO;
+import com.jjld.domain.house.dto.HouseDetailResponse;
 import com.jjld.domain.house.dto.HouseManagementResponse;
 import com.jjld.domain.house.dto.HouseResponse;
 import com.jjld.domain.house.dto.HouseSearchCond;
@@ -13,9 +14,11 @@ import com.jjld.domain.house.repository.EntranceCardRepository;
 import com.jjld.domain.house.repository.HouseRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
+import com.jjld.global.exception.house.CardAlreadyAssigned;
 import lombok.RequiredArgsConstructor;
 import com.jjld.domain.house.specification.HouseSpecification;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,23 +67,36 @@ public class HouseServiceImpl implements HouseService{
                 .toList();
     }
 
+    // 세대 상세 조회
     @Override
-    public HouseResponse findByIdHouseId(Long houseId) {
+    public HouseDetailResponse getDetail(Long houseId) {
         House house = houseDAO.findHouseId(houseId);
         if(houseId == null){
             throw new NotFoundException(ErrorCode.HOUSE_NOT_FOUND, "없는 세대 번호입니다");
         }
 
-        HouseResponse houseResponse = HouseResponse.builder()
+        return HouseDetailResponse.builder()
                 .houseId(house.getHouseId())
                 .houseDong(house.getHouseDong())
+                .houseHo(house.getHouseHo())
+                .householderName(house.getHouseholderName())
+                .householderPhone(house.getHouseholderPhone())
+                .householderEmail(house.getHouseholderEmail())
+                .entrancePass(house.getEntrancePass())
+                .moveInAt(house.getMoveInAt())
+                .householdSize(house.getHouseholdSize())
+                .cardUid(
+                        house.getCardList().stream()
+                                .map(EntranceCard::getCardUid)
+                                .toList()
+                )
                 .build();
-        return null;
     }
 
     // 세대 등록
     @Override
     public void houseInsert(Long houseId, HouseManagementResponse houseManagementResponse) {
+        // 세대 조회
         House house = houseRepository.findByHouseId(houseId);
 
         if(house == null){
@@ -91,15 +107,25 @@ public class HouseServiceImpl implements HouseService{
         List<EntranceCard> houseCardList = Optional.ofNullable(houseManagementResponse.getCardUid())
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(uid -> entranceCardRepository.findByCardUid(uid)
-                        .orElseGet(() -> {
+                .map(uid ->{
+                        EntranceCard card = entranceCardRepository.findByCardUid(uid)
+                                .orElse(null);
+
+                        // 카드가 이미 존재하는 경우
+                        if (card != null) {
+                            if(card.getHouse() != null &&
+                            !card.getHouse().getHouseId().equals(houseId)){
+                                throw new CardAlreadyAssigned("이미 다른 세대에 등록된 카드입니다.");
+                            }
+                            return card;
+                        }
                             // DB에 없는 카드면 생성
                             EntranceCard newCard = EntranceCard.builder()
                                     .cardUid(uid)
                                     .status(CardStatus.ACTIVE)
                                     .build();
                             return entranceCardRepository.save(newCard);
-                        }))
+                        })
                 .collect(Collectors.toList());
 
         // 기존 카드 리스트
@@ -123,6 +149,15 @@ public class HouseServiceImpl implements HouseService{
         house.setHouseholderPhone(houseManagementResponse.getHouseholderPhone());
         house.setHouseholderEmail(houseManagementResponse.getHouseholderEmail());
         house.setHouseholdSize(houseManagementResponse.getHouseholdSize());
+        boolean hasEmail = hasText(houseManagementResponse.getHouseholderEmail());
+        boolean hasName = hasText(houseManagementResponse.getHouseholderName());
+        boolean hasPhone = hasText(houseManagementResponse.getHouseholderPhone());
+
+        // 이메일 기준 + 보조 정보
+        boolean active = hasEmail && (hasName || hasPhone);
+
+        // 최종 상태 저장
+        house.setHouseStatus(active);
         if(pass == null || pass.isBlank()){
             house.setEntrancePass(pass);
         }else{
@@ -169,7 +204,9 @@ public class HouseServiceImpl implements HouseService{
         }
         }
 
-
+    private boolean hasText(String s) {
+        return s != null && !s.trim().isEmpty();
+    }
 
 
 }

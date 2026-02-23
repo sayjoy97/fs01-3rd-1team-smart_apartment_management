@@ -9,11 +9,14 @@ lerna-debug.log*
 
 node_modules
 node_modules/
+frontend/node_modules/
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+
+# Editor 1directories and files
+frontend/.vite/
 .vscode/*
 !.vscode/extensions.json
 .idea

@@ -25,7 +25,6 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/complaint/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class ComplaintAdminController {
 
     private final ComplaintAdminServiceImpl service;
@@ -50,7 +49,7 @@ public class ComplaintAdminController {
     // 관리자 민원 상세 조회
     @GetMapping("/detail/{complaintId}")
     @Operation(summary = "관리자 민원 상세 조회")
-    public ResponseEntity<?>  getComplaint(@RequestParam("complaintId") Long complaintId){
+    public ResponseEntity<?>  getComplaint(@PathVariable Long complaintId){
         ComplaintAdminDetailResponse complaint = service.findByComplaintId(complaintId);
 
         return ResponseEntity.ok(
@@ -71,6 +70,16 @@ public class ComplaintAdminController {
         return ResponseEntity.ok(
                 ApiResponse.success(HttpStatus.OK)
         );
+    }
+
+
+    // 관리자 요약 요청
+    @PostMapping("/{complaintId}/summary")
+    @Operation(summary = "관리자 민원 요약 요청")
+    public ResponseEntity<?> requestSummary(@PathVariable Long complaintId){
+        service.generateSummary(complaintId);
+        return ResponseEntity.ok(
+                ApiResponse.success(HttpStatus.OK));
     }
 
 }

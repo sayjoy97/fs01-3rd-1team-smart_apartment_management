@@ -8,6 +8,7 @@ import java.util.Arrays;
 public enum MqttServiceType {
     GARDEN,
     ELEVATOR,
+    ENTRANCE,
     ENERGY,
     CARGATE;
 

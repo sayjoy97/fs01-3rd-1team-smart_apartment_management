@@ -11,12 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseManagementResponse {
+    private Long houseId;
     private String householderName;
     private String householderPhone;
     private String householderEmail;
     private String entrancePass;
     private LocalDate moveInAt;
     private int householdSize;
+    private Boolean houseStatus;
 
     private List<String> cardUid;
+
 }

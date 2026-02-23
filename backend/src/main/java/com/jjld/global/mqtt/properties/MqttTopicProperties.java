@@ -15,6 +15,8 @@ public class MqttTopicProperties {
     private String energy;
     private String cargate;
 
+    private String entrance;
+
 
 
     // 작성 후 topic - MqttTopicRegistry로 이동
