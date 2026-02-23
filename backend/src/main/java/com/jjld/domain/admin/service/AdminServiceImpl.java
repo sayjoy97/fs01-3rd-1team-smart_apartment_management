@@ -247,6 +247,7 @@ public class AdminServiceImpl implements AdminService {
 
             // 인증 수행
             Authentication authentication = adminAuthenticationProvider.authenticate(token);
+            System.out.println("authentication: " + authentication);
             AdminUserDetail adminUserDetail = (AdminUserDetail) authentication.getPrincipal();
 
             String jwtToken = tokenProvider.createToken(authentication);
