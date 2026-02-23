@@ -1,3 +1,25 @@
-/* .card {
-  width: 200px;
-} */
+/* src/pages/energy/components/EnergySummaryCards.css */
+.energy-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.energy-summary .card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px;
+}
+
+.energy-summary .card h3 {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.energy-summary .card p {
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}

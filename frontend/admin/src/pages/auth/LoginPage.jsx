@@ -26,47 +26,75 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    login(adminform)
-      .then((data) => {
-        localStorage.setItem("accessToken", data.loginRes.accessToken);
-        localStorage.setItem("roles", JSON.stringify(data.loginRes.roles));
-        localStorage.setItem("adminId", data.loginRes.loginAdminRes.adminId);
+    try {
+      const loginData = await login(adminform);
+      console.log("🔥 LOGIN RESPONSE:", loginData);
+      console.log("🔥 response.data:", loginData.data);
 
-        if (data.loginAdminRes.isFristLogin) {
-          navigate("/initial-setup");
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        // console.log("로그인 실패: ", err);
-        // console.log(err.response?.error);
-        // // const status = err.response.status;
-        // const {code, message} = err.response.data || {};
+      if (!loginData) {
+        throw new Error("응답 데이터가 없습니다.");
+      }
 
-        // switch (code) {
-        //   case "INVALID_CREDENTIALS":
-        //     alert(message);
-        //     break;
-        //   default:
-        //     alert("알 수 없는 오류가 발생했습니다.");
-        console.error("로그인 실패:", err);
+      localStorage.setItem("accessToken", loginData.accessToken);
+      localStorage.setItem("adminRole", loginData.adminRole);
+      localStorage.setItem("adminId", loginData.adminId);
+      localStorage.setItem("isFirstLogin", loginData.isFirstLogin);
 
-        if (err.response && err.response.data) {
-          // const {code, message} = err.response.error || {};
-          switch (err.response.error.errorcode) {
-            case "INVALID_CREDENTIALS":
-              alert(err.response.error.message);
-              break;
-            default:
-              alert("서버 오류 발생");
-          }
-        } else {
-          alert("서버 연결 실패 또는 CORS 오류");
-        }
-        return null;
-      });
+      if (loginData.isFirstLogin) {
+        navigate("/initial-setup");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("로그인 실패:", err);
+      alert("로그인 실패");
+    }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   login(adminform)
+  //     .then((data) => {
+  //       localStorage.setItem("accessToken", data.loginRes.accessToken);
+  //       localStorage.setItem("roles", JSON.stringify(data.loginRes.roles));
+  //       localStorage.setItem("adminId", data.loginRes.loginAdminRes.adminId);
+
+  //       if (data.loginAdminRes.isFirstLogin) {
+  //         navigate("/initial-setup");
+  //       } else {
+  //         navigate("/");
+  //       }
+  //     })
+  //     .catch((err) => {
+  // console.log("로그인 실패: ", err);
+  // console.log(err.response?.error);
+  // // const status = err.response.status;
+  // const {code, message} = err.response.data || {};
+
+  // switch (code) {
+  //   case "INVALID_CREDENTIALS":
+  //     alert(message);
+  //     break;
+  //   default:
+  //     alert("알 수 없는 오류가 발생했습니다.");
+  //   console.error("로그인 실패:", err);
+
+  //   if (err.response && err.response.data) {
+  //     // const {code, message} = err.response.error || {};
+  //     switch (err.response.error.errorcode) {
+  //       case "INVALID_CREDENTIALS":
+  //         alert(err.response.error.message);
+  //         break;
+  //       default:
+  //         alert("서버 오류 발생");
+  //     }
+  //   } else {
+  //     alert("서버 연결 실패 또는 CORS 오류");
+  //   }
+  //   return null;
+  // });
+  // };
 
   return (
     <div className={styles.container}>

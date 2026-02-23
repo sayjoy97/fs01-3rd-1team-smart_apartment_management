@@ -1,183 +1,219 @@
-import { useState, useEffect } from "react";
+// src/pages/energy/components/useEnergyPage.js
+import { useEffect, useState, useCallback } from "react";
 import {
   getEnergyDashboard,
   getEnergyDeviceList,
   getEnergyDeviceDetail,
   getEnergyDeviceControlLogs,
+  getEnergyDeviceSavingResults,
   startEnergyDeviceCheck,
   completeEnergyDeviceCheck,
   controlEnergyDevice,
+  getActiveEnergyPolicy,
 } from "../../../api/energyAPI";
 
-/*
-  🔥 이 훅은 EnergyPage 전용 상태/로직을 전부 관리한다.
-  UI와 완전히 분리된 상태 관리 레이어다.
-*/
-
 export default function useEnergyPage() {
-  /* ================================
-     1️⃣ 기본 상태
-  ================================= */
-
+  // dashboard
   const [dashboard, setDashboard] = useState(null);
+  const [dashboardLoading, setDashboardLoading] = useState(false);
+
+  // list
   const [devices, setDevices] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const [statusFilter, setStatusFilter] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-
-  const [selectedDevice, setSelectedDevice] = useState(null);
-  const [controlLogs, setControlLogs] = useState([]);
-
-  const [detailOpen, setDetailOpen] = useState(false);
-
+  const [devicesLoading, setDevicesLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("ALL"); // ALL | CHECK_REQUIRED | CHECKING | NORMAL
+  const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  /* ================================
-     2️⃣ 대시보드 로딩
-  ================================= */
+  // detail
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detail, setDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [controlLogs, setControlLogs] = useState([]);
+  const [savingResults, setSavingResults] = useState({ content: [], totalPages: 0, number: 0 });
 
-  const loadDashboard = async () => {
+  // policy
+  const [activePolicy, setActivePolicy] = useState(null);
+  const [policyLoading, setPolicyLoading] = useState(false);
+
+  const loadDashboard = useCallback(async () => {
     try {
+      setDashboardLoading(true);
       const res = await getEnergyDashboard();
-
-      // ApiResponse.success(data)
-      if (res.success) {
-        setDashboard(res.data);
-      }
+      if (res?.success) setDashboard(res.data);
     } catch (e) {
       console.error("대시보드 로딩 실패:", e);
-    }
-  };
-
-  /* ================================
-     3️⃣ 설비 목록 로딩
-  ================================= */
-
-  const loadDevices = async (status = statusFilter, page = currentPage) => {
-    try {
-      setLoading(true);
-
-      const res = await getEnergyDeviceList(status, page);
-
-      if (res.success) {
-        const pageData = res.data;
-
-        setDevices(pageData.content);
-        setTotalPages(pageData.totalPages);
-        setTotalElements(pageData.totalElements);
-        setCurrentPage(pageData.number); // 서버 기준 page
-      }
-    } catch (e) {
-      console.error("설비 목록 로딩 실패:", e);
     } finally {
-      setLoading(false);
+      setDashboardLoading(false);
     }
-  };
+  }, []);
 
-  /* ================================
-     4️⃣ 설비 상세 조회
-  ================================= */
+  const loadDevices = useCallback(
+    async (nextStatus = statusFilter, nextPage = page) => {
+      try {
+        setDevicesLoading(true);
+        const statusParam = nextStatus === "ALL" ? null : nextStatus;
+        const res = await getEnergyDeviceList(statusParam, nextPage);
+
+        if (res?.success) {
+          const pageData = res.data;
+          setDevices(pageData?.content ?? []);
+          setTotalPages(pageData?.totalPages ?? 0);
+          setTotalElements(pageData?.totalElements ?? 0);
+          setPage(pageData?.number ?? nextPage);
+        }
+      } catch (e) {
+        console.error("설비 목록 로딩 실패:", e);
+      } finally {
+        setDevicesLoading(false);
+      }
+    },
+    [statusFilter, page],
+  );
+
+  const reloadPolicy = useCallback(async () => {
+    try {
+      setPolicyLoading(true);
+      const res = await getActiveEnergyPolicy();
+      if (res?.success) setActivePolicy(res.data);
+      else setActivePolicy(null);
+    } catch (e) {
+      console.error("활성 정책 로딩 실패:", e);
+      setActivePolicy(null);
+    } finally {
+      setPolicyLoading(false);
+    }
+  }, []);
 
   const openDeviceDetail = async (deviceId) => {
     try {
-      const detailRes = await getEnergyDeviceDetail(deviceId);
-      const logRes = await getEnergyDeviceControlLogs(deviceId);
+      setDetailLoading(true);
 
-      if (detailRes.success) {
-        setSelectedDevice(detailRes.data);
+      const [detailRes, logRes, savingRes] = await Promise.allSettled([
+        getEnergyDeviceDetail(deviceId),
+        getEnergyDeviceControlLogs(deviceId),
+        getEnergyDeviceSavingResults(deviceId, 0),
+      ]);
+
+      if (detailRes.status === "fulfilled" && detailRes.value?.success) {
+        setDetail(detailRes.value.data);
+      } else {
+        setDetail(null);
       }
 
-      if (logRes.success) {
-        setControlLogs(logRes.data);
+      if (logRes.status === "fulfilled" && logRes.value?.success) {
+        setControlLogs(Array.isArray(logRes.value.data) ? logRes.value.data : []);
+      } else {
+        setControlLogs([]);
+      }
+
+      if (savingRes.status === "fulfilled" && savingRes.value?.success) {
+        setSavingResults(savingRes.value.data ?? { content: [], totalPages: 0, number: 0 });
+      } else {
+        setSavingResults({ content: [], totalPages: 0, number: 0 });
       }
 
       setDetailOpen(true);
     } catch (e) {
       console.error("상세 조회 실패:", e);
+    } finally {
+      setDetailLoading(false);
     }
   };
 
-  /* ================================
-     5️⃣ 상태 변경
-  ================================= */
-
+  // actions
   const handleStartCheck = async (deviceId) => {
-    await startEnergyDeviceCheck(deviceId);
-    await loadDevices();
+    try {
+      await startEnergyDeviceCheck(deviceId);
+    } catch (e) {
+      console.error("점검 시작 실패:", e);
+    } finally {
+      await Promise.all([loadDashboard(), loadDevices()]);
+    }
   };
 
   const handleCompleteCheck = async (deviceId) => {
-    await completeEnergyDeviceCheck(deviceId);
-    await loadDevices();
+    try {
+      await completeEnergyDeviceCheck(deviceId);
+    } catch (e) {
+      console.error("점검 완료 실패:", e);
+    } finally {
+      await Promise.all([loadDashboard(), loadDevices()]);
+    }
   };
 
-  /* ================================
-     6️⃣ ON/OFF 제어
-  ================================= */
+  const handleControl = async (deviceId, operate, reason) => {
+    try {
+      await controlEnergyDevice(deviceId, operate, reason || "관리자 수동 제어");
 
-  const handleControl = async (deviceId, operate) => {
-    await controlEnergyDevice(deviceId, operate, "관리자 수동 제어");
-    await loadDevices();
-    setDetailOpen(false);
+      // 상세창 열려있으면 상세 refresh
+      if (detailOpen) {
+        const res = await getEnergyDeviceDetail(deviceId);
+        if (res?.success) setDetail(res.data);
+      }
+    } catch (e) {
+      console.error("설비 제어 실패:", e);
+    } finally {
+      await loadDevices();
+    }
   };
 
-  /* ================================
-     7️⃣ 필터 변경
-  ================================= */
-
-  const changeStatusFilter = async (status) => {
-    setStatusFilter(status);
-    setCurrentPage(0);
-    await loadDevices(status, 0);
+  // filter/page
+  const changeStatusFilter = async (nextStatus) => {
+    setStatusFilter(nextStatus);
+    setPage(0);
+    await loadDevices(nextStatus, 0);
   };
 
-  const changePage = async (page) => {
-    setCurrentPage(page);
-    await loadDevices(statusFilter, page);
+  const changePage = async (nextPage) => {
+    setPage(nextPage);
+    await loadDevices(statusFilter, nextPage);
   };
 
-  /* ================================
-     8️⃣ 최초 로딩
-  ================================= */
-
+  // init
   useEffect(() => {
-    const init = async () => {
-      await loadDashboard();
-      await loadDevices(null, 0);
-    };
-
-    init();
+    (async () => {
+      await Promise.all([reloadPolicy(), loadDashboard(), loadDevices("ALL", 0)]);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ================================
-     9️⃣ 반환
-  ================================= */
-
   return {
+    // dashboard
     dashboard,
-    devices,
-    loading,
+    dashboardLoading,
 
+    // list
+    devices,
+    devicesLoading,
     statusFilter,
-    currentPage,
+    page,
     totalPages,
     totalElements,
+    changeStatusFilter,
+    changePage,
 
-    selectedDevice,
-    controlLogs,
+    // detail
     detailOpen,
-
     setDetailOpen,
+    detail,
+    detailLoading,
+    controlLogs,
+    savingResults,
+    openDeviceDetail,
 
-    // openDeviceDetail,
+    // policy
+    activePolicy,
+    policyLoading,
+    reloadPolicy,
+
+    // loaders (EnergyPage에서 onSaved에 쓰려고 노출)
+    loadDashboard,
+    loadDevices,
+
+    // actions
     handleStartCheck,
     handleCompleteCheck,
     handleControl,
-
-    changeStatusFilter,
-    changePage,
-    loadDevices,
   };
 }

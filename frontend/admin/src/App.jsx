@@ -1,4 +1,4 @@
-import {Routes, Route, Navigate} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
@@ -8,12 +8,13 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import HouseholdMangement from "./pages/house/HouseholdMangement";
 import ComplaintsPage from "./pages/complaint/ComplaintsPage";
 import NoisePage from "./pages/noise/NoisePage";
+import HabitualPage from "./pages/noise/HabitualPage";
 import EnergyPage from "./pages/energy/EnergyPage";
 
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
 // PrivateRoute 컴포넌트
-function PrivateRoute({children}) {
+function PrivateRoute({ children }) {
   const token = localStorage.getItem("accessToken"); // 🔥 이걸로 체크해야 함
 
   return token ? children : <Navigate to="/login" replace />;
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="house" element={<HouseholdMangement />} />
         <Route path="complaint" element={<ComplaintsPage />} />
         <Route path="noise" element={<NoisePage />} />
+        <Route path="noise/habitual" element={<HabitualPage />} />
         <Route path="energy" element={<EnergyPage />} />
       </Route>
 

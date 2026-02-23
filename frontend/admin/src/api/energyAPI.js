@@ -115,3 +115,26 @@ export const createEnergyMeasurement = async (requestBody) => {
   const response = await backendServer.post(requests.energyMeasurementCreate, requestBody);
   return response.data;
 };
+
+// 그래프 및 차트 연결용
+
+export const getEnergyPattern = async ({ period, deviceId, baseDate } = {}) => {
+  const response = await backendServer.get(requests.energyPattern, {
+    params: {
+      period,
+      deviceId: deviceId ?? undefined,
+      baseDate: baseDate ?? undefined,
+    },
+  });
+  return response.data; // { success, data, error }
+};
+
+export const getEnergyCategory = async ({ month, deviceId } = {}) => {
+  const response = await backendServer.get(requests.energyCategory, {
+    params: {
+      month: month ?? undefined,
+      deviceId: deviceId ?? undefined,
+    },
+  });
+  return response.data;
+};

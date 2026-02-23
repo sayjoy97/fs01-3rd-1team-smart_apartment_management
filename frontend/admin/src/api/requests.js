@@ -26,6 +26,27 @@ const requests = {
   // -------- 시설 --------
 
   // -------- 환경·에너지 --------
+  // 1) 층간소음 관리
+  noiseDashboard: "/noise/api/dashboard",
+  // 이벤트
+  noiseEventList: "/noise/api/events", //목록
+  noiseUrgentList: "/noise/api/urgent", //목록
+  noiseEventDetail: (noiseEventId) => `/noise/api/event/${noiseEventId}`, //상세
+  noiseEventObserve: (noiseEventId) => `/noise/api/event/${noiseEventId}/observe`, //상태변경
+  noiseEventNotify: (noiseEventId) => `/noise/api/event/${noiseEventId}/notify`, //상태변경
+  // 통계
+  noiseStatistics: "/noise/api/statistics",
+  // 상습 구간
+  noiseHabitualZones: "/noise/api/habitual/zones",
+  noiseHabitualZoneDetail: (zoneId) => `/noise/api/habitual/zones/${zoneId}`,
+  noiseHabitualZoneClose: (zoneId) => `/noise/api/habitual/zones/${zoneId}/close`,
+  noiseHabitualZoneRegister: "/noise/api/habitual/zones/register",
+  noiseHabitualZoneCount: "/noise/api/habitual/zones/count",
+  // 정책
+  activeNoisePolicy: "/noise/api/policy/active",
+  createNoisePolicy: "/noise/api/policy",
+
+  // 2) 에너지 관리
   energyDashboard: "/energy/api/dashboard",
 
   energyPolicyActive: "/energy/api/policy/active",
@@ -44,6 +65,8 @@ const requests = {
 
   energyUsageCreate: "/energy/api/usage",
   energyMeasurementCreate: "/energy/api/measurement",
+  energyPattern: "/energy/api/pattern",
+  energyCategory: "/energy/api/category",
 
   // -------- 시스템 --------
 };
