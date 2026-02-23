@@ -26,19 +26,19 @@ public class EnergySavingResult {
 
     // ENERGY_CONTROL_LOG (선택적 연결)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "control_id")
+    @JoinColumn(name = "control_id", nullable = false)
     private EnergyControlLog controlLog;
 
     @Column(nullable = false)
     private Double beforeKwh;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double afterKwh;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double savedKwh;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Double savedCost;
 
     @Column(nullable = false)

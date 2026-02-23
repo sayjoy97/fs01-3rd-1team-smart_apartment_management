@@ -13,10 +13,12 @@ public interface NoiseEventService {
     Page<NoiseEventProcess> findUrgentNoiseByStatus(Pageable pageable);
 
     // 소음 이벤트 승인 처리
-    void approveNoiseEvent(Long noiseEventId, String adminMemo);
+    // 알림 발송 완료
+    void notifyNoiseEvent(Long noiseEventId, String adminMemo);
 
     // 소음 이벤트 보류 처리
-    void holdNoiseEvent(Long noiseEventId, String adminMemo);
+    // 관찰 시작
+    void startObserving(Long noiseEventId, String adminMemo);
 
     // 상세 조회용 Response DTO 반환
     NoiseEventDetailResponse getNoiseEventDetailResponse(Long noiseEventId);
@@ -25,6 +27,15 @@ public interface NoiseEventService {
     Page<NoiseUrgentEventResponse> getUrgentNoiseEventResponses(Pageable pageable);
 
     // 이벤트 목록 (전체/상태별/페이지네이션)
-    Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, Pageable pageable
+    Page<NoiseEventListResponse> getNoiseEventListResponses(
+            ProcessStatus status,
+            String viewMode, // all | day | night
+            Pageable pageable
+    );
+
+    Page<NoiseEventListResponse> getNoiseEventList(
+            ProcessStatus status,
+            String timeZone,
+            Pageable pageable
     );
 }

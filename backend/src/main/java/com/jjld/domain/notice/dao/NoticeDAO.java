@@ -14,11 +14,13 @@ public interface NoticeDAO {
     // 고정 게시글 리스트
     List<Notice> findAllByFixStatus();
 
+    Page<Notice> searchAll(String keyword, Pageable pageable);
+
     // 제목으로 리스트 조회
-    List<Notice> findByNoticeTitle(String noticeTitle);
+    Page<Notice> findByNoticeTitle(String noticeTitle, Pageable pageable);
 
     // 작성자로 리스트 조회
-    List<Notice> findByAdminName(String adminName);
+    Page<Notice> findByAdminName(String adminName, Pageable pageable);
 
     // 공지사항 등록
     void writeNotice(Notice notice);

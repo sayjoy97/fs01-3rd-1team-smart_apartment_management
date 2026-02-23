@@ -1,5 +1,7 @@
 package com.jjld.global.security;
 
+import com.jjld.domain.admin.service.AdminAuthenticationProvider;
+import com.jjld.domain.admin.service.AdminDetailsService;
 import com.jjld.domain.house.service.AccountAuthenticationProvider;
 import com.jjld.domain.house.service.AccountDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -22,34 +25,42 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity(debug = false)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class JWTSecurityConfig {
 
     private final AccountAuthenticationProvider accountAuthenticationProvider;
+    private final AdminAuthenticationProvider adminAuthenticationProvider;
     private final JwtTokenProvider tokenProvider;
     private final AccountDetailsService accountDetailsService;
+    private final AdminDetailsService adminDetailsService;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.authenticationProvider(accountAuthenticationProvider);
+        authBuilder.authenticationProvider(accountAuthenticationProvider)
+                .authenticationProvider(adminAuthenticationProvider);
         return authBuilder.build();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/account/api/login","/house/api/**","/complaint/api/**","/entrance/api/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
+                        .requestMatchers("/account/api/login", "/admin/api/login", "/admin/api/find-pass", "/admin/api/change-pass", "/admin/api/refresh", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider, accountDetailsService),
-                        UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+                .addFilterBefore(new JwtAuthenticationFilter(tokenProvider, accountDetailsService, adminDetailsService),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -76,5 +87,4 @@ public class JWTSecurityConfig {
         source.registerCorsConfiguration("/**", configurationSource);
         return source;
     }
-
 }

@@ -17,6 +17,8 @@ public class NoiseEventListResponse {
     // 소음 이벤트 ID
     private Long noiseEventId;
 
+    private Long noiseEventProcessId;
+
     // 위치 정보
     private Integer upperHouseDong;
     private Integer upperHouseHo;
@@ -44,4 +46,7 @@ public class NoiseEventListResponse {
 
     // 즉시 처리 필요 여부 (우선순위 표시용)
     private Boolean urgentBreak;
+
+    private Boolean recurrent; // 🔁 재발
+    private Boolean habitual;  // [상습]
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,5 +65,23 @@ public class AdminDAOImpl implements AdminDAO {
     @Override
     public void updateAdmin(Admin admin) {
         adminRepository.save(admin);
+    }
+
+    // 전체 관리자 수 조회
+    @Override
+    public long countTotalAdmins() {
+        return adminRepository.count();
+    }
+
+    // 활동 중인 관리자 수 조회
+    @Override
+    public long countActiveAdmins() {
+        return adminRepository.countByStateTrue();
+    }
+
+    // 신규 관리자 수 조회
+    @Override
+    public long countNewAdmins(LocalDateTime startOfMonth) {
+        return adminRepository.countByCreatedAtAfter(startOfMonth);
     }
 }

@@ -9,5 +9,4 @@ public interface HouseDAO {
 
     // 동호수로 세대아이디 찾아오기
     House findByHouseInfo(Integer houseDong, Integer houseHo);
-
 }

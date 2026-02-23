@@ -20,5 +20,4 @@ public interface HouseRepository extends JpaRepository<House, Long>, JpaSpecific
         and h.houseHo = :houseHo
     """)
     House findByHouseInfo(Integer houseDong, Integer houseHo);
-
 }

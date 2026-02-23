@@ -1,94 +1,240 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import styles from "./LoginPage.module.css";
 import { Building2, LogIn } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {initialSetupAdmin, login, logout, findPass, changePass} from "../../api/admin/adminAPI";
+
+import InitialSetupModal from "./components/InitialSetupModal";
+import FindPasswordModal from "./components/FindPasswordModal";
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    username: "",
-    password: "",
+  const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
+  const [isFindPassModalOpen, setIsFindPassModalOpen] = useState(false);
+
+  const [onCheckInitialSetup, setOnCheckInitialSetup] = useState(false);
+  const [onCheckEmail, setOnCheckEmail] = useState(false);
+
+  const [adminform, setAdminForm] = useState({
+    adminLoginId: "",
+    adminPass: "",
+  });
+
+  const [initialSetupForm, setInitialSetupForm] = useState({
+    adminName: "",
+    newPassword: "",
+    confirmNewPassword: "",
+    adminPhone: "",
+    adminEmail: "",
+  });
+
+  const [findPassForm, setFindPassForm] = useState({
+    adminLoginId: "",
+    adminEmail: "",
+  });
+
+  const [changePassForm, setChangePassForm] = useState({
+    adminLoginId: "",
+    newPassword: "",
+    confirmNewPassword: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setAdminForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("LOGIN SUBMIT"); // 추가
+    login(adminform)
+      .then((res) => {
+        if (!res || !res.data.loginAdminRes) {
+          alert("로그인 응답이 올바르지 않습니다.");
+          return;
+        }
 
-    // ✅ 아무 값으로 로그인 허용
-    localStorage.setItem(
-      "auth",
-      JSON.stringify({
-        username: form.username || "admin",
-        isFirstLogin: false,
-      }),
-    );
+        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("roles", JSON.stringify(res.data.roles));
+        localStorage.setItem("adminId", res.data.loginAdminRes.adminId);
 
-    navigate("/", { replace: true });
+        if (res.data.loginAdminRes.isFirstLogin) {
+          setIsSetupModalOpen(true);
+        } else {
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        if (err.response) {
+          const {code, message} = err.response.data.error || {};
+          alert(message || "로그인 실패");
+        } else {
+          alert("서버 연결 실패 또는 CORS 오류");
+        }
+      });
+  };
+
+  const handleInitialSetup = (e) => {
+    e.preventDefault();
+
+    const adminId = localStorage.getItem("adminId");
+
+    // 1. API 호출 (예: updateInitialAdminInfo)
+    initialSetupAdmin(adminId, initialSetupForm)
+      .then((res) => {
+        // 성공 시
+        setOnCheckInitialSetup(true);
+        setIsSetupModalOpen(false);
+        navigate("/"); // 대시보드로 이동
+      })
+      .catch((err) => {
+        console.error("초기 설정 오류:", err);
+        if (err.response) {
+          const {code, message} = err.response.data.error || {};
+          alert(message || "초기 설정 실패");
+        } else {
+          alert("설정 중 오류가 발생했습니다. 보안을 위해 다시 로그인해 주세요.");
+
+          // 2. 오류 시 로그아웃 처리 및 리셋
+          logout().finally(() => {
+            localStorage.clear();
+            setIsSetupModalOpen(false);
+            setAdminForm({adminLoginId: "", adminPass: ""}); // 로그인 폼 초기화
+            setInitialSetupForm({
+              adminName: "",
+              newPassword: "",
+              confirmNewPassword: "",
+              adminPhone: "",
+              adminEmail: "",
+            }); // 초기 설정 폼 초기화
+            navigate("/login");
+          });
+        }
+      });
+  };
+
+  const handleFindPass = (e) => {
+    e.preventDefault();
+    // findPass API 호출
+    findPass(findPassForm)
+      .then((res) => {
+        // 성공 시 이메일 확인 상태를 true로 변경하여 다음 단계(비밀번호 입력)로 전환
+        setOnCheckEmail(true);
+        // 비밀번호 변경 폼에 아이디 미리 세팅
+        setChangePassForm((prev) => ({...prev, adminLoginId: findPassForm.adminLoginId}));
+      })
+      .catch((err) => {
+        const {code, message} = err.response.data.error || {};
+        alert(message || "일치하는 계정 정보가 없습니다.");
+      });
+  };
+
+  const handleChangePass = (e) => {
+    e.preventDefault();
+    // changePass API 호출
+    changePass(changePassForm)
+      .then((res) => {
+        alert("비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.");
+        setIsFindPassModalOpen(false);
+        setOnCheckEmail(false);
+        // 폼 초기화 로직 추가...
+      })
+      .catch((err) => {
+        alert("비밀번호 변경에 실패했습니다.");
+      });
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center space-y-2">
-          <div className="flex justify-center">
-            <div className="bg-primary p-3 rounded-full">
-              <Building2 className="size-7 text-primary-foreground" />
+    <div className={styles.container}>
+      <div className={styles.loginBox}>
+        <header className={styles.header}>
+          <div className={styles.logoWrapper}>
+            <div className={styles.logoCircle}>
+              <Building2 className={styles.logoIcon} />
             </div>
           </div>
-          <CardTitle className="text-2xl">아파트 관리 시스템</CardTitle>
-          <CardDescription>단지 관리자 로그인</CardDescription>
-        </CardHeader>
+          <h2 className={styles.title}>아파트 관리 시스템</h2>
+          <p className={styles.subtitle}>단지 관리자 로그인</p>
+        </header>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <Label htmlFor="username">아이디</Label>
-              <Input
-                id="username"
-                name="username"
-                placeholder="아이디를 입력하세요"
-                value={form.username}
-                onChange={handleChange}
-              />
-            </div>
+        <form className={styles.content} onSubmit={handleSubmit}>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="adminLoginId" className={styles.label}>
+              아이디
+            </label>
+            <input
+              id="adminLoginId"
+              type="text"
+              name="adminLoginId"
+              placeholder="아이디를 입력하세요"
+              value={adminform.adminLoginId}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="adminPass" className={styles.label}>
+              비밀번호
+            </label>
+            <input
+              id="adminPass"
+              type="password"
+              name="adminPass"
+              placeholder="비밀번호를 입력하세요"
+              value={adminform.adminPass}
+              onChange={handleChange}
+              className={styles.input}
+              required
+            />
+          </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="password">비밀번호</Label>
-              <Input
-                id="password"
-                type="password"
-                name="password"
-                placeholder="비밀번호를 입력하세요"
-                value={form.password}
-                onChange={handleChange}
-              />
-            </div>
+          <button type="submit" className={styles.loginButton}>
+            <LogIn className={styles.loginIcon} size={18} />
+            로그인
+          </button>
 
-            <Button type="submit" className="w-full gap-2">
-              <LogIn className="size-4" />
-              로그인
-            </Button>
-          </form>
+          <div className={styles.footer}>
+            <button
+              type="button"
+              className={styles.findPassButton}
+              onClick={() => setIsFindPassModalOpen(true)}
+            >
+              비밀번호를 잊으셨나요?
+            </button>
+          </div>
 
-          <div className="mt-6 text-center text-xs text-muted-foreground">
-            <p>데모용: 아무 값이나 입력하여 로그인 가능</p>
-            <p className="mt-1">
-              💡 최초 로그인 테스트: <span className="font-mono text-primary">new_admin</span>
+          <div className={styles.testInfo}>
+            <p>
+              테스트 계정: <strong>admin01</strong> / <strong>11111111</strong>
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </form>
+      </div>
+
+      <InitialSetupModal
+        open={isSetupModalOpen}
+        onClose={() => setIsSetupModalOpen(false)}
+        onSubmit={handleInitialSetup}
+        formData={initialSetupForm}
+        setFormData={setInitialSetupForm}
+        setOnCheckInitialSetup={setOnCheckInitialSetup}
+      />
+
+      <FindPasswordModal
+        open={isFindPassModalOpen}
+        onClose={() => setIsFindPassModalOpen(false)}
+        onFindPass={handleFindPass}
+        onChangePass={handleChangePass}
+        formData={findPassForm}
+        setFormData={setFindPassForm}
+        onCheckEmail={onCheckEmail}
+        setOnCheckEmail={setOnCheckEmail}
+        changePassForm={changePassForm}
+        setPassForm={setChangePassForm}
+      />
     </div>
   );
 }

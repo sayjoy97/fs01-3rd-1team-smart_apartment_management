@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +18,10 @@ public class NoiseStatisticsServiceImpl implements NoiseStatisticsService {
     private final NoiseStatisticsDAO noiseStatisticsDAO;
     @Override
     public NoiseStatisticsResponse getStatistics(LocalDate date) {
+        LocalDate target = (date != null) ? date : LocalDate.now();
         // 1. 하루기준 조회범위계산
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        LocalDateTime start = target.atStartOfDay();
+        LocalDateTime end = target.plusDays(1).atStartOfDay();
         return NoiseStatisticsResponse.builder()
                 // 시간대별 전체 소음 발생 건수
                 .noiseCountByHour(noiseStatisticsDAO.countNoiseEventByHour(start, end))

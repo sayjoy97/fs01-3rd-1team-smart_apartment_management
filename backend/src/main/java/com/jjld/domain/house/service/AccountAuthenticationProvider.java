@@ -8,6 +8,7 @@ import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.repository.AccountRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.UnauthorizedException;
+import com.jjld.global.security.UserAuthenticationToken;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
@@ -42,6 +43,7 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
         }
 
         if(!passwordEncoder.matches(password, accountDetail.getPassword())){
+
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
@@ -59,6 +61,6 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        return UserAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

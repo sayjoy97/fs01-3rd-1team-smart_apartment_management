@@ -22,6 +22,8 @@ public class MqttTopicRegistry {
                 // 예시 - MqttServiceType.[본인 기능], properties.get[본인 기능](),
                 MqttServiceType.GARDEN, properties.getGarden(),
                 MqttServiceType.ELEVATOR, properties.getElevator(),
+                MqttServiceType.ENERGY, properties.getEnergy(),
+                MqttServiceType.CARGATE, properties.getCargate(),
 
                 MqttServiceType.ENTRANCE, properties.getEntrance()
 

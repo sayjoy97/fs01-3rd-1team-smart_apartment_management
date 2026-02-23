@@ -52,6 +52,7 @@ public enum ErrorCode {
     CURRENT_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "CURRENT_PASSWORD_MISMATCH", "현재 비밀번호와 입력한 비밀번호가 일치하지 않습니다."),
     ADMIN_NOT_SCHEDULE_OWNER(HttpStatus.FORBIDDEN, "ADMIN_NOT_SCHEDULE_OWNER", "일정을 생성한 관리자만 수정할 수 있습니다."),
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "아이디 또는 비밀번호가 일치하지 않습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED,"INVALID_TOKEN", "토큰이 일치하지 않습니다."),
 
     // -------- Alarm --------
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM_NOT_FOUND", "알람을 찾을 수 없습니다."),

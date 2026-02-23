@@ -1,0 +1,58 @@
+/* 통계 그리드 (가이드라인 반영) */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.statsCard {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.statsCard:hover {
+  transform: translateY(-4px);
+}
+
+.statsLabel {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.statsValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 4px;
+}
+
+.iconBox {
+  padding: 10px;
+  border-radius: 10px;
+}
+.logoIcon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.blue {
+  background-color: #2563eb;
+}
+.green {
+  background-color: #10b981;
+}
+.puple {
+  background-color: #9f7aea;
+}
+.orenge {
+  background-color: #f97316;
+}

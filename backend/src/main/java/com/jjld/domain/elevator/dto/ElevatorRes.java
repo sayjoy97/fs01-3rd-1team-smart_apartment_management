@@ -30,4 +30,5 @@ public class ElevatorRes {
         this.hogi = hogi;
         this.state = state;
     }
+
 }

@@ -3,6 +3,8 @@ package com.jjld.domain.noise.repository;
 import com.jjld.domain.noise.entity.NoiseEvent;
 import com.jjld.domain.noise.entity.NoiseEventAnalysis;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -18,4 +20,24 @@ public interface NoiseEventAnalysisRepository extends JpaRepository<NoiseEventAn
     long countByPolicyBreakTrueAndCreatedAtBetween(LocalDateTime start, LocalDateTime end);
     // 특정기간 내 분석결과 조회(통계용)
     List<NoiseEventAnalysis> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+        select hour(a.createdAt), count(a)
+        from NoiseEventAnalysis a
+        where a.createdAt >= :start and a.createdAt < :end
+          and a.policyBreak = true
+        group by hour(a.createdAt)
+        order by hour(a.createdAt)
+    """)
+    List<Object[]> countPolicyBreakByHour(@Param("start") LocalDateTime start,
+                                          @Param("end") LocalDateTime end);
+
+    @Query("""
+        select a.noisePattern1, count(a)
+        from NoiseEventAnalysis a
+        where a.createdAt >= :start and a.createdAt < :end
+        group by a.noisePattern1
+    """)
+    List<Object[]> countNoisePattern(@Param("start") LocalDateTime start,
+                                     @Param("end") LocalDateTime end);
 }

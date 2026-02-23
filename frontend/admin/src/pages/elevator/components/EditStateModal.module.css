@@ -1,0 +1,241 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 480px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.headerIcon {
+  color: #2563eb;
+}
+.header h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 2px 0 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.alertBox {
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.alertBox p {
+  font-size: 0.813rem;
+  color: #0369a1;
+  margin: 0;
+  line-height: 1.4;
+}
+.alertBox svg {
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.stateGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stateCard {
+  position: relative;
+  padding: 16px;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.radioCircle {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.stateLabel {
+  font-weight: 700;
+  color: #334155;
+  font-size: 0.938rem;
+}
+.stateDescription {
+  font-size: 0.813rem;
+  color: #64748b;
+  margin: 0 0 0 28px;
+}
+
+.selected {
+  border-color: #2563eb;
+  background: #f8faff;
+}
+.selected .radioCircle {
+  border-color: #2563eb;
+  background: #2563eb;
+}
+.selected .radioCircle::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+/* 상태별 특성색상 (선택 시 포인트) */
+.idle.selected {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+.idle.selected .radioCircle {
+  border-color: #10b981;
+  background: #10b981;
+}
+
+.repair.selected {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+.repair.selected .radioCircle {
+  border-color: #f59e0b;
+  background: #f59e0b;
+}
+
+.error.selected {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+.error.selected .radioCircle {
+  border-color: #ef4444;
+  background: #ef4444;
+}
+
+.checkIcon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #2563eb;
+}
+.idle .checkIcon {
+  color: #10b981;
+}
+.repair .checkIcon {
+  color: #f59e0b;
+}
+.error .checkIcon {
+  color: #ef4444;
+}
+
+.footer {
+  padding: 1.25rem 1.5rem;
+  background: #f8fafc;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+}
+
+.cancelButton {
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.submitButton {
+  padding: 0.75rem;
+  border: none;
+  background: #1e293b;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #0f172a;
+}
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

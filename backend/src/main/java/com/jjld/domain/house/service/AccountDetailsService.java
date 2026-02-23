@@ -1,13 +1,15 @@
 package com.jjld.domain.house.service;
 
-import com.jjld.domain.house.dao.AccountDAO;
+import com.jjld.domain.admin.dao.AdminDAO;
+import com.jjld.domain.admin.entity.Admin;
+import com.jjld.domain.admin.security.AdminUserDetail;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
-import com.jjld.domain.house.dto.login.UserLoginResponse;
 import com.jjld.domain.house.entity.Account;
-import com.jjld.domain.house.entity.House;
 import com.jjld.domain.house.repository.AccountRepository;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,13 +17,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountDetailsService implements UserDetailsService {
     private final AccountRepository repository;
+    private final AdminDAO adminDAO;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

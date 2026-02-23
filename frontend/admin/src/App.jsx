@@ -8,13 +8,42 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import HouseholdManagement from "./pages/house/HouseholdManagement";
 import ComplaintsPage from "./pages/complaint/ComplaintsPage";
 import EntranceDoor from "./pages/entrance/EntranceDoor";
+import MyPage from "./pages/mypage/MyPage";
+import AdminsPage from "./pages/admins/AdminsPage";
+import ElevatorPage from "./pages/elevator/ElevatorPage";
+import {toast} from "sonner";
+import NoisePage from "./pages/noise/NoisePage";
+import HabitualPage from "./pages/noise/HabitualPage";
+import EnergyPage from "./pages/energy/EnergyPage";
+import { NoticesPage } from "./pages/notice/NoticesPage";
+import { NoticeDetailPage } from "./pages/notice/NoticeDetailPage";
+import { NoticeCreatePage } from "./pages/notice/NoticeCreatePage";
+import { CargatePage } from "./pages/cargate/CargatePage";
+import { FeeDetailPage } from "./pages/cargate/FeeDetailPage";
 
 // 임시 인증 상태 (나중에 AuthContext로 교체)
 
 // PrivateRoute 컴포넌트
-function PrivateRoute({ children }) {
-  const auth = localStorage.getItem("auth");
-  return auth ? children : <Navigate to="/login" replace />;
+function PrivateRoute({children}) {
+  const token = localStorage.getItem("accessToken");
+
+  return token ? children : <Navigate to="/login" replace />;
+}
+
+// RoleRoute 컴포넌트
+function RoleRoute({children}) {
+  const userRole = localStorage.getItem("roles");
+
+  if (!userRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (userRole.includes("SUPER_ADMIN") || userRole.includes("ACTING_ADMIN")) {
+    return children;
+  }
+
+  toast.error("접근 권한이 없습니다");
+  return <Navigate to="/" replace />;
 }
 
 export default function App() {
@@ -39,10 +68,28 @@ export default function App() {
           </PrivateRoute>
         }
       >
+        <Route path="/mypage" element={<MyPage />} />
         <Route index element={<Dashboard />} />
         <Route path="/house" element={<HouseholdManagement />} />
         <Route path="/complaint" element={<ComplaintsPage />} />
         <Route path="/entrance" element={<EntranceDoor />} />
+        <Route path="/elevator" element={<ElevatorPage />} />
+        <Route
+          path="/admins"
+          element={
+            <RoleRoute>
+              <AdminsPage />
+            </RoleRoute>
+          }
+        />
+        <Route path="/noise" element={<NoisePage />} />
+        <Route path="/noise/habitual" element={<HabitualPage />} />
+        <Route path="/energy" element={<EnergyPage />} />
+        <Route path="/notices" element={<NoticesPage />} />
+        <Route path="/notices/:noticeId" element={<NoticeDetailPage />} />
+        <Route path="/notice/write" element={<NoticeCreatePage />} />
+        <Route path="/cargate" element={<CargatePage />} />
+        <Route path="/cargate/feeDetail" element={<FeeDetailPage />} />
       </Route>
 
       {/* 그 외 전부 로그인으로 */}

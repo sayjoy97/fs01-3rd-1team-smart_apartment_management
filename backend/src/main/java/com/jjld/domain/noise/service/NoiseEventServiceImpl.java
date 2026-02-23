@@ -11,11 +11,17 @@ import com.jjld.domain.noise.entity.NoiseEventAnalysis;
 import com.jjld.domain.noise.entity.NoiseEventProcess;
 import com.jjld.domain.noise.entity.NoiseSensor;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
+import com.jjld.domain.noise.repository.NoiseHabitualZoneRepository;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,25 +30,66 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     private final NoiseEventDAO noiseEventDAO;
     private final NoiseEventProcessRepository noiseEventProcessRepository;
     private final NoisePolicyService noisePolicyService;
+    private final NoiseHabitualZoneRepository noiseHabitualZoneRepository;
 
     //-----목록-------
     @Override
     @Transactional(readOnly = true)
-    public Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, Pageable pageable) {
-        // 상태 조건이 있으면 필터, 없으면 전체
+    public Page<NoiseEventListResponse> getNoiseEventListResponses(ProcessStatus status, String viewMode, Pageable pageable) {
+        // 1) DB에서 정렬된 "전체 List" 조회 (status 있으면 status 조건 적용)
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+
+        List<NoiseEventProcess> processes = (status == null)
+                ? noiseEventProcessRepository.findAll(sort)
+                : noiseEventProcessRepository.findByStatus(status, sort);
+
+        // 2) Entity -> DTO 변환
+        List<NoiseEventListResponse> dtos = processes.stream()
+                .map(this::toListResponse)
+                .toList();
+
+        // 3) 주/야(viewMode) 필터 (all/day/night)
+        List<NoiseEventListResponse> filtered = dtos.stream()
+                .filter(d -> {
+                    if (viewMode == null || viewMode.isBlank() || "all".equalsIgnoreCase(viewMode)) return true;
+                    if ("day".equalsIgnoreCase(viewMode)) return "주간".equals(d.getTimeZone());
+                    if ("night".equalsIgnoreCase(viewMode)) return "야간".equals(d.getTimeZone());
+                    return true;
+                })
+                .toList();
+
+        // 4) 수동 페이지네이션 (정상 Page 타입 유지)
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), filtered.size());
+
+        List<NoiseEventListResponse> pageContent =
+                (start >= filtered.size()) ? List.of() : filtered.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, filtered.size());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<NoiseEventListResponse> getNoiseEventList(ProcessStatus status, String timeZone, Pageable pageable) {
+        // 1) DB에서 Page<NoiseEventProcess> 가져오기 (기존 그대로)
         Page<NoiseEventProcess> processPage =
                 (status == null)
                         ? noiseEventDAO.findAllNoiseEvent(pageable)
                         : noiseEventDAO.findNoiseEventByStatus(status, pageable);
-        // Entity → DTO 변환
-        return processPage.map(this::toListResponse);
+
+        // 2) Page -> DTO 변환 (Page 유지)
+        Page<NoiseEventListResponse> dtoPage = processPage.map(this::toListResponse);
+        // (지금은 viewMode 파라미터가 메서드에 없으니 "전체"만 반환)
+        // 나중에 viewMode 파라미터 추가하면 아래 필터 부분만 활성화하면 됨.
+        return dtoPage;
     }
+
     //  ------ 즉시처리 -------
     @Override
     @Transactional(readOnly = true)
     public Page<NoiseUrgentEventResponse> getUrgentNoiseEventResponses(Pageable pageable) {
         // 1. 즉시 처리 필요 이벤트(Process) 조회
-        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+        Page<NoiseEventProcess> processPage = noiseEventProcessRepository.findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
         // 2. 엔티티 → DTO 변환
         return processPage.map(this::toUrgentResponse);
     }
@@ -58,26 +105,22 @@ public class NoiseEventServiceImpl implements NoiseEventService {
     @Override
     public Page<NoiseEventProcess> findUrgentNoiseByStatus(Pageable pageable) {
         return noiseEventProcessRepository
-                .findByUrgentBreakTrueAndStatus(ProcessStatus.PENDING, pageable);
+                .findByUrgentBreakTrueAndStatus(ProcessStatus.UNPROCESSED, pageable);
     }
     // 소음 이벤트 승인 처리 (이벤트 상태를 APPROVED로 변경 >> 관리자 메모 저장)
+    // 알림 발송 완료
     @Override
-    public void approveNoiseEvent(Long noiseEventId, String adminMemo) {
-        NoiseEventProcess process =
-                noiseEventDAO.findNoiseEventDetail(noiseEventId);
-        // 승인 상태로 변경
-        process.setStatus(ProcessStatus.APPROVED);
-        // 관리자 메모 저장
+    public void notifyNoiseEvent(Long noiseEventId, String adminMemo) {
+        NoiseEventProcess process = noiseEventDAO.findNoiseEventDetail(noiseEventId);
+        process.setStatus(ProcessStatus.NOTIFIED);
         process.setAdminMemo(adminMemo);
     }
     // 소음 이벤트 보류 처리 (이벤트 상태를 HOLD로 변경 >> 관리자 메모 저장)
+    // 관찰 시작 (미처리 -> 관찰 중)
     @Override
-    public void holdNoiseEvent(Long noiseEventId, String adminMemo) {
-        NoiseEventProcess process =
-                noiseEventDAO.findNoiseEventDetail(noiseEventId);
-        // 보류 상태로 변경
-        process.setStatus(ProcessStatus.HOLD);
-        // 관리자 메모 저장
+    public void startObserving(Long noiseEventId, String adminMemo) {
+        NoiseEventProcess process = noiseEventDAO.findNoiseEventDetail(noiseEventId);
+        process.setStatus(ProcessStatus.OBSERVING);
         process.setAdminMemo(adminMemo);
     }
 
@@ -108,6 +151,8 @@ public class NoiseEventServiceImpl implements NoiseEventService {
                 .repeatCount(analysis.getRepeatCount())
                 .status(process.getStatus())
                 .urgentBreak(process.getUrgentBreak())
+                .recurrent(isRecurred(process))
+                .habitual(isHabitual(process))
                 .build();
     }
 
@@ -146,9 +191,12 @@ public class NoiseEventServiceImpl implements NoiseEventService {
         NoiseSensor sensor = noiseEvent.getNoiseSensor();
         House upper = sensor.getUpperHouse();
         House lower = sensor.getLowerHouse();
+        boolean habitual = isHabitual(process);
+        boolean canRegisterHabitual = habitual && !existsHabitualZone(sensor);
 
         return NoiseEventDetailResponse.builder()
                 .noiseEventId(noiseEvent.getNoiseEventId())
+                .noiseEventProcessId(process.getProcessId())
                 // 위치 정보
                 .upperHouseDong(upper.getHouseDong())
                 .upperHouseHo(upper.getHouseHo())
@@ -176,6 +224,32 @@ public class NoiseEventServiceImpl implements NoiseEventService {
                 // 처리 상태
                 .status(process.getStatus())
                 .adminMemo(process.getAdminMemo())
+
+                .habitual(habitual)
+                .canRegisterHabitual(canRegisterHabitual)
                 .build();
+    }
+    // 재발 여부 계산
+    private boolean isRecurred(NoiseEventProcess process) {
+        if (process.getStatus() != ProcessStatus.OBSERVING) {
+            return false;
+        }
+        NoiseSensor sensor = process.getNoiseEvent().getNoiseSensor();
+        LocalDateTime since = LocalDateTime.now().minusHours(24);
+        long count = noiseEventProcessRepository
+                .countByNoiseEvent_NoiseSensorAndStatusAndCreatedAtAfter(sensor, ProcessStatus.OBSERVING, since);
+        return count >= 3;
+    }
+    // 상습여부계산
+    private boolean isHabitual(NoiseEventProcess process) {
+        NoiseSensor sensor = process.getNoiseEvent().getNoiseSensor();
+        LocalDateTime since = LocalDateTime.now().minusDays(30);
+        long count = noiseEventProcessRepository
+                .countByNoiseEvent_NoiseSensorAndUrgentBreakTrueAndCreatedAtAfter(sensor, since);
+        return count >= 5;
+    }
+    // 상습구간 기준충족(버튼 나타나는 여부) 계산
+    private boolean existsHabitualZone(NoiseSensor sensor) {
+        return noiseHabitualZoneRepository.existsBySensorAndStatus(sensor, "MONITORING");
     }
 }
