@@ -1,17 +1,11 @@
 package com.jjld.global.mqtt.handler.entrance;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jjld.domain.entrancedoor.dto.EntranceDoorPayload;
-import com.jjld.domain.entrancedoor.service.EntranceDoorService;
 import com.jjld.domain.entrancedoor.service.EntranceMqttService;
-import com.jjld.domain.garden.service.GardenService;
 import com.jjld.global.exception.BusinessException;
-import com.jjld.global.exception.ErrorCode;
-import com.jjld.global.exception.businessexceptions.BadRequestException;
 import com.jjld.global.mqtt.handler.MqttMessageHandler;
 import com.jjld.global.mqtt.topic.MqttServiceType;
 import com.jjld.global.mqtt.topic.TopicInfo;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -50,6 +44,19 @@ public class EntranceMqttHandler implements MqttMessageHandler {
                 case CARD -> {
                     entranceMqttService.handleCard(houseDong, cardUid);
                 }
+                case PASS -> {
+                    String[] passParts = payload.trim().split("#");
+
+                    if(passParts.length != 2){
+                        log.warn("잘못된 PASS payload 형식: {}", payload);
+                        return;
+                    }
+
+                    Integer houseHo = Integer.parseInt(passParts[0]);
+                    String rawPass = passParts[1];
+
+                    entranceMqttService.handlePass(houseDong, houseHo, rawPass);
+                }
 
                 default -> log.warn("지원하지 않는 출입 서비스 타입: {}", serviceType);
             }
@@ -58,7 +65,7 @@ public class EntranceMqttHandler implements MqttMessageHandler {
             log.error("비즈니스 로직 에러 발생! 진짜 원인: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Garden MQTT 처리 실패", e);
+            log.error("Entrance MQTT 처리 실패", e);
         }
     }
 

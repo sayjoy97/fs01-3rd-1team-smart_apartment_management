@@ -17,8 +17,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -56,10 +60,12 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, "비활성 계정은 로그인할 수 없습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken
-                (accountDetail,
-                        null,
-                        accountDetail.getAuthorities());
+
+        return new UserAuthenticationToken(
+                accountDetail,
+                null,
+                accountDetail.getAuthorities()
+        );
     }
 
     @Override

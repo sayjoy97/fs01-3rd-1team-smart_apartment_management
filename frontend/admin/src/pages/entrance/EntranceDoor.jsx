@@ -33,6 +33,7 @@ const failReasonTypeMap = {
   LOST_CARD: "분실 카드",
   EXPIRED_CARD: "만료된 카드",
   SYSTEM_ERROR: "시스템 에러",
+  NOT_EXIST_HOUSE: "잘못된 세대 입력",
 };
 
 const EntranceDoor = () => {

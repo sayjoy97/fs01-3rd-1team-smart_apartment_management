@@ -1,11 +1,17 @@
 package com.jjld.domain.house.controller;
 
 
+import com.jjld.domain.admin.dto.TokenRes;
+import com.jjld.domain.admin.entity.RefreshToken;
+import com.jjld.domain.admin.repository.RefreshTokenRepository;
 import com.jjld.domain.house.dto.login.*;
 import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.service.AccountService;
 import com.jjld.domain.house.service.AccountServiceImpl;
 import com.jjld.domain.house.service.HouseService;
+import com.jjld.global.exception.ErrorCode;
+import com.jjld.global.exception.businessexceptions.UnauthorizedException;
+import com.jjld.global.response.ApiResponse;
 import com.jjld.global.security.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,48 +36,28 @@ import java.util.Map;
 @RequestMapping("/account/api")
 @RequiredArgsConstructor
 public class AccountController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider tokenProvider;
     private final AccountService accountService;
-    private final PasswordEncoder passwordEncoder;
-    private final HouseService houseService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginRequest request) {
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(request.getHouseholderEmail(), request.getPassword());
-
-        token.setDetails(request);
-
-        // 인증 수행
-        Authentication authentication =
-                authenticationManager.authenticate(token);
-
-        AccountUserDetail accountUserDetail =
-                (AccountUserDetail) authentication.getPrincipal();
-
-        String jwtToken = tokenProvider.createToken(authentication);
-
-        String role = accountUserDetail.getAuthorities()
-                .iterator()
-                .next()
-                .getAuthority();
-
-        boolean firstLogin =
-                accountUserDetail.getAccount().isFirstLogin();
-
-        UserLoginResponse response =
-                new UserLoginResponse(
-                        jwtToken,
-                        accountUserDetail.getUsername(),
-                        role,
-                        firstLogin
-                );
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", "Bearer " + jwtToken.trim());
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request){
+        UserLoginResponse response = accountService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<TokenRes>> refresh(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken
+    ){
+        if(refreshToken == null){
+            throw new UnauthorizedException(ErrorCode.INTERNAL_SERVER_ERROR, "토큰을 찾을 수 없습니다.");
+        }
+
+        TokenRes tokenRes = accountService.refresh(refreshToken);
+
+        return ResponseEntity.ok(ApiResponse.success(tokenRes));
+
     }
 
     // 비밀번호 변경

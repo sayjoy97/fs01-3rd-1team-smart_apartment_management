@@ -62,7 +62,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="myInfo"
+        name="myinfo"
         component={MyInfoScreen}
         options={{
           title: "My정보",

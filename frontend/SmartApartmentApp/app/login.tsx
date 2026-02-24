@@ -30,8 +30,10 @@ export default function Login() {
         password: loginData.password,
       };
 
-      const data = await loginApi(payload);
-
+      const res = await loginApi(payload);
+      console.log("전체 응답:", res);
+      const data = res.data || res;
+      console.log("받은 데이터:", data);
       // 토큰이 있으면 저장
       if (data && data.accessToken) {
         await AsyncStorage.setItem("accessToken", data.accessToken);

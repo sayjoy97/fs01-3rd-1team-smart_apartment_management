@@ -2,10 +2,7 @@ package com.jjld.domain.house.entity;
 
 import com.jjld.domain.cargate.entity.RegisteredCar;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
@@ -19,7 +16,8 @@ import java.util.List;
                 @UniqueConstraint(columnNames = {"house_dong", "house_ho"})
         }
 )
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
