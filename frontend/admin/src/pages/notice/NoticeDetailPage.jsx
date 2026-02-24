@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { noticeDetail, noticeUpdate, noticeDelete, noticeFixedChange } from "../../api/noticeAPI";
-
-import "../../App.css";
-import "./Notices.css";
 import "./NoticeDetail.css";
 
 export function NoticeDetailPage() {
@@ -12,11 +9,9 @@ export function NoticeDetailPage() {
 
   const [notice, setNotice] = useState(null);
   const [editMode, setEditMode] = useState(false);
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  // 상세 조회
   useEffect(() => {
     noticeDetail(noticeId)
       .then((res) => {
@@ -27,93 +22,140 @@ export function NoticeDetailPage() {
       .catch(console.error);
   }, [noticeId]);
 
-  if (!notice) return <div>로딩 중...</div>;
+  if (!notice) return <div className="ndp-loading">로딩 중...</div>;
 
-  // 수정
-  const handleUpdate = async () => {
-    const updateData = {
-      noticeId: notice.noticeId,
-      adminId: 1, // 필요하면 로그인 정보로 교체
-      noticeTitle: title,
-      noticeContent: content,
-    };
-
-    const res = await noticeUpdate(updateData);
-    if (res) {
-      alert("수정 완료");
-      setEditMode(false);
-      window.location.reload(); // 수정 후 새로고침하여 최신 정보 반영
-    }
-  };
-
-  // 삭제
-  const handleDelete = async () => {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-
-    const res = await noticeDelete({ notice_id: notice.noticeId });
-    if (res) {
-      alert("삭제 완료");
-      navigate("/notices");
-    }
-  };
-
-  // 고정 상태 변경
   const handleFixToggle = async () => {
-    console.log("공지사항 고정 상태변화 시도, noticeId: ", notice.noticeId);
+    const action = notice.fixStatus ? "해제" : "고정";
+    if (window.confirm(`공지사항을 ${action}하시겠습니까?`)) {
+      const res = await noticeFixedChange({ notice_id: notice.noticeId });
+      if (res) {
+        alert(`공지사항이 ${action}되었습니다.`);
+        window.location.reload();
+      }
+    }
+  };
 
-    const res = await noticeFixedChange({ notice_id: notice.noticeId });
-    if (res) {
-      alert("고정 상태 변경 완료");
-      window.location.reload(); // 상태 변경 후 새로고침하여 최신 정보 반영
+  const handleUpdate = async () => {
+    if (window.confirm("수정사항을 저장하시겠습니까?")) {
+      const updateData = {
+        noticeId: notice.noticeId,
+        adminId: 1,
+        noticeTitle: title,
+        noticeContent: content,
+      };
+      const res = await noticeUpdate(updateData);
+      if (res) {
+        alert("수정 완료");
+        setEditMode(false);
+        window.location.reload();
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      const res = await noticeDelete({ notice_id: notice.noticeId });
+      if (res) {
+        alert("삭제 완료");
+        navigate("/notices");
+      }
     }
   };
 
   return (
-    <div className="notice-page">
-      <div className="notice-card">
-        {/* 제목 */}
-        {editMode ? (
-          <input
-            className="notice-input"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        ) : (
-          <h2>{notice.noticeTitle}</h2>
-        )}
+    <div className="ndp-wrapper">
+      <div className="ndp-card">
+        {/* 상단 레이아웃 */}
+        <div className="ndp-top-section">
+          {/* 1. 왼쪽 핀 */}
+          <div className="ndp-pin-wrapper">
+            <button
+              className={`ndp-pin-button ${notice.fixStatus ? "is-fixed" : ""}`}
+              onClick={handleFixToggle}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                stroke="currentColor"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2v8" />
+                <path d="M5 10h14l-2 7H7l-2-7Z" />
+                <path d="M12 17v5" />
+              </svg>
+            </button>
+          </div>
 
-        <p>작성자: {notice.adminName}</p>
-        <p>작성일: {notice.createdAt?.replace("T", " ")}</p>
-        <p>고정 여부: {notice.fixStatus ? "고정됨" : "일반"}</p>
+          {/* 2. 중앙 제목 */}
+          <div className="ndp-title-wrapper">
+            {editMode ? (
+              <input
+                className="ndp-input-title-center"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            ) : (
+              <h1 className="ndp-title-center">{notice.noticeTitle}</h1>
+            )}
+          </div>
+        </div>
 
-        <hr />
-
-        {/* 내용 */}
-        {editMode ? (
-          <textarea
-            className="notice-textarea"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-        ) : (
-          <div className="notice-content">{notice.noticeContent}</div>
-        )}
-
-        <div className="notice-buttons">
-          {editMode ? (
-            <>
-              <button onClick={handleUpdate}>저장</button>
-              <button onClick={() => setEditMode(false)}>취소</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setEditMode(true)}>수정</button>
-              <button onClick={handleDelete}>삭제</button>
-              <button onClick={handleFixToggle}>
-                {notice.fixStatus ? "고정 해제" : "고정하기"}
-              </button>
-            </>
+        {/* 3. 오른쪽 수직 정렬 메타 정보 */}
+        <div className="ndp-meta-container">
+          <div className="ndp-meta-item">작성자: {notice.adminName || "관리사무소"}</div>
+          <div className="ndp-meta-item">작성날짜: {notice.createdAt?.split("T")[0]}</div>
+          {notice.updatedAt && (
+            <div className="ndp-meta-item">수정날짜: {notice.updatedAt?.split("T")[0]}</div>
           )}
+        </div>
+
+        <hr className="ndp-divider" />
+
+        {/* 본문 */}
+        <div className="ndp-body">
+          {editMode ? (
+            <textarea
+              className="ndp-textarea"
+              rows={15}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+          ) : (
+            <div className="ndp-content-text">{notice.noticeContent}</div>
+          )}
+        </div>
+
+        {/* 하단 버튼 (목록보기 왼쪽, 수정/삭제 오른쪽) */}
+        <div className="ndp-footer">
+          <button className="ndp-btn ndp-btn-list" onClick={() => navigate("/notices")}>
+            목록보기
+          </button>
+
+          <div className="ndp-right-btns">
+            {editMode ? (
+              <>
+                <button className="ndp-btn ndp-btn-outline" onClick={() => setEditMode(false)}>
+                  취소
+                </button>
+                <button className="ndp-btn ndp-btn-primary" onClick={handleUpdate}>
+                  저장
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="ndp-btn ndp-btn-outline" onClick={() => setEditMode(true)}>
+                  수정
+                </button>
+                <button className="ndp-btn ndp-btn-danger" onClick={handleDelete}>
+                  삭제
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
