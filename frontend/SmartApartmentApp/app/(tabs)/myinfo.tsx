@@ -169,7 +169,7 @@ export default function MyInfoScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 10,
   },
   card: {
     backgroundColor: "#ffffff",

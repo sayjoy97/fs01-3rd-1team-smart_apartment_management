@@ -42,16 +42,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="elevator"
-        component={ElevatorScreen}
-        options={{
-          title: "엘리베이터",
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcons name="elevator" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="notice"
         component={NoticeScreen}
         options={{
