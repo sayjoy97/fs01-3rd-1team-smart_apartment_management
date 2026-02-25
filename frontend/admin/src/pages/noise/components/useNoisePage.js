@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -11,6 +11,7 @@ import {
   registerHabitualZone,
   getActiveNoisePolicy,
   createNoisePolicy,
+  getNoiseUrgentEvents,
 } from "../../../api/noiseAPI";
 
 /**
@@ -21,6 +22,7 @@ export default function useNoisePage() {
   // ---------- DASHBOARD ----------
   const [dashboard, setDashboard] = useState(null);
   const [dashboardLoading, setDashboardLoading] = useState(false);
+  const didInit = useRef(false);
 
   const loadDashboard = useCallback(async () => {
     setDashboardLoading(true);
@@ -46,16 +48,21 @@ export default function useNoisePage() {
 
   const [viewMode, setViewMode] = useState("all");
   const [eventFilter, setEventFilter] = useState("all");
+  const lastListKeyRef = useRef("");
 
   const loadEvents = useCallback(async () => {
     setLoadingList(true);
     try {
       const status =
-        eventFilter === "unprocessed"
-          ? "UNPROCESSED"
-          : eventFilter === "notified"
-            ? "NOTIFIED"
-            : undefined;
+        eventFilter === "all"
+          ? undefined
+          : eventFilter === "unprocessed"
+            ? "UNPROCESSED"
+            : eventFilter === "observing"
+              ? "OBSERVING"
+              : eventFilter === "notified"
+                ? "NOTIFIED"
+                : undefined;
 
       const res = await getNoiseEventList({
         status,
@@ -83,8 +90,43 @@ export default function useNoisePage() {
   }, [eventFilter, page, viewMode]);
 
   useEffect(() => {
+    const key = `${eventFilter}|${viewMode}|${page}`;
+    if (lastListKeyRef.current === key) return; // 같은 조건이면 중복 호출 막기
+    lastListKeyRef.current = key;
+
     loadEvents();
-  }, [loadEvents]);
+  }, [eventFilter, viewMode, page, loadEvents]);
+
+  // ---------- URGENT (즉시 처리 필요 패널) ----------
+  const [urgentEvents, setUrgentEvents] = useState([]);
+  const [urgentLoading, setUrgentLoading] = useState(false);
+
+  const [urgentPage, setUrgentPage] = useState(0);
+  const [urgentTotalPages, setUrgentTotalPages] = useState(1);
+  const urgentSize = 5;
+
+  const loadUrgentEvents = useCallback(async () => {
+    setUrgentLoading(true);
+    try {
+      const res = await getNoiseUrgentEvents(urgentPage, urgentSize, "createdAt,desc");
+      if (!res?.success) throw new Error("urgent fail");
+
+      const pg = res.data;
+      setUrgentEvents(pg?.content ?? []);
+      setUrgentTotalPages(pg?.totalPages ?? 1);
+    } catch (e) {
+      console.error(e);
+      toast.error("즉시 처리 필요 목록을 불러오지 못했습니다.");
+      setUrgentEvents([]);
+      setUrgentTotalPages(1);
+    } finally {
+      setUrgentLoading(false);
+    }
+  }, [urgentPage, urgentSize]);
+
+  useEffect(() => {
+    loadUrgentEvents();
+  }, [loadUrgentEvents]);
 
   // ---------- DETAIL (모달) ----------
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -130,12 +172,19 @@ export default function useNoisePage() {
 
       toast.success("관찰 시작 처리되었습니다.");
       closeDetail();
-      await Promise.all([loadDashboard(), loadEvents()]);
+      await Promise.all([loadDashboard(), loadEvents(), loadUrgentEvents()]);
     } catch (e) {
       console.error(e);
       toast.error("관찰 처리 실패");
     }
-  }, [adminMemo, closeDetail, loadDashboard, loadEvents, selectedEvent?.noiseEventId]);
+  }, [
+    adminMemo,
+    closeDetail,
+    loadDashboard,
+    loadEvents,
+    loadUrgentEvents,
+    selectedEvent?.noiseEventId,
+  ]);
 
   const sendNotification = useCallback(async () => {
     if (!selectedEvent?.noiseEventId) return;
@@ -146,12 +195,19 @@ export default function useNoisePage() {
 
       toast.success("알림 발송 완료");
       closeDetail();
-      await Promise.all([loadDashboard(), loadEvents()]);
+      await Promise.all([loadDashboard(), loadEvents(), loadUrgentEvents()]);
     } catch (e) {
       console.error(e);
       toast.error("알림 발송 실패");
     }
-  }, [adminMemo, closeDetail, loadDashboard, loadEvents, selectedEvent?.noiseEventId]);
+  }, [
+    adminMemo,
+    closeDetail,
+    loadDashboard,
+    loadEvents,
+    loadUrgentEvents,
+    selectedEvent?.noiseEventId,
+  ]);
 
   // ✅ 상습 구간 등록(상세에서만)
   const registerHabitual = useCallback(async () => {
@@ -171,12 +227,19 @@ export default function useNoisePage() {
 
       toast.success("상습 구간 등록 완료");
       closeDetail();
-      await Promise.all([loadDashboard(), loadEvents()]);
+      await Promise.all([loadDashboard(), loadEvents(), loadUrgentEvents()]);
     } catch (e) {
       console.error(e);
       toast.error("상습 구간 등록 실패");
     }
-  }, [adminMemo, closeDetail, loadDashboard, loadEvents, selectedEvent?.noiseEventProcessId]);
+  }, [
+    adminMemo,
+    closeDetail,
+    loadDashboard,
+    loadEvents,
+    loadUrgentEvents,
+    selectedEvent?.noiseEventProcessId,
+  ]);
 
   // ---------- STATISTICS ----------
   const [statisticsLoading, setStatisticsLoading] = useState(false);
@@ -279,9 +342,12 @@ export default function useNoisePage() {
 
   // 최초 로드
   useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
+
     loadDashboard();
     loadStatistics();
-  }, [loadDashboard, loadStatistics]);
+  }, [loadDashboard, loadStatistics, loadUrgentEvents]);
 
   return {
     // dashboard
@@ -299,6 +365,14 @@ export default function useNoisePage() {
     setViewMode,
     setEventFilter,
     setPage,
+
+    // urgent
+    urgentEvents,
+    urgentLoading,
+    urgentPage,
+    urgentTotalPages,
+    setUrgentPage,
+    loadUrgentEvents,
 
     // detail
     showDetailModal,

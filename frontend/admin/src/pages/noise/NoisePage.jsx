@@ -8,6 +8,7 @@ import NoiseDashboardCards from "./components/NoiseDashboardCards";
 import NoiseCharts from "./components/NoiseCharts";
 import NoiseEventTable from "./components/NoiseEventTable";
 import NoisePendingPanel from "./components/NoisePendingPanel";
+import NoiseDistributions from "./components/NoiseDistributions";
 
 import PolicyModal from "./components/PolicyModal";
 import NoiseEventDetailModal from "./components/NoiseEventDetailModal";
@@ -44,6 +45,11 @@ export default function NoisePage() {
 
     statisticsLoading,
     charts,
+    urgentEvents,
+    urgentLoading,
+    urgentPage,
+    urgentTotalPages,
+    setUrgentPage,
 
     policyOpen,
     setPolicyOpen,
@@ -58,10 +64,6 @@ export default function NoisePage() {
     [],
   );
 
-  const pendingAll = (events || []).filter(
-    (e) => e.urgentBreak === true && e.status === "UNPROCESSED",
-  );
-
   if (showHabitual) return <HabitualPage onBack={() => setShowHabitual(false)} />;
 
   return (
@@ -74,25 +76,47 @@ export default function NoisePage() {
         activePolicy={activePolicy}
       />
 
-      <NoisePendingPanel
-        pendingEvents={pendingAll.slice(0, 3)}
-        pendingCount={pendingAll.length}
-        onOpenDetail={openDetail}
-      />
+      <div className="noise2-maingrid">
+        {/* LEFT: 즉시 처리 필요 */}
+        <div className="noise2-left">
+          <NoisePendingPanel
+            pendingEvents={urgentEvents}
+            pendingLoading={urgentLoading}
+            pendingCount={dashboard?.pendingEventCount ?? 0}
+            page={urgentPage}
+            totalPages={urgentTotalPages}
+            onPrev={() => setUrgentPage((p) => Math.max(0, p - 1))}
+            onNext={() => setUrgentPage((p) => Math.min(urgentTotalPages - 1, p + 1))}
+            onOpenDetail={openDetail}
+          />
+        </div>
 
-      {/* ✅ (선택) 피그마의 “즉시 처리 필요” 영역은 API 정해지면 여기 끼우면 됨 */}
-      {/* <NoisePendingPanel ... /> */}
+        {/* RIGHT TOP: 시간대별 소음 발생 그래프 */}
+        <div className="noise2-rightTop">
+          <NoiseCharts
+            statisticsLoading={statisticsLoading}
+            charts={charts}
+            viewMode={viewMode}
+            onChangeViewMode={(mode) => {
+              setViewMode(mode);
+              setPage(0);
+            }}
+            colors={COLORS}
+            mode="hourly" // 아래 2)에서 NoiseCharts가 mode 지원하도록
+            compact
+          />
+        </div>
 
-      <NoiseCharts
-        statisticsLoading={statisticsLoading}
-        charts={charts}
-        viewMode={viewMode}
-        onChangeViewMode={(mode) => {
-          setViewMode(mode);
-          setPage(0);
-        }}
-        colors={COLORS}
-      />
+        {/* RIGHT BOTTOM: 센서/패턴 분포 (pillbar 토글) */}
+        <div className="noise2-rightBottom">
+          <NoiseDistributions
+            loading={statisticsLoading}
+            sensorPie={charts?.sensorPie ?? []}
+            patternPie={charts?.patternPie ?? []}
+            colors={COLORS}
+          />
+        </div>
+      </div>
 
       <NoiseEventTable
         events={events}
