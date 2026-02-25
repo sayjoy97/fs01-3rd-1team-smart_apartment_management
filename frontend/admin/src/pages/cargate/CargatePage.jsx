@@ -223,7 +223,7 @@ export function CargatePage() {
                   />
                   <Bar
                     dataKey="ADMIN_APPROVED"
-                    name="기타차량"
+                    name="관리자 승인차량"
                     fill="#3b82f6"
                     radius={[4, 4, 0, 0]}
                     barSize={15}
@@ -293,7 +293,7 @@ export function CargatePage() {
                     <th>차량번호</th>
                     <th>유형</th>
                     <th>상태</th>
-                    <th>입차시간</th>
+                    <th>요청시간</th>
                   </tr>
                 </thead>
                 <tbody>{renderTableRows()}</tbody>

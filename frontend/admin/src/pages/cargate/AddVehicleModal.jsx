@@ -93,7 +93,7 @@ export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
           {vehicleType === "REGISTERED" && (
             <>
               <div className="avm-input-group">
-                <label>방문지 (동호수)</label>
+                <label>세대정보 (동호수)</label>
                 <input
                   type="text"
                   placeholder="101동 301호"
@@ -103,7 +103,7 @@ export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
                 />
               </div>
               <div className="avm-input-group">
-                <label>방문자 이름</label>
+                <label>차량 소유자</label>
                 <input
                   type="text"
                   placeholder="홍길동"
