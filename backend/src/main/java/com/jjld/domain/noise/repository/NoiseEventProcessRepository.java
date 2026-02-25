@@ -8,9 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,4 +59,30 @@ public interface NoiseEventProcessRepository extends JpaRepository<NoiseEventPro
     List<NoiseEventProcess> findAll(Sort sort);
 
     List<NoiseEventProcess> findByStatus(ProcessStatus status, Sort sort);
+
+    @Query("""
+        select p
+        from NoiseEventProcess p
+        where (:status is null or p.status = :status)
+          and (
+                :viewMode = 'all'
+                or (:viewMode = 'day'
+                    and function('TIME', p.noiseEvent.createdAt) >= :dayStart
+                    and function('TIME', p.noiseEvent.createdAt) < :nightStart
+                )
+                or (:viewMode = 'night'
+                    and not (
+                        function('TIME', p.noiseEvent.createdAt) >= :dayStart
+                        and function('TIME', p.noiseEvent.createdAt) < :nightStart
+                    )
+                )
+          )
+    """)
+    Page<NoiseEventProcess> findForList(
+            @Param("status") ProcessStatus status,
+            @Param("viewMode") String viewMode,
+            @Param("dayStart") LocalTime dayStart,
+            @Param("nightStart") LocalTime nightStart,
+            Pageable pageable
+    );
 }
