@@ -31,57 +31,70 @@ export default function NoiseEventTable({
             <div className="noise2-carddesc">전체 {totalElements}건</div>
           </div>
 
-          <div className="noise2-table-actions">
-            <div className="noise2-seg">
-              <Button
-                size="sm"
-                variant={eventFilter === "all" ? "default" : "outline"}
-                onClick={() => onChangeFilter("all")}
-              >
-                전체
-              </Button>
-              <Button
-                size="sm"
-                variant={eventFilter === "unprocessed" ? "default" : "outline"}
-                className={eventFilter === "unprocessed" ? "noise2-btn-warn" : ""}
-                onClick={() => onChangeFilter("unprocessed")}
-              >
-                승인 필요
-              </Button>
-              <Button
-                size="sm"
-                variant={eventFilter === "notified" ? "default" : "outline"}
-                onClick={() => onChangeFilter("notified")}
-              >
-                처리 완료
-              </Button>
-            </div>
+          {/* <div className="noise2-table-actions"> */}
+          <div className="noise2-pillbar">
+            {/* 상태 필터 */}
+            <button
+              type="button"
+              className={`pill ${eventFilter === "all" ? "active" : ""}`}
+              onClick={() => onChangeFilter("all")}
+            >
+              전체 <span className="pill-count">({totalElements})</span>
+            </button>
 
-            <div className="noise2-seg">
-              <Button
-                size="sm"
-                variant={viewMode === "all" ? "default" : "outline"}
-                onClick={() => onChangeViewMode("all")}
-              >
-                전체
-              </Button>
-              <Button
-                size="sm"
-                variant={viewMode === "day" ? "default" : "outline"}
-                className={viewMode === "day" ? "noise2-btn-day" : ""}
-                onClick={() => onChangeViewMode("day")}
-              >
-                주간
-              </Button>
-              <Button
-                size="sm"
-                variant={viewMode === "night" ? "default" : "outline"}
-                className={viewMode === "night" ? "noise2-btn-night" : ""}
-                onClick={() => onChangeViewMode("night")}
-              >
-                야간
-              </Button>
-            </div>
+            <button
+              type="button"
+              className={`pill ${eventFilter === "unprocessed" ? "active" : ""}`}
+              onClick={() => onChangeFilter("unprocessed")}
+            >
+              <Clock className="pill-icon" />
+              대기
+            </button>
+
+            <button
+              type="button"
+              className={`pill ${eventFilter === "observing" ? "active" : ""}`}
+              onClick={() => onChangeFilter("observing")}
+            >
+              <Eye className="pill-icon" />
+              관찰 중
+            </button>
+
+            <button
+              type="button"
+              className={`pill ${eventFilter === "notified" ? "active" : ""}`}
+              onClick={() => onChangeFilter("notified")}
+            >
+              <Bell className="pill-icon" />
+              알림 완료
+            </button>
+
+            <div className="pill-spacer" />
+
+            {/* 뷰모드 */}
+            <button
+              type="button"
+              className={`pill pill-ghost ${viewMode === "all" ? "active" : ""}`}
+              onClick={() => onChangeViewMode("all")}
+            >
+              전체
+            </button>
+
+            <button
+              type="button"
+              className={`pill pill-ghost ${viewMode === "day" ? "active day" : ""}`}
+              onClick={() => onChangeViewMode("day")}
+            >
+              주간
+            </button>
+
+            <button
+              type="button"
+              className={`pill pill-ghost ${viewMode === "night" ? "active night" : ""}`}
+              onClick={() => onChangeViewMode("night")}
+            >
+              야간
+            </button>
           </div>
         </div>
       </CardHeader>
@@ -110,7 +123,7 @@ export default function NoiseEventTable({
                 <tbody>
                   {events.map((e) => (
                     <tr key={e.noiseEventId} className={e.urgentBreak ? "row-hot" : ""}>
-                      <td className="td-muted">{new Date(e.createdAt).toLocaleString("ko-KR")}</td>
+                      <td className="td-muted">{new Date(e.occurredAt).toLocaleString("ko-KR")}</td>
                       <td>
                         <div className="td-location">
                           <MapPin className="size-3 text-gray-400" />
@@ -134,11 +147,17 @@ export default function NoiseEventTable({
                         <Badge className={timeZoneBadge(e.timeZone)}>{e.timeZone}</Badge>
                       </td>
                       <td>
-                        {e.urgentBreak ? (
-                          <Badge className="bg-red-100 text-red-700">URGENT</Badge>
-                        ) : (
-                          <Badge className="bg-gray-100 text-gray-700">NORMAL</Badge>
-                        )}
+                        {(() => {
+                          const s = statusUi(e.status);
+                          return (
+                            <div className="td-status">
+                              <Badge className={s.cls}>{s.label}</Badge>
+
+                              {/* URGENT는 "상태"가 아니라 "플래그"니까 옆에 작은 뱃지로만 */}
+                              {e.urgentBreak && <Badge className="st-urgent">URGENT</Badge>}
+                            </div>
+                          );
+                        })()}
                       </td>
                       <td className="td-actions">
                         <Button
