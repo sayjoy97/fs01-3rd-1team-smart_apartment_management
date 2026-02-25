@@ -20,112 +20,100 @@ import {
 } from "recharts";
 
 import "./FeeDetailPage.css";
+import { FeeSettingModal } from "./FeeSettingModal";
 
 export function FeeDetailPage() {
   const navigate = useNavigate();
 
-  // =========================
-  // 데이터
-  // =========================
+  // 데이터 상태
   const [total, setTotal] = useState({});
   const [daily, setDaily] = useState([]);
   const [monthly, setMonthly] = useState([]);
   const [yearly, setYearly] = useState([]);
 
-  const [setting, setSetting] = useState({});
-  const [form, setForm] = useState({});
-
-  // =========================
   // UI 상태
-  // =========================
   const [mode, setMode] = useState("day"); // day | month | year
-  const [openSetting, setOpenSetting] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [openSetting, setOpenSetting] = useState(false); // 요금 설정 모달 등에 사용 가능
 
-  // =========================
-  // 최초 로딩
-  // =========================
+  const [setting, setSetting] = useState(null); // 초기 세팅 데이터
+
+  // 데이터 호출
   useEffect(() => {
-    getTotalChargeInfo()
-      .then((res) => setTotal(res.data))
-      .catch((err) => console.error("통합정보 요청실패: ", err));
-
-    getDailyList()
-      .then((res) => setDaily(res.data))
-      .catch((err) => console.error("일별 정보 요청실패: ", err));
-
-    getMonthlyList()
-      .then((res) => setMonthly(res.data))
-      .catch((err) => console.error("월별 정보 요청실패: ", err));
-
-    getYearlyList()
-      .then((res) => {
-        setSetting(res.data);
-        setForm(res.data);
-      })
-      .catch((err) => console.error("연간 정보 요청실패: ", err));
-
-    getChargeSettingInfo()
-      .then((res) => setTotal(res.data))
-      .catch((err) => console.error("요금설정 정보 요청실패: ", err));
+    getTotalChargeInfo().then((res) => setTotal(res.data));
+    getDailyList().then((res) => setDaily(res.data));
+    getMonthlyList().then((res) => setMonthly(res.data));
+    getYearlyList().then((res) => setYearly(res.data));
+    getChargeSettingInfo().then((res) => {
+      // API 응답 구조가 { success: true, data: {...} } 이므로 res.data 전달
+      if (res && res.data) setSetting(res.data);
+    });
   }, []);
 
-  // =========================
-  // 설정 수정
-  // =========================
-  const onChange = (key, val) => {
-    setForm((prev) => ({ ...prev, [key]: val }));
+  // 모드별 그래프 설정값 정의 (제공된 데이터 키값 반영)
+  const getChartConfig = () => {
+    switch (mode) {
+      case "month":
+        return { xKey: "month", yKey: "monthlySum", label: "월별 누적 금액" };
+      case "year":
+        return { xKey: "year", yKey: "yearTotalSum", label: "연간 누적 금액" };
+      case "day":
+      default:
+        return { xKey: "date", yKey: "amount", label: "일별 누적 금액" };
+    }
   };
 
-  const handleSave = async () => {
-    await chargeSettingUpdate(form);
-    setSetting(form);
-    setEditMode(false);
-    setOpenSetting(false);
-  };
-
-  // =========================
-  // 그래프 데이터
-  // =========================
+  const { xKey, yKey, label } = getChartConfig();
   const graphData = mode === "day" ? daily : mode === "month" ? monthly : yearly;
 
-  const showSummary = mode !== "day";
+  // 2. 수정 저장 처리
+  const handleUpdateSetting = async (updatedData) => {
+    try {
+      const res = await chargeSettingUpdate(updatedData);
+      if (res && res.status === 200) {
+        alert("요금 설정이 저장되었습니다.");
+        setSetting(updatedData); // 화면 데이터 갱신
+        setOpenSetting(false); // 모달 닫기
+      }
+    } catch (error) {
+      alert("저장 중 오류가 발생했습니다.");
+    }
+  };
 
-  const sum = graphData.reduce((a, b) => a + (b.chargeAmount || 0), 0);
-  const avg = graphData.length ? Math.floor(sum / graphData.length) : 0;
-
-  // =========================
-  // 렌더
-  // =========================
   return (
-    <div className="page">
-      {/* 상단 */}
-      <div className="top-bar">
-        <button className="back-btn" onClick={() => navigate("/cargate")}>
+    <div className="fd-container">
+      {/* 상단 바: 양 끝 정렬 적용 */}
+      <div className="fd-top-bar">
+        <button className="fd-back-btn" onClick={() => navigate("/cargate")}>
           ← 뒤로가기
         </button>
-
-        <button className="setting-btn" onClick={() => setOpenSetting(true)}>
+        <button className="fd-setting-btn" onClick={() => setOpenSetting(true)}>
           ⚙ 요금 설정
         </button>
       </div>
 
-      {/* KPI 카드 */}
-      <div className="kpi-grid-v2">
-        <KPI2 title="금일 누적금액" value={total?.todayCount} color="blue" />
-        <KPI2 title="월 누적금액" value={total?.thisMonthCount} color="green" />
-        <KPI2 title="연 누적금액" value={total?.thisYearCount} color="purple" />
-        <KPI2 title="월평균 금액" value={total?.monthAverageCount} color="orange" />
-        <KPI2 title="일일 최고금액" value={total?.dayTopCount} color="red" />
-        <KPI2 title="월평균 방문차량" value={`${total?.unRegisAverageCount}대`} color="indigo" />
+      {/* KPI 카드 그리드 */}
+      <div className="fd-kpi-grid">
+        <KPIItem title="금일 누적금액" value={total?.todayCount} color="blue" />
+        <KPIItem title="월 누적금액" value={total?.thisMonthCount} color="green" />
+        <KPIItem title="연 누적금액" value={total?.thisYearCount} color="purple" />
+        <KPIItem title="월평균 금액" value={total?.monthAverageCount} color="orange" />
+        <KPIItem title="일일 최고금액" value={total?.dayTopCount} color="red" />
+        <KPIItem
+          title="월평균 방문차량"
+          value={`${total?.unRegisAverageCount || 0}대`}
+          color="indigo"
+        />
       </div>
 
-      {/* 그래프 카드 */}
-      <div className="chart-card">
-        <div className="chart-header">
-          <h3>주차 요금 통계</h3>
+      {/* 그래프 섹션 */}
+      <div className="fd-chart-card">
+        <div className="fd-chart-header">
+          <div className="fd-chart-title">
+            <h3>{label}</h3>
+            <p>{mode === "day" ? "최근 30일간 누적 주차 요금 추이" : "기간별 요금 통계"}</p>
+          </div>
 
-          <div className="toggle">
+          <div className="fd-toggle-group">
             <button className={mode === "day" ? "active" : ""} onClick={() => setMode("day")}>
               일별
             </button>
@@ -133,107 +121,57 @@ export function FeeDetailPage() {
               월별
             </button>
             <button className={mode === "year" ? "active" : ""} onClick={() => setMode("year")}>
-              연별
+              연간
             </button>
           </div>
         </div>
 
-        {/* 월/연일 때만 요약 표시 */}
-        {showSummary && (
-          <div className="summary-box">
-            <div>
-              <span>누적 금액</span>
-              <b>{sum.toLocaleString()}원</b>
-            </div>
-            <div>
-              <span>평균 금액</span>
-              <b>{avg.toLocaleString()}원</b>
-            </div>
-          </div>
-        )}
-
-        {/* 그래프 */}
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={graphData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey={mode === "day" ? "day" : mode === "month" ? "month" : "year"} />
-            <YAxis />
-            <Tooltip formatter={(v) => v.toLocaleString() + "원"} />
-            <Line
-              type="monotone"
-              dataKey="chargeAmount"
-              stroke="#2563eb"
-              strokeWidth={3}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div className="fd-chart-content">
+          <ResponsiveContainer width="100%" height={350}>
+            <LineChart data={graphData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <XAxis
+                dataKey={xKey}
+                tick={{ fontSize: 12, fill: "#888" }}
+                axisLine={{ stroke: "#ddd" }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "#888" }}
+                axisLine={false}
+                tickFormatter={(value) => (value === 0 ? "0" : `${value / 1000}k`)}
+              />
+              <Tooltip formatter={(v) => v.toLocaleString() + "원"} />
+              <Line
+                type="monotone"
+                dataKey={yKey}
+                stroke="#4f46e5"
+                strokeWidth={3}
+                dot={{ r: 4, fill: "#4f46e5" }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      {/* 설정 모달 */}
-      {openSetting && (
-        <FeeSettingModal
-          setting={form}
-          onClose={() => {
-            setOpenSetting(false);
-            setEditMode(false);
-          }}
-          editMode={editMode}
-          setEditMode={setEditMode}
-          onChange={onChange}
-          onSave={handleSave}
-        />
-      )}
+      {/* 모달 추가 */}
+      <FeeSettingModal
+        isOpen={openSetting}
+        onClose={() => setOpenSetting(false)}
+        initialData={setting}
+        onSave={handleUpdateSetting}
+      />
     </div>
   );
 }
 
-// =========================
-// KPI 카드
-// =========================
-function KPI2({ title, value, color }) {
+// 독립적인 KPI 아이템 컴포넌트
+function KPIItem({ title, value, color }) {
   return (
-    <div className={`kpi-card ${color}`}>
-      <div className="kpi-title">{title}</div>
-      <div className="kpi-value">
-        {typeof value === "number" ? value.toLocaleString() + "원" : value}
-      </div>
-    </div>
-  );
-}
-
-// =========================
-// 설정 모달
-// =========================
-function FeeSettingModal({ setting, onClose, editMode, setEditMode, onChange, onSave }) {
-  const [peakOn, setPeakOn] = useState(setting?.peakEnabled ?? false);
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <div className="modal-header">
-          <h2>주차 요금 설정</h2>
-          <span className="close" onClick={onClose}>
-            ✕
-          </span>
-        </div>
-
-        <div className="modal-footer">
-          {editMode ? (
-            <>
-              <button className="cancel" onClick={() => setEditMode(false)}>
-                취소
-              </button>
-              <button className="save" onClick={onSave}>
-                저장
-              </button>
-            </>
-          ) : (
-            <button className="edit" onClick={() => setEditMode(true)}>
-              수정
-            </button>
-          )}
-        </div>
+    <div className="fd-kpi-card">
+      <div className="fd-kpi-label">{title}</div>
+      <div className={`fd-kpi-value fd-text-${color}`}>
+        {typeof value === "number" ? value.toLocaleString() + "원" : value || "0원"}
       </div>
     </div>
   );

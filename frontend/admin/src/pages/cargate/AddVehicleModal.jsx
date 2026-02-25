@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { carRegister } from "../../api/cargateAPI";
+import "./AddVehicleModal.css";
 
 export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
   const [plateNumber, setPlateNumber] = useState("");
@@ -29,17 +30,11 @@ export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
 
     try {
       setLoading(true);
-
-      const res = await carRegister(payload);
-
-      console.log("등록 성공:", res);
-
+      await carRegister(payload);
       alert("차량 등록 완료");
-
-      // 부모 갱신 콜백
       onSuccess?.();
 
-      // 초기화
+      // 상태 초기화
       setPlateNumber("");
       setVehicleType("REGISTERED");
       setHouseInfo("");
@@ -47,7 +42,6 @@ export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
       setApprovalReason("");
       setStartAt("");
       setEndAt("");
-
       onClose();
     } catch (err) {
       console.error(err);
@@ -60,89 +54,109 @@ export function AddVehicleModal({ isOpen, onClose, onSuccess }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40"
-      onClick={onClose}
-    >
-      <div className="bg-white rounded-lg w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-        <h2 className="text-lg font-semibold mb-2">차량 등록</h2>
+    <div className="avm-overlay" onClick={onClose}>
+      <div className="avm-modal-card" onClick={(e) => e.stopPropagation()}>
+        <div className="avm-modal-header">
+          <div className="avm-header-text">
+            <h2>방문차량 등록</h2>
+            <p>새로운 방문차량을 등록합니다</p>
+          </div>
+          <button className="avm-close-x" onClick={onClose}>
+            &times;
+          </button>
+        </div>
 
-        <div className="space-y-4">
-          {/* 차량번호 */}
-          <input
-            type="text"
-            placeholder="차량번호"
-            value={plateNumber}
-            onChange={(e) => setPlateNumber(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-          />
+        <div className="avm-modal-body">
+          <div className="avm-input-group">
+            <label>차량번호</label>
+            <input
+              type="text"
+              placeholder="예: 12가3456"
+              value={plateNumber}
+              onChange={(e) => setPlateNumber(e.target.value)}
+              className="avm-input"
+            />
+          </div>
 
-          {/* 차량유형 */}
-          <select
-            value={vehicleType}
-            onChange={(e) => setVehicleType(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-          >
-            <option value="REGISTERED">세대 차량</option>
-            <option value="ADMIN_APPROVED">관리자 승인 차량</option>
-          </select>
+          <div className="avm-input-group">
+            <label>차량유형</label>
+            <select
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              className="avm-select"
+            >
+              <option value="REGISTERED">세대 차량</option>
+              <option value="ADMIN_APPROVED">관리자 승인 차량</option>
+            </select>
+          </div>
 
-          {/* REGISTERED */}
           {vehicleType === "REGISTERED" && (
             <>
-              <input
-                type="text"
-                placeholder="세대정보를 입력하세요 (예: 101동 102호)"
-                value={houseInfo}
-                onChange={(e) => setHouseInfo(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
-              <input
-                type="text"
-                placeholder="차량 소유자"
-                value={vehicleOwner}
-                onChange={(e) => setVehicleOwner(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
+              <div className="avm-input-group">
+                <label>방문지 (동호수)</label>
+                <input
+                  type="text"
+                  placeholder="101동 301호"
+                  value={houseInfo}
+                  onChange={(e) => setHouseInfo(e.target.value)}
+                  className="avm-input"
+                />
+              </div>
+              <div className="avm-input-group">
+                <label>방문자 이름</label>
+                <input
+                  type="text"
+                  placeholder="홍길동"
+                  value={vehicleOwner}
+                  onChange={(e) => setVehicleOwner(e.target.value)}
+                  className="avm-input"
+                />
+              </div>
             </>
           )}
 
-          {/* ADMIN_APPROVED */}
           {vehicleType === "ADMIN_APPROVED" && (
             <>
-              <input
-                type="text"
-                placeholder="승인 사유"
-                value={approvalReason}
-                onChange={(e) => setApprovalReason(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
-              <input
-                type="date"
-                value={startAt}
-                onChange={(e) => setStartAt(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
-              <input
-                type="date"
-                value={endAt}
-                onChange={(e) => setEndAt(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
-              />
+              <div className="avm-input-group">
+                <label>승인 사유</label>
+                <input
+                  type="text"
+                  placeholder="사유를 입력하세요"
+                  value={approvalReason}
+                  onChange={(e) => setApprovalReason(e.target.value)}
+                  className="avm-input"
+                />
+              </div>
+              <div className="avm-date-row">
+                <div className="avm-input-group">
+                  <label>시작일</label>
+                  <input
+                    type="date"
+                    value={startAt}
+                    onChange={(e) => setStartAt(e.target.value)}
+                    className="avm-input"
+                  />
+                </div>
+                <div className="avm-input-group">
+                  <label>종료일</label>
+                  <input
+                    type="date"
+                    value={endAt}
+                    onChange={(e) => setEndAt(e.target.value)}
+                    className="avm-input"
+                  />
+                </div>
+              </div>
             </>
           )}
         </div>
 
-        <div className="mt-6 flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 border rounded">
+        <div className="avm-modal-footer">
+          <button onClick={onClose} className="avm-btn-cancel">
             취소
           </button>
-          <button
-            onClick={handleAdd}
-            disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
-          >
-            {loading ? "등록중..." : "등록"}
+          <button onClick={handleAdd} disabled={loading} className="avm-btn-submit">
+            {loading ? "등록 중..." : "등록하기"}
           </button>
         </div>
       </div>

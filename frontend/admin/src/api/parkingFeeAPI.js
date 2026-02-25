@@ -47,7 +47,7 @@ export const getDailyList = async () => {
 // 최근 12개월 월별 요금정보 호출
 export const getMonthlyList = async () => {
   try {
-    const response = await backendServer.get(requests.getMonthlyTotalList);
+    const response = await backendServer.get(requests.getMonthly12TotalList);
 
     console.log("API응답: ", response.data);
 
@@ -61,7 +61,7 @@ export const getMonthlyList = async () => {
 // 최근 3년 연간 요금정보 호출
 export const getYearlyList = async () => {
   try {
-    const response = await backendServer.get(requests.getYearlyTotalList);
+    const response = await backendServer.get(requests.getYearly3TotalList);
 
     console.log("API응답: ", response.data);
 
@@ -87,11 +87,9 @@ export const getChargeSettingInfo = async () => {
 };
 
 // 요금 설정정보 수정
-export const chargeSettingUpdate = async (updateDate) => {
+export const chargeSettingUpdate = async (updateData) => {
   try {
-    const response = await backendServer.put(requests.updateChargeSetting, {
-      data: updateDate,
-    });
+    const response = await backendServer.put(requests.updateChargeSetting, updateData);
 
     return response;
   } catch (error) {

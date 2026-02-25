@@ -1,79 +1,148 @@
-.detail-wrapper {
-  max-width: 900px;
-  margin: 40px auto;
+/* 상단 네비바와의 간격 */
+.ndp-wrapper {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 0 20px;
 }
 
-.detail-card {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
+.ndp-card {
+  background: #ffffff;
+  padding: 50px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+/* 상단 섹션 (핀 + 제목) */
+.ndp-top-section {
+  position: relative;
+  display: flex;
+  justify-content: center; /* 제목 중앙 정렬 */
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.ndp-pin-wrapper {
+  position: absolute;
+  left: 0; /* 핀은 왼쪽 끝에 고정 */
+}
+
+.ndp-pin-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af; /* 기본 회색(수직) */
+  transition: all 0.3s ease;
+}
+
+/* 고정 상태: 파란색 + 대각선 회전 */
+.ndp-pin-button.is-fixed {
+  color: #5d7cff;
+  transform: rotate(45deg);
+}
+
+.ndp-title-center {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.ndp-input-title-center {
+  font-size: 28px;
+  text-align: center;
+  width: 500px;
+  padding: 5px;
   border: 1px solid #ddd;
 }
 
-/* 상단 */
-.detail-top {
+/* 오른쪽 수직 정렬 메타 정보 */
+.ndp-meta-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column; /* 수직으로 쌓기 */
+  align-items: flex-end; /* 오른쪽 정렬 */
+  gap: 5px;
   margin-bottom: 20px;
 }
 
-.right-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-/* 제목 */
-.title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.title-input {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* 메타 */
-.meta {
-  font-size: 13px;
+.ndp-meta-item {
+  font-size: 14px;
   color: #666;
-  display: flex;
-  gap: 16px;
-  margin-bottom: 10px;
 }
 
-/* 내용 */
-.content {
-  min-height: 200px;
-  line-height: 1.6;
+.ndp-divider {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 20px 0 40px 0;
 }
 
-.textarea {
+/* 본문 */
+.ndp-body {
+  min-height: 400px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.ndp-content-text {
+  white-space: pre-wrap;
+}
+
+.ndp-textarea {
   width: 100%;
-  padding: 10px;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: none;
 }
 
-/* 버튼 */
-.btn {
-  padding: 6px 12px;
+/* 하단 버튼 바 */
+.ndp-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.ndp-btn {
+  padding: 10px 20px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  font-weight: 600;
   cursor: pointer;
+  border: 1px solid #ddd;
+  font-size: 14px;
 }
 
-.btn-outline {
+.ndp-btn-list {
+  background: #f8f9fa;
+  color: #333;
+}
+
+.ndp-right-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.ndp-btn-primary {
+  background: #5d7cff;
+  color: white;
+  border: none;
+}
+
+.ndp-btn-danger {
+  background: #ffffff;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.ndp-btn-outline {
   background: white;
+  color: #666;
 }
 
-.btn-blue {
-  background: #2563eb;
-  color: white;
-  border: none;
-}
-
-.btn-danger {
-  background: #ef4444;
-  color: white;
-  border: none;
+.ndp-loading {
+  text-align: center;
+  padding: 100px;
 }
