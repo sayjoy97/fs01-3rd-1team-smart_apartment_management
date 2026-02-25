@@ -21,7 +21,7 @@ public class EnergyControlPublisher {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onControlCommitted(EnergyControlEvent event) {
         try {
-            String topic = "jjld/energy/" + event.getDeviceId() + "/CONTROL";
+            String topic = "jjld/energy/" + event.getDeviceId() + "/control";
 
             EnergyControlCommand cmd = EnergyControlCommand.builder()
                     .deviceId(event.getDeviceId())

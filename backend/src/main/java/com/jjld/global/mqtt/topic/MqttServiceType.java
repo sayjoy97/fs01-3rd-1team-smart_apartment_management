@@ -10,6 +10,7 @@ public enum MqttServiceType {
     ELEVATOR,
     ENTRANCE,
     ENERGY,
+    NOISE,
     CARGATE;
 
     public static MqttServiceType from(String value) {
