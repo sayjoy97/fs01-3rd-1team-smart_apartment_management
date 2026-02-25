@@ -23,8 +23,8 @@ public class MqttTopicRegistry {
                 MqttServiceType.GARDEN, properties.getGarden(),
                 MqttServiceType.ELEVATOR, properties.getElevator(),
                 MqttServiceType.ENERGY, properties.getEnergy(),
+                MqttServiceType.NOISE, properties.getNoise(),
                 MqttServiceType.CARGATE, properties.getCargate(),
-
                 MqttServiceType.ENTRANCE, properties.getEntrance()
 
 

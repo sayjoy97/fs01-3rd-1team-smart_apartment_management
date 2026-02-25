@@ -1,5 +1,6 @@
 package com.jjld.domain.noise.service;
 
+import com.jjld.domain.house.entity.House;
 import com.jjld.domain.noise.entity.Enum.NoisePattern1;
 import com.jjld.domain.noise.entity.Enum.NoisePattern2;
 import com.jjld.domain.noise.entity.Enum.SensorType;
@@ -62,9 +63,18 @@ public class NoiseViolationServiceImpl implements NoiseViolationService {
     private boolean existsVibrationEventAround(NoiseEvent event, int seconds) {
         LocalDateTime from = event.getCreatedAt().minusSeconds(seconds);
         LocalDateTime to   = event.getCreatedAt().plusSeconds(seconds);
-        return noiseEventRepository.existsByNoiseSensorAndNoiseSensor_SensorTypeInAndCreatedAtBetween(
-                        event.getNoiseSensor(), List.of(SensorType.PIEZO, SensorType.SW_420),
-                        from, to);
+
+        House upper = event.getNoiseSensor().getUpperHouse();
+        House lower = event.getNoiseSensor().getLowerHouse();
+        // 같은 시간대에 PIEZO/SW420 이벤트가 있었는지만 확인
+        return noiseEventRepository
+                .existsByNoiseSensor_UpperHouseAndNoiseSensor_LowerHouseAndNoiseSensor_SensorTypeInAndCreatedAtBetween(
+                        upper,
+                        lower,
+                        List.of(SensorType.PIEZO, SensorType.SW_420),
+                        from,
+                        to
+                );
     }
 
     // 정책 위반 사유 설명 문장 생성

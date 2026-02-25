@@ -1,5 +1,6 @@
 package com.jjld.domain.noise.repository;
 
+import com.jjld.domain.house.entity.House;
 import com.jjld.domain.noise.entity.Enum.SensorType;
 import com.jjld.domain.noise.entity.NoiseEvent;
 import com.jjld.domain.noise.entity.NoiseSensor;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -57,4 +59,20 @@ public interface NoiseEventRepository extends JpaRepository<NoiseEvent, Long> {
     """)
     List<Object[]> countSensorType(@Param("start") LocalDateTime start,
                                    @Param("end") LocalDateTime end);
+
+    boolean existsByNoiseSensor_SensorTypeInAndCreatedAtBetween(Collection<SensorType> noiseSensorSensorTypes, LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    boolean existsByNoiseSensor_SensorTypeInAndCreatedAtBetween(
+            List<SensorType> sensorTypes,
+            LocalDateTime from,
+            LocalDateTime to
+    );
+
+    boolean existsByNoiseSensor_UpperHouseAndNoiseSensor_LowerHouseAndNoiseSensor_SensorTypeInAndCreatedAtBetween(
+            House upperHouse,
+            House lowerHouse,
+            List<SensorType> sensorTypes,
+            LocalDateTime from,
+            LocalDateTime to
+    );
 }
