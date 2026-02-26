@@ -42,8 +42,7 @@ export default function EnergyDetailModal({
   const s = statusBadge(detail?.deviceStatus);
 
   const safeLogs = Array.isArray(controlLogs) ? controlLogs : [];
-
-  const savingContent = savingResults?.content ?? [];
+  const savingContent = Array.isArray(savingResults?.content) ? savingResults.content : [];
 
   const lastAnalyzed = useMemo(() => {
     const v = detail?.analyzedAt;
@@ -204,7 +203,7 @@ export default function EnergyDetailModal({
                           로그가 없습니다.
                         </div>
                       ) : (
-                        <div className="border rounded-lg overflow-auto">
+                        <div className="border rounded-lg overflow-auto max-h-64">
                           <Table>
                             <TableHeader>
                               <TableRow>
@@ -252,38 +251,71 @@ export default function EnergyDetailModal({
                       <CardTitle className="text-sm text-gray-600">절감 결과</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {!savingContent?.length ? (
-                        <div className="py-6 text-center text-sm text-gray-500">
-                          절감 결과 데이터가 없습니다.
-                        </div>
-                      ) : (
-                        <div className="border rounded-lg overflow-auto">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>기간</TableHead>
-                                <TableHead>절감(kWh)</TableHead>
-                                <TableHead>절감액(₩)</TableHead>
-                                <TableHead>생성일</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {savingContent.map((r, idx) => (
-                                <TableRow key={idx}>
-                                  <TableCell>{r.periodLabel ?? "-"}</TableCell>
-                                  <TableCell>{Number(r.savedKwh ?? 0).toLocaleString()}</TableCell>
-                                  <TableCell>{Number(r.savedCost ?? 0).toLocaleString()}</TableCell>
-                                  <TableCell>
-                                    {r.createdAt
-                                      ? new Date(r.createdAt).toLocaleString("ko-KR")
-                                      : "-"}
-                                  </TableCell>
+                      {(() => {
+                        const pageObj =
+                          savingResults && typeof savingResults === "object" ? savingResults : null;
+                        const rows = Array.isArray(pageObj?.content) ? pageObj.content : [];
+
+                        if (!rows.length) {
+                          return (
+                            <div className="py-6 text-center text-sm text-gray-500">
+                              절감 성과 데이터가 없습니다.
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div className="border rounded-lg overflow-auto max-h-64">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>ID</TableHead>
+                                  <TableHead>Before(kWh)</TableHead>
+                                  <TableHead>After(kWh)</TableHead>
+                                  <TableHead>Saved(kWh)</TableHead>
+                                  <TableHead>Saved(₩)</TableHead>
+                                  <TableHead>측정 시각</TableHead>
                                 </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      )}
+                              </TableHeader>
+
+                              <TableBody>
+                                {rows.map((r) => (
+                                  <TableRow key={r.savingId ?? `${r.evaluatedAt}-${Math.random()}`}>
+                                    <TableCell>
+                                      {r.savingId != null ? `#${r.savingId}` : "-"}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r.beforeKwh == null
+                                        ? "-"
+                                        : Number(r.beforeKwh).toLocaleString()}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r.afterKwh == null
+                                        ? "-"
+                                        : Number(r.afterKwh).toLocaleString()}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r.savedKwh == null
+                                        ? "-"
+                                        : Number(r.savedKwh).toLocaleString()}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r.savedCost == null
+                                        ? "-"
+                                        : Number(r.savedCost).toLocaleString()}
+                                    </TableCell>
+                                    <TableCell>
+                                      {r.evaluatedAt
+                                        ? new Date(r.evaluatedAt).toLocaleString("ko-KR")
+                                        : "-"}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        );
+                      })()}
                     </CardContent>
                   </Card>
                 </TabsContent>

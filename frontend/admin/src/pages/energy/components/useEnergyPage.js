@@ -144,17 +144,47 @@ export default function useEnergyPage() {
 
   const handleControl = async (deviceId, operate, reason) => {
     try {
-      await controlEnergyDevice(deviceId, operate, reason || "관리자 수동 제어");
+      // optimistic update: 버튼 누르자마자 UI 반영
+      setDetail((prev) => (prev?.deviceId === deviceId ? { ...prev, isOperating: operate } : prev));
 
-      // 상세창 열려있으면 상세 refresh
-      if (detailOpen) {
-        const res = await getEnergyDeviceDetail(deviceId);
-        if (res?.success) setDetail(res.data);
+      const res = await controlEnergyDevice(deviceId, operate, reason || "관리자 수동 제어");
+      if (!res?.success) throw new Error("controlEnergyDevice success=false");
+
+      // 모달에서 필요한 데이터 3종을 한 번에 재조회해서 확정 반영
+      const [detailRes, logRes, savingRes] = await Promise.allSettled([
+        getEnergyDeviceDetail(deviceId),
+        getEnergyDeviceControlLogs(deviceId),
+        getEnergyDeviceSavingResults(deviceId, 0),
+      ]);
+      if (detailRes.status === "fulfilled" && detailRes.value?.success) {
+        setDetail(detailRes.value.data);
       }
+
+      if (logRes.status === "fulfilled" && logRes.value?.success) {
+        setControlLogs(logRes.value.data ?? []);
+      } else {
+        setControlLogs([]);
+      }
+
+      if (savingRes.status === "fulfilled" && savingRes.value?.success) {
+        setSavingResults(savingRes.value.data ?? { content: [], totalPages: 0, number: 0 });
+      } else {
+        setSavingResults({ content: [], totalPages: 0, number: 0 });
+      }
+      // 상세창 열려있으면 상세 refresh
+      // if (detailOpen) {
+      //   const res = await getEnergyDeviceDetail(deviceId);
+      //   if (res?.success) setDetail(res.data);
+      // }
     } catch (e) {
       console.error("설비 제어 실패:", e);
+      setDetail((prev) =>
+        prev?.deviceId === deviceId ? { ...prev, isOperating: !operate } : prev,
+      );
+      alert("제어에 실패했습니다. (서버/통신 확인)");
     } finally {
       await loadDevices();
+      await loadDashboard();
     }
   };
 

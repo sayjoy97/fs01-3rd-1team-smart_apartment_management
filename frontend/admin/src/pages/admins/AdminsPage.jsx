@@ -1,5 +1,5 @@
-import {useEffect, useState, useCallback} from "react";
-import {toast} from "sonner";
+import { useEffect, useState, useCallback } from "react";
+import { toast } from "sonner";
 
 import {
   createAdmin,
@@ -181,13 +181,13 @@ export default function AdminsPage() {
       .then((res) => {
         console.log("관리자 권한 수정 성공:", res);
         toast.success("관리자 권한이 수정되었습니다");
-        setEditRoleForm({adminPass: "", adminRole: ""});
+        setEditRoleForm({ adminPass: "", adminRole: "" });
         fetchAdmins();
         setIsEditRoleModalOpen(false);
       })
       .catch((err) => {
         console.error("관리자 권한 수정 실패:", err);
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "관리자 권한 수정에 실패했습니다");
       });
   };
@@ -205,25 +205,18 @@ export default function AdminsPage() {
         console.log("관리자 삭제 성공:", res);
         toast.success("관리자가 삭제되었습니다");
         setIsDeleteModalOpen(false);
-        setDeleteAdminForm({adminPass: ""});
+        setDeleteAdminForm({ adminPass: "" });
         fetchAdmins();
       })
       .catch((err) => {
         console.error("관리자 삭제 실패:", err);
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "관리자 삭제에 실패했습니다");
       });
   };
 
   return (
     <div className={styles.container}>
-      <header className={styles.pageHeader}>
-        <div>
-          <h1 className={styles.title}>관리자 관리</h1>
-          <p className={styles.subtitle}>시스템 관리자 계정을 관리합니다</p>
-        </div>
-      </header>
-
       <AdminsStatsSection
         adminsStats={adminsStats}
         onClickCreateModalOpen={() => setIsCreateModalOpen(true)}
@@ -255,7 +248,7 @@ export default function AdminsPage() {
         open={isCreateModalOpen}
         onClose={() => {
           setIsCreateModalOpen(false);
-          setCreateAdminForm({adminLoginId: "", adminName: "", adminPass: "", adminRole: ""});
+          setCreateAdminForm({ adminLoginId: "", adminName: "", adminPass: "", adminRole: "" });
         }}
         formData={createAdminForm}
         setFormData={setCreateAdminForm}
@@ -276,7 +269,7 @@ export default function AdminsPage() {
         open={isEditRoleModalOpen}
         onClose={() => {
           setIsEditRoleModalOpen(false);
-          setEditRoleForm({adminPass: "", adminRole: ""});
+          setEditRoleForm({ adminPass: "", adminRole: "" });
         }}
         admin={selectedAdmin}
         editRole={editRoleForm}
@@ -290,7 +283,7 @@ export default function AdminsPage() {
         open={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setDeleteAdminForm({adminPass: ""});
+          setDeleteAdminForm({ adminPass: "" });
         }}
         admin={selectedAdmin}
         deleteForm={deleteAdminForm}
