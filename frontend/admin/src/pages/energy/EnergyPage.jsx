@@ -238,7 +238,7 @@ export default function EnergyPage() {
   return (
     <div className="energy-page">
       {/* 요약 카드 4개 */}
-      <div className="dashboard-grid">
+      <div className="dashboard-grid-energy">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-gray-600">이번 달 총 사용량</CardTitle>

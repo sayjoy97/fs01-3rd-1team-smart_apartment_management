@@ -1,0 +1,159 @@
+.fd-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.fd-modal-content {
+  background: white;
+  width: 480px;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.fd-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.fd-modal-header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #1e293b;
+}
+.fd-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #94a3b8;
+}
+
+.fd-modal-sub {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+}
+
+.fd-modal-section {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+}
+
+.fd-modal-section.peak-section.active {
+  background: #fffaf5;
+  border: 1px solid #ffedd5;
+}
+
+.fd-modal-section h3 {
+  font-size: 0.95rem;
+  color: #475569;
+  margin: 0 0 16px 0;
+}
+
+.fd-input-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.fd-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fd-input-group label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+.fd-input-group input {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.fd-input-group input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.fd-current-setting {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 8px 0 0 0;
+}
+
+/* 커스텀 토글 스위치 */
+.fd-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.fd-switch {
+  width: 44px;
+  height: 24px;
+  background: #e2e8f0;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.fd-switch.on {
+  background: #3b82f6;
+}
+.fd-switch.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.fd-handle {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.fd-switch.on .fd-handle {
+  transform: translateX(20px);
+}
+
+/* 하단 버튼 */
+.fd-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.fd-btn-cancel {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+}
+.fd-btn-submit {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}

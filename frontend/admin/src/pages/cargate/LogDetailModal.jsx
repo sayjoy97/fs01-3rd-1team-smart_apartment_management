@@ -142,27 +142,28 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
   if (!open) return null;
 
   return (
-    <div className="modal-backdrop" onClick={handleClose}>
-      <div className="modal-card horizontal" onClick={(e) => e.stopPropagation()}>
-        {/* ================= 왼쪽 이미지 ================= */}
-        <div className="modal-image">
-          {imagePath ? (
-            <img src={`${BASE_IMAGE_URL}/${encodeURI(imagePath)}`} />
-          ) : (
-            <div className="no-image">이미지 없음</div>
-          )}
+    <div className="ldm-backdrop" onClick={handleClose}>
+      <div className="ldm-card-horizontal" onClick={(e) => e.stopPropagation()}>
+        {/* ================= 왼쪽 이미지 (4:3 고정) ================= */}
+        <div className="ldm-image-container">
+          <div className="ldm-image-wrapper">
+            {imagePath ? (
+              <img src={`${BASE_IMAGE_URL}/${encodeURI(imagePath)}`} alt="차량 이미지" />
+            ) : (
+              <div className="ldm-no-image">이미지 없음</div>
+            )}
+          </div>
         </div>
 
-        {/* ================= 오른쪽 정보 ================= */}
-        <div className="modal-content">
-          <h2>차량 상세</h2>
+        {/* ================= 오른쪽 정보 (컴팩트 레이아웃) ================= */}
+        <div className="ldm-content">
+          <h2 className="ldm-title">차량 상세 정보</h2>
 
           {loading ? (
-            <p>로딩중...</p>
+            <p className="ldm-loading">로딩중...</p>
           ) : (
-            <>
-              {/* 번호판 */}
-              <div className="modal-field">
+            <div className="ldm-form">
+              <div className="ldm-field">
                 <label>번호판</label>
                 <input
                   value={formData.plateNumber}
@@ -171,21 +172,20 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 />
               </div>
 
-              {/* 차량 유형 */}
-              <div className="modal-field">
+              <div className="ldm-field">
                 <label>차량 유형</label>
                 <select
                   value={formData.vehicleType}
                   disabled={!isEditMode}
-                  onChange={(e) => handleTypeChange(e.target.value)}>
+                  onChange={(e) => handleTypeChange(e.target.value)}
+                >
                   <option value="REGISTERED">세대차량</option>
                   <option value="UNREGISTERED">미등록차량</option>
                   <option value="ADMIN_APPROVED">관리자 승인차량</option>
                 </select>
               </div>
 
-              {/* 시간 */}
-              <div className="modal-field">
+              <div className="ldm-field">
                 <label>입차시간</label>
                 <input
                   type="datetime-local"
@@ -195,7 +195,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 />
               </div>
 
-              <div className="modal-field">
+              <div className="ldm-field">
                 <label>출차시간</label>
                 <input
                   type="datetime-local"
@@ -205,58 +205,49 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 />
               </div>
 
-              {/* REGISTERED */}
               {formData.vehicleType === "REGISTERED" && (
                 <>
-                  <div className="modal-field">
+                  <div className="ldm-field">
                     <label>세대 정보</label>
-                    <input value={formData.houseInfo || ""} disabled />
+                    <input value={formData.houseInfo || "-"} disabled />
                   </div>
-
-                  <div className="modal-field">
-                    <label>차량 소유주</label>
+                  <div className="ldm-field">
+                    <label>소유주</label>
                     <input
                       value={formData.vehicleOwner}
                       disabled={!isEditMode}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          vehicleOwner: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setFormData({ ...formData, vehicleOwner: e.target.value })}
                     />
                   </div>
                 </>
               )}
 
-              {/* ADMIN_APPROVED */}
               {formData.vehicleType === "ADMIN_APPROVED" && (
-                <div className="modal-field">
+                <div className="ldm-field">
                   <label>승인 사유</label>
                   <input
                     value={formData.approvalReason}
                     disabled={!isEditMode}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        approvalReason: e.target.value,
-                      })
-                    }
+                    onChange={(e) => setFormData({ ...formData, approvalReason: e.target.value })}
                   />
                 </div>
               )}
 
-              <div className="modal-buttons">
+              <div className="ldm-buttons">
                 {!isEditMode ? (
-                  <button onClick={() => setIsEditMode(true)}>수정</button>
+                  <button className="ldm-btn-edit" onClick={() => setIsEditMode(true)}>
+                    수정
+                  </button>
                 ) : (
-                  <button className="primary" onClick={handleSave}>
+                  <button className="ldm-btn-primary" onClick={handleSave}>
                     저장
                   </button>
                 )}
-                <button onClick={handleClose}>닫기</button>
+                <button className="ldm-btn-close" onClick={handleClose}>
+                  닫기
+                </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

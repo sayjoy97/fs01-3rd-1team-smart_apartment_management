@@ -10,6 +10,7 @@ import com.jjld.domain.energy.entity.Enum.DeviceStatus;
 import com.jjld.domain.energy.entity.Enum.PeriodType;
 import com.jjld.domain.energy.mqtt.EnergyControlEvent;
 import com.jjld.domain.energy.repository.*;
+import com.jjld.global.mqtt.MqttPublish;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class EnergyDeviceServiceImpl implements EnergyDeviceService {
     private final EnergySavingResultRepository energySavingResultRepository;
     private final AdminRepository adminRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final MqttPublish mqttPublish;
 
 
     @Override

@@ -60,7 +60,7 @@ export default function EnergyDetailModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       {/* ✅ 가로 넓은 모달 */}
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>설비 상세 정보</DialogTitle>
         </DialogHeader>

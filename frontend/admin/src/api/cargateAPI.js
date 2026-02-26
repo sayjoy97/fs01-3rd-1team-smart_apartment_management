@@ -6,8 +6,6 @@ export const last7TypeCountList = async () => {
   try {
     const response = await backendServer.get(requests.lastWeekByTypeList);
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("타입별 카운트 호출도중 에러발생: ", error);
@@ -22,8 +20,6 @@ export const getCargateRecordList = async ({ size, page }) => {
     params.size = size;
     params.page = page;
     const response = await backendServer.get(requests.cargateRecordList, { params });
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -40,8 +36,6 @@ export const getLogDetail = async ({ cargate_event_log_id }) => {
 
     const response = await backendServer.get(requests.entryExitLogDetail, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error(cargate_event_log_id, ": 차량 출입기록 상세정보 호출도중 에러발생: ", error);
@@ -57,8 +51,6 @@ export const getUpdateLogData = async ({ cargate_event_log_id }, updateData) => 
       updateData, // body
       { params: { cargate_event_log_id } }, // params
     );
-
-    console.log("API응답:", response.data);
     return response.data;
   } catch (error) {
     console.error("정보수정 실패:", error);
@@ -69,8 +61,6 @@ export const getUpdateLogData = async ({ cargate_event_log_id }, updateData) => 
 export const carRegister = async (writeData) => {
   try {
     const response = await backendServer.post(requests.carRegisterByType, writeData);
-
-    console.log("API응답: ", response);
 
     return response;
   } catch (error) {
@@ -87,8 +77,6 @@ export const getRegisCarList = async ({ size, page }) => {
 
     const response = await backendServer.get(requests.registeredCarList, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("세대 등록차량 리스트 호출도중 에러발생: ", error);
@@ -103,8 +91,6 @@ export const getRegisCarDetail = async ({ vehicle_id }) => {
     params.vehicle_id = vehicle_id;
 
     const response = await backendServer.get(requests.registeredCarDetail, { params });
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -121,8 +107,6 @@ export const deleteRegisCar = async ({ vehicle_id }) => {
 
     const response = await backendServer.delete(requests.deleteRegisteredCar, { params });
 
-    console.log("API응답: ", response);
-
     return response;
   } catch (error) {
     console.error(vehicle_id, ": 세대 등록차량 정보삭제 도중 에러발생: ", error);
@@ -137,8 +121,6 @@ export const getApproCarList = async ({ size, page }) => {
     params.page = page;
 
     const response = await backendServer.get(requests.approvedCarList, { params });
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -155,8 +137,6 @@ export const getApproCarDetail = async ({ vehicle_id }) => {
 
     const response = await backendServer.get(requests.approvedCarDetail, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error(vehicle_id, ": 관리자 승인차량 상세정보 호출도중 에러발생: ", error);
@@ -172,8 +152,6 @@ export const updateApproCar = async ({ vehicle_id }, updateData) => {
 
     const response = await backendServer.put(requests.updateApprovedCar, { params }, updateData);
 
-    console.log("API응답: ", response);
-
     return response;
   } catch (error) {
     console.error(vehicle_id, ": 관리자 승인차량 수정도중 에러발생: ", error);
@@ -187,8 +165,6 @@ export const deleteApproCar = async ({ vehicle_id }) => {
     params.vehicle_id = vehicle_id;
 
     const response = await backendServer.delete(requests.deleteApprovedCar, { params });
-
-    console.log("API응답: ", response);
 
     return response;
   } catch (error) {

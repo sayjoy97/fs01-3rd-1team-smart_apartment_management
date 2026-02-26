@@ -1,5 +1,6 @@
 import "./NoisePage.css";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HabitualPage from "./HabitualPage";
 import useNoisePage from "./components/useNoisePage";
 
@@ -8,12 +9,14 @@ import NoiseDashboardCards from "./components/NoiseDashboardCards";
 import NoiseCharts from "./components/NoiseCharts";
 import NoiseEventTable from "./components/NoiseEventTable";
 import NoisePendingPanel from "./components/NoisePendingPanel";
+import NoiseDistributions from "./components/NoiseDistributions";
 
 import PolicyModal from "./components/PolicyModal";
 import NoiseEventDetailModal from "./components/NoiseEventDetailModal";
 
 export default function NoisePage() {
   const [showHabitual, setShowHabitual] = useState(false);
+  const navigate = useNavigate();
 
   const {
     dashboard,
@@ -44,6 +47,11 @@ export default function NoisePage() {
 
     statisticsLoading,
     charts,
+    urgentEvents,
+    urgentLoading,
+    urgentPage,
+    urgentTotalPages,
+    setUrgentPage,
 
     policyOpen,
     setPolicyOpen,
@@ -58,41 +66,60 @@ export default function NoisePage() {
     [],
   );
 
-  const pendingAll = (events || []).filter(
-    (e) => e.urgentBreak === true && e.status === "UNPROCESSED",
-  );
-
-  if (showHabitual) return <HabitualPage onBack={() => setShowHabitual(false)} />;
+  // if (showHabitual) return <HabitualPage onBack={() => setShowHabitual(false)} />;
 
   return (
     <div className="noise-page2">
-      <NoiseHeader onOpenHabitual={() => setShowHabitual(true)} onOpenPolicy={openPolicy} />
-
       <NoiseDashboardCards
         dashboard={dashboard}
         loading={dashboardLoading}
         activePolicy={activePolicy}
       />
+      <NoiseHeader onOpenHabitual={() => navigate("/noise/habitual")} onOpenPolicy={openPolicy} />
 
-      <NoisePendingPanel
-        pendingEvents={pendingAll.slice(0, 3)}
-        pendingCount={pendingAll.length}
-        onOpenDetail={openDetail}
-      />
+      {/* 대시보드 하단 메인 그리드: 2열 구조 */}
+      <div className="noise2-main-layout">
+        {/* 왼쪽 열: 즉시 처리 필요 목록 (1줄 차지) */}
+        <div className="noise2-left-column">
+          <NoisePendingPanel
+            pendingEvents={urgentEvents}
+            pendingLoading={urgentLoading}
+            pendingCount={dashboard?.pendingEventCount ?? 0}
+            page={urgentPage}
+            totalPages={urgentTotalPages}
+            onPrev={() => setUrgentPage((p) => Math.max(0, p - 1))}
+            onNext={() => setUrgentPage((p) => Math.min(urgentTotalPages - 1, p + 1))}
+            onOpenDetail={openDetail}
+          />
+        </div>
 
-      {/* ✅ (선택) 피그마의 “즉시 처리 필요” 영역은 API 정해지면 여기 끼우면 됨 */}
-      {/* <NoisePendingPanel ... /> */}
+        {/* 오른쪽 열: 차트와 분포도를 위아래로 배치 */}
+        <div className="noise2-right-column">
+          <div className="noise2-chart-wrapper">
+            <NoiseCharts
+              statisticsLoading={statisticsLoading}
+              charts={charts}
+              viewMode={viewMode}
+              onChangeViewMode={(mode) => {
+                setViewMode(mode);
+                setPage(0);
+              }}
+              colors={COLORS}
+              mode="hourly"
+              compact={false} // 가로 폭이 넓어지므로 compact를 꺼도 좋습니다
+            />
+          </div>
 
-      <NoiseCharts
-        statisticsLoading={statisticsLoading}
-        charts={charts}
-        viewMode={viewMode}
-        onChangeViewMode={(mode) => {
-          setViewMode(mode);
-          setPage(0);
-        }}
-        colors={COLORS}
-      />
+          <div className="noise2-dist-wrapper">
+            <NoiseDistributions
+              loading={statisticsLoading}
+              sensorPie={charts?.sensorPie ?? []}
+              patternPie={charts?.patternPie ?? []}
+              colors={COLORS}
+            />
+          </div>
+        </div>
+      </div>
 
       <NoiseEventTable
         events={events}

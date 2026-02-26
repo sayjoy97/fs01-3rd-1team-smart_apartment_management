@@ -374,7 +374,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 0px;
   flex-wrap: wrap;
 }
 
@@ -398,38 +398,25 @@
   color: #6b7280;
 }
 
-.pending-body {
-  padding-top: 18px !important;
-}
-
 .pending-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.pending-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px;
-  border: 1px solid #fde68a;
-  background: #fffbeb;
-  border-radius: 12px;
-}
-
 .pending-left {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .pending-topline {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .prio {
@@ -437,7 +424,7 @@
   color: #fff;
   border-radius: 999px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .pending-loc {
@@ -449,10 +436,10 @@
 
 .tz-pill {
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 5px 10px;
   color: #fff;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
 }
 .tz-night {
   background: #6366f1;
@@ -463,11 +450,11 @@
 
 .db-pill {
   color: #ea580c;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .pending-subline {
-  margin-top: 8px;
+  margin-top: 0px;
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
@@ -504,94 +491,551 @@
   }
 }
 
-/* 
+/* status badges */
+.st-wait {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.st-observing {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.st-notified {
+  background: #10b981;
+  color: #fff;
+}
+
+.st-hold {
+  background: #6b7280;
+  color: #fff;
+}
+
+.td-status {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.st-urgent {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* pillbar */
+.noise2-pillbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 13px;
+  color: #111827;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.05s ease;
+}
+.pill:active {
+  transform: translateY(1px);
+}
+
+.pill .pill-icon {
+  width: 14px;
+  height: 14px;
+}
+.pill .pill-count {
+  color: #6b7280;
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.pill.active {
+  border-color: #111827;
+  background: #111827;
+  color: #fff;
+}
+.pill.active .pill-count {
+  color: #e5e7eb;
+}
+
+.pill-ghost {
+  background: transparent;
+}
+.pill-ghost.active {
+  border-color: #111827;
+  background: #111827;
+  color: #fff;
+}
+
+.pill-ghost.active.day {
+  background: #f97316;
+  border-color: #f97316;
+}
+.pill-ghost.active.night {
+  background: #6366f1;
+  border-color: #6366f1;
+}
+
+.pill-spacer {
+  flex: 1 1 auto;
+}
+
+/* Pending + Charts를 한 줄에 배치 (테트리스) */
+.noise2-grid-row {
+  display: grid;
+  grid-template-columns: 1.15fr 1.85fr; /* 왼쪽(즉시처리) 작게, 오른쪽(차트) 크게 */
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .noise2-grid-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 즉시 처리 필요 패널을 컴팩트하게 */
+.pending-card {
+  width: 100% !important;
+  border: 2px solid #fbbf24; /* 노란 강조 */
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.pending-head {
+  padding: 12px 16px !important;
+  background: #fffbeb;
+}
+
+.pending-body {
+  width: 100% !important;
+  background: #fffbeb;
+  padding: 16px 16px 16px !important;
+  margin-top: -40px;
+  flex: 1;
+}
+
+.pending-list {
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 아이템 카드 높이/패딩 줄이기 */
+.pending-item {
+  width: 100% !important;
+  min-height: 78px;
+  padding: 12px 14px;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  background: #fffdf2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pending-topline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pending-subline {
+  margin-top: 6px;
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.pending-mini {
+  opacity: 0.85;
+}
+
+/* 상세 버튼 작게 */
+.pending-actions .button,
+.pending-actions button {
+  height: 34px;
+  padding: 0 10px;
+}
+
+/* 위치 텍스트 줄어들면 말줄임 */
+.pending-loc {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noise2-maingrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr !important; /* 좌 넓게, 우 좁게 */
+  /* grid-template-rows: auto auto; 우상/우하 */
+  grid-template-areas:
+    "left rightTop"
+    "left rightBottom";
+  gap: 16px;
+  align-items: start;
+}
+
+.noise2-left {
+  grid-area: left;
+  display: flex;
+}
+.noise2-rightTop {
+  grid-area: rightTop;
+  display: flex;
+}
+.noise2-rightBottom {
+  grid-area: rightBottom;
+  display: flex;
+}
+@media (max-width: 1024px) {
+  .noise2-maingrid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "left"
+      "rightTop"
+      "rightBottom";
+  }
+}
+
+.noise2-cardhead {
+  padding-bottom: 8px !important;
+}
+
+.noise2-cardheadrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.noise2-pillbar {
+  display: inline-flex;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.noise2-pill {
+  border: 0;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.noise2-pill.active {
+  background: #111827;
+  color: white;
+}
+
+/* 빈 슬롯 */
+.pending-empty-slot {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px dashed rgba(0, 0, 0, 0.05);
+  opacity: 0.3;
+}
+
+/* footer 정렬 */
+.pending-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 5px;
+  border-top: 1px solid #eee;
+}
+
+/* 화살표 버튼 */
+.pending-arrow {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.pending-arrow:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.pending-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 카드 hover 느낌 */
+.pending-card {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+.pending-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* 아이템 hover */
+.pending-item {
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
+}
+.pending-item:hover {
+  transform: translateY(-1px);
+  background: rgba(0, 0, 0, 0.015);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 우선순위 # 표시 살짝 강조 */
+.prio {
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* (선택) pending-item에 urgent 느낌 주고 싶으면 class 하나 더 붙여서 사용 가능 */
+.pending-item.is-urgent {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+/* 헤더 아이콘 미세 pulse */
+.pending-ic {
+  animation: pendingPulse 1.6s ease-in-out infinite;
+}
+@keyframes pendingPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   HabitualPage 전용 (noise- prefix)
+   ============================================ */
+
+/* 페이지 래퍼 */
 .noise-page {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 100%;
 }
 
-.noise-header h1 {
-  font-size: 28px;
-  font-weight: 600;
-}
-
-.noise-header p {
-  color: var(--color-muted-foreground);
-}
-
-.noise-controls button {
-  margin-right: 8px;
-}
-
-.noise-item {
-  padding: 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-} */
-
-/* === Noise header row (Noise/Habitual 공통) === */
-/* .noise-header-row {
+/* ✅ 헤더 행 — 제목 왼쪽 / 돌아가기 버튼 오른쪽 */
+.noise-header-row {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
 }
 
 .noise-title {
   font-size: 28px;
   font-weight: 700;
   margin: 0;
+  color: #111827;
 }
 
 .noise-subtitle {
-  margin: 6px 0 0;
-  color: #6b7280;
+  margin-top: 6px;
   font-size: 14px;
+  color: #6b7280;
 }
 
+/* ✅ flex-shrink: 0 — 좁은 화면서도 버튼이 찌그러지지 않게 */
 .noise-header-actions {
   display: flex;
-  gap: 8px;
-} */
+  gap: 0px;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  transform: translateY(-30px);
+}
+.noise-header-actions button {
+  height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
 
-/* 강조 row */
-/* .row-hot {
-  background: rgba(239, 68, 68, 0.06);
-} */
+/* ✅ 상단 카드 3개 — 균등 3분할 */
+.dashboard-grid-hanoise {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  transform: translateY(-58px);
+}
 
-/* 모달 배경: 화면 전체를 덮는 overlay */
-/* .modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(0, 0, 0, 0.45);
+/* ✅ list-topbar 패딩 (Card 내부 상단에 위치하므로) */
+.ha-list-table {
+  margin-top: -60px;
+}
+.list-topbar {
+  padding: 0px 14px 0;
+}
 
+/* ✅ 테이블 래퍼 */
+.table-wrap {
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* ✅ noise-table — noise2-table 스타일 그대로 차용 */
+.noise-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.noise-table thead th {
+  text-align: left;
+  color: #6b7280;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  background: #f9fafb;
+}
+
+.noise-table tbody td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.noise-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.noise-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* ✅ 페이지네이션 */
+.pagination {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
 
-  padding: 24px;
-} */
+.page-indicator {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 56px;
+  text-align: center;
+}
 
-/* 모달 본체 */
-/* .modal {
-  width: min(720px, 100%);
-  max-height: 85vh;
-  overflow: auto;
+/* ✅ pill.active 글씨 안 보이는 문제 —
+   CSS에 .pill이 두 번 선언되어 있어 뒤쪽이 앞쪽을 덮을 수 있음.
+   !important로 최종 보장 */
+.pill.active {
+  background: #111827 !important;
+  border-color: #111827 !important;
+  color: #ffffff !important;
+}
 
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
+.pill.active .pill-count {
+  color: #e5e7eb !important;
+  opacity: 1;
+}
 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-} */
-
-/* 버튼 영역 */
-/* .modal-actions {
+/* 전체 레이아웃: 2열 (왼쪽 4.5 : 오른쪽 5.5 비율 - 조절 가능) */
+.noise2-main-layout {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  gap: 20px;
+  margin-bottom: 24px;
+  align-items: stretch; /* 좌우 높이를 동일하게 맞춤 */
+}
+/* 오른쪽 카드들이 쓸데없이 50%씩 나눠 갖지 않게 설정 */
+.noise2-right-column {
   display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 12px;
-} */
+  flex-direction: column;
+  gap: 20px;
+  justify-content: flex-start; /* 위로 밀착 */
+}
+/* 왼쪽 컬럼 설정 */
+.noise2-left-column {
+  display: flex;
+}
+
+/* 왼쪽 목록 카드가 부모 높이를 꽉 채우도록 강제 */
+.noise2-left-column .noise2-card {
+  width: 100% !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 오른쪽 컬럼 설정 (위아래 배치) */
+.noise2-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 카드 사이 간격 */
+}
+
+/* 오른쪽 카드들이 각자 적절한 높이를 갖도록 설정 */
+.noise2-chart-wrapper,
+.noise2-dist-wrapper {
+  flex: none; /* 두 카드의 높이를 동일하게 배분 (원치 않으면 조정 가능) */
+  display: flex;
+  height: auto;
+}
+
+.noise2-chart-wrapper > .noise2-card {
+  width: 100%;
+  max-height: 300px;
+}
+.noise2-dist-wrapper > .noise2-card {
+  width: 100%;
+  max-height: 250px;
+}
+
+/* 내부 차트/목록 영역 최소 높이 확보 (어색한 빈공간 방지) */
+.noise2-cardContent {
+  flex: 1;
+}
