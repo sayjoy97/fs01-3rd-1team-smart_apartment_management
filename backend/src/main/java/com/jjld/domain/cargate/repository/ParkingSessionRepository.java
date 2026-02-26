@@ -20,8 +20,8 @@ public interface ParkingSessionRepository extends JpaRepository<ParkingSession,L
         select ps
         from ParkingSession ps
         where ps.vehicle.vehicleId = :vehicleId
-        and ps.status = :status
         and ps.exitAt is null
+        and ps.status = :status
     """)
     ParkingSession findSessionDataByStatus(@Param("vehicleId") Long vehicleId, @Param("status")ParkingStatus parkingStatus);
 

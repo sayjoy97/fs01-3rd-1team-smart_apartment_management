@@ -2,12 +2,10 @@ import React from "react";
 import backendServer from "./backendServer";
 import requests from "./requests";
 
-// 차량 출입관리 페이지 간단 요금저보 조회
+// 차량 출입관리 페이지 간단 요금정보 조회
 export const getSimpleCharge = async () => {
   try {
     const response = await backendServer.get(requests.getSimpleCharge);
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -21,8 +19,6 @@ export const getTotalChargeInfo = async () => {
   try {
     const response = await backendServer.get(requests.getTotalList);
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("전체 요금 정보 호출 도중 에러발생: ", error);
@@ -34,8 +30,6 @@ export const getTotalChargeInfo = async () => {
 export const getDailyList = async () => {
   try {
     const response = await backendServer.get(requests.getDaily30TotalList);
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -49,8 +43,6 @@ export const getMonthlyList = async () => {
   try {
     const response = await backendServer.get(requests.getMonthly12TotalList);
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("월별 요금 정보 호출 도중 에러발생: ", error);
@@ -62,9 +54,6 @@ export const getMonthlyList = async () => {
 export const getYearlyList = async () => {
   try {
     const response = await backendServer.get(requests.getYearly3TotalList);
-
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("연별 요금 정보 호출 도중 에러발생: ", error);
@@ -76,8 +65,6 @@ export const getYearlyList = async () => {
 export const getChargeSettingInfo = async () => {
   try {
     const response = await backendServer.get(requests.getChargeSetting);
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {

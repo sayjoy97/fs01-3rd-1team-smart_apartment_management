@@ -71,6 +71,8 @@ const useMqtt = (brokerUrl) => {
   const publish = useCallback(
     (topic, message) => {
       if (client) {
+        console.log("브로커로 mqtt통신 함");
+
         client.publish(topic, message);
       } else {
         console.error("Mqtt전송실패");

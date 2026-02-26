@@ -10,8 +10,6 @@ export const noticeAllList = async ({ page, size }) => {
 
     const response = await backendServer.get(requests.noticeAllList, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("전체 공지사항 호출 도중 에러발생: ", error);
@@ -23,8 +21,6 @@ export const noticeAllList = async ({ page, size }) => {
 export const fixedNoticeList = async () => {
   try {
     const response = await backendServer.get(requests.fixedNoticeList);
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {
@@ -40,8 +36,6 @@ export const searchNocticeList = async ({ search_type, keyword, page, size }) =>
 
     const response = await backendServer.get(requests.noticeBySearch, { params });
 
-    console.log("API응답: ", response.data);
-
     return response;
   } catch (error) {
     console.error("타입별 공지사항 리스트 호출 도중 에러발생: ", error);
@@ -55,8 +49,6 @@ export const noticeDetail = async (notice_id) => {
     const response = await backendServer.get(requests.noticeDetail, {
       params: { notice_id: notice_id },
     });
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {

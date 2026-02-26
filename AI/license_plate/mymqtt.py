@@ -1,10 +1,13 @@
-import os
-import paho.mqtt.client as mqtt
-from plate_detector_byAI import LicensePlateRecognizer
 import base64
-import numpy as np
-import cv2
+import os
 from threading import Thread
+
+import cv2
+import numpy as np
+import paho.mqtt.client as mqtt
+
+from plate_detector_byAI import LicensePlateRecognizer
+
 
 # MQTT 작업자 클래스
 class MqttWorker:
@@ -78,7 +81,7 @@ class MqttWorker:
                 self.publish(f"jjld/cargate/{gate}/process_result", file_name)
 
             else:
-                self.publish("jjld/cargate/entry/gate_command", "reload")
+                self.publish(f"jjld/cargate/{gate}/gate_command", "reload")
                 print(result["message"])
 
 
@@ -86,7 +89,7 @@ class MqttWorker:
     def mqtt_connect(self):
         try:
             print("브로커 연결 시작하기")
-            self.client.connect(self.broker, 1883, 60)
+            self.client.connect(self.broker, 1884, 60)
 
             mymqtt_obj = Thread(target=self.client.loop_forever)
             mymqtt_obj.start()

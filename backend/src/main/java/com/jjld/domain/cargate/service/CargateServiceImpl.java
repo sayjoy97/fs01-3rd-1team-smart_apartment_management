@@ -10,6 +10,7 @@ import com.jjld.domain.house.dao.HouseDAO;
 import com.jjld.domain.house.entity.House;
 import com.jjld.domain.parkingfee.dao.ParkingFeeDAO;
 import com.jjld.domain.parkingfee.dao.ParkingFeeSettingDAO;
+import com.jjld.domain.parkingfee.entity.ParkingFeeHistory;
 import com.jjld.domain.parkingfee.entity.ParkingFeeSetting;
 import com.jjld.global.mqtt.MqttPublish;
 import com.jjld.global.mqtt.handler.cargate.CargateServiceType;
@@ -541,154 +542,169 @@ public class CargateServiceImpl implements CargateService {
     @Override
     public void AddToTheAccessLog(String payload, CargateServiceType serviceType) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmmss");
-
         String timeStr = payload.split("_")[0];
-
-        // 처리결과 : 시간
         LocalDateTime resultTime = LocalDateTime.parse(timeStr, formatter);
-
-        // 처리결과 : 차량번호.jpg에서 차량번호만 추출
         String plateNumber = payload.split("_")[3].split("\\.")[0];
 
-        // 차량 유형별로 찾기
         Vehicle findVehicle = vehicleDAO.findByPlateNumber(plateNumber)
-                .orElse(vehicleDAO.newVehicle(plateNumber, VehicleType.UNREGISTERED)); // 없으면 새로 추가(미등록)
+                .orElseGet(() -> vehicleDAO.newVehicle(plateNumber, VehicleType.UNREGISTERED));
 
-        // 엔티티가 있다면 로그 출력
-        if(findVehicle != null){
-            log.info("vehicle Type : {}", findVehicle.getVehicleType());
-            log.info("plate number : {}", findVehicle.getPlateNumber());
-        }
-
-        // 게이트 타입 찾기
         Cargate cg = cargateDAO.findByCargateType(GateType.valueOf(serviceType.toString()));
-
         String imgFile = payload.replace(" ", "_");
-
-        // 저장 이미지 경로
         String imgPath = "cargate_image/" + imgFile;
 
         String message = "";
         String topic = "";
 
-        // 입차시
-        if(cg.getCargateId() == 1){
-
-            message = "open_"+ findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType().toString();
-
+        // --- [입차 로직] ---
+        if (cg.getCargateId() == 1) {
+            ParkingSession existingSession = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+            if (existingSession != null) {
+                mqttPublish.sendToMqtt("duplicate", "jjld/cargate/entry/gate_command");
+                return;
+            }
+            message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType().toString();
             topic = "jjld/cargate/entry/gate_command";
-
-            // 게이트 오픈 메세지 브로커로 pub
             mqttPublish.sendToMqtt(message, topic);
 
-            // parking_session 엔티티에 입차내용 등록
             ParkingSession sessionInfo = parkingSessionDAO.createSessionInfo(ParkingSession.builder()
-                    .vehicle(findVehicle)
-                    .entryCargate(cg)
-                    .entryAt(resultTime)
-                    .status(ParkingStatus.IN)
-                    .build());
+                    .vehicle(findVehicle).entryCargate(cg).entryAt(resultTime).status(ParkingStatus.IN).build());
 
-            // 로그 엔티티에 데이터 추가
-            cargateEventLogDAO.createCargateLog(
-                    CargateEventLog.builder()
-                            .carGate(cg)
-                            .vehicle(findVehicle)
-                            .parkingSession(sessionInfo)
-                            .gateType(GateType.ENTRY)
-                            .eventAt(resultTime)
-                            .imagePath(imgPath)
-                            .build()
-            );
-
+            cargateEventLogDAO.createCargateLog(CargateEventLog.builder()
+                    .carGate(cg).vehicle(findVehicle).parkingSession(sessionInfo)
+                    .gateType(GateType.ENTRY).eventAt(resultTime).imagePath(imgPath).build());
         }
 
-        // 출차시
-        else if (cg.getCargateId() == 2){
+        // --- [출차 로직] ---
+        else if (cg.getCargateId() == 2) {
             topic = "jjld/cargate/exit/gate_command";
+            ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+            if (psEntity == null) return;
 
-            // 유형에 따라 요금부여를 위해
-            switch (findVehicle.getVehicleType()){
-                // 세대등록 및 관리자 승인차량은 게이트 오픈명령 보내고 출차기록 데이터 추가
+            switch (findVehicle.getVehicleType()) {
                 case REGISTERED, ADMIN_APPROVED:
                     message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
-
-                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
-                    ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
-
                     psEntity.exit(cg, resultTime);
-
-                    // 출차기록 추가
                     parkingSessionDAO.exitVehicleStatus(psEntity);
-
-                    // cargate_event_log 엔티티에 출차기록 추가
-                    CargateEventLog logEntity = CargateEventLog.builder()
-                            .carGate(cg)
-                            .vehicle(findVehicle)
-                            .parkingSession(psEntity)
-                            .gateType(GateType.EXIT)
-                            .eventAt(resultTime)
-                            .imagePath(imgPath)
-                            .build();
-
-                    cargateEventLogDAO.createCargateLog(logEntity);
-
+                    cargateEventLogDAO.createCargateLog(CargateEventLog.builder()
+                            .carGate(cg).vehicle(findVehicle).parkingSession(psEntity)
+                            .gateType(GateType.EXIT).eventAt(resultTime).imagePath(imgPath).build());
                     break;
 
-                // 미등록 차량은 요금정산 요청 메세지 보내기
                 case UNREGISTERED:
-                    // prarknig_session 엔티티에서 해당차량 입차했던 내용 조회
-                    ParkingSession psEntity1 = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
+                    long stayMin = java.time.Duration.between(psEntity.getEntryAt(), resultTime).toMinutes();
+                    int fee = FeeCount(psEntity.getEntryAt(), resultTime);
+                    // 아두이노 시간 동기화를 위해 서버 현재 시간 포맷팅
+                    String currentTime = resultTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-                    // 출차요청 시간과 입차시간 비교
-                    LocalTime entry = psEntity1.getEntryAt().toLocalTime();
-                    int entryMinuite = entry.getHour()*60 + entry.getMinute();
-                    int resultMinuite = resultTime.toLocalTime().getHour()*60 + resultTime.toLocalTime().getMinute();
-                    int result = resultMinuite-entryMinuite;
-                    if (result <= 30){
-                        message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType()+ "_" + result;
+                    if (stayMin <= 30) {
+                        message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType() + "_" + stayMin;
+                    } else {
+                        // 형식: request_payment_차량번호_유형_체류시간_금액_서버시간
+                        message = "request_payment_" + findVehicle.getPlateNumber() + "_" +
+                                findVehicle.getVehicleType() + "_" + stayMin + "_" + fee + "_" + currentTime;
                     }
-                    else{
-                        message = "request_payment_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType();
-                    }
-
+                    break;
             }
-
-            // 각 유형별 다른 메세지를 담은 토픽 브로커로 pub
             mqttPublish.sendToMqtt(message, topic);
         }
-
     }
 
-    private long FeeCount(LocalTime entryAt, LocalTime endAt){
+    private int FeeCount(LocalDateTime entryAt, LocalDateTime exitAt) {
+        // 1. 현재 활성화된 요금 설정 가져오기
+        ParkingFeeSetting setting = parkingFeeSettingDAO.findAppliedSetting(entryAt);
+        if (setting == null) return 0;
 
-        // 현재 활성화상태인 요금정산 찾기
-        ParkingFeeSetting byFirstActive = parkingFeeDAO.findByFirstActive();
+        // 2. 총 주차 시간(분) 계산
+        long totalMinutes = Duration.between(entryAt, exitAt).toMinutes();
 
-        // 입차시간 출차시간 "분"으로 바꾸기
-        int entryM = entryAt.getHour()*60 + entryAt.getMinute();
-        int endM = endAt.getHour()*60 + endAt.getMinute();
-
-        if (byFirstActive.getPeakEnabled()){
-            return 0;
-        } else{
+        // 3. 무료 주차 시간 확인
+        if (totalMinutes <= setting.getBaseTime()) {
             return 0;
         }
+
+        // 4. 요금 계산 시작
+        int finalFee = 0;
+        long billableMinutes = totalMinutes - setting.getBaseTime(); // 무료 시간 제외
+
+        // 피크 시간 적용 여부 판단
+        boolean isPeakApplied = false;
+        if (setting.getPeakEnabled()) {
+            LocalTime entryTime = entryAt.toLocalTime();
+            // 입차 시간이 피크 시간대(Start ~ End) 사이인 경우
+            if (!entryTime.isBefore(setting.getPeakStartTime()) && !entryTime.isAfter(setting.getPeakEndTime())) {
+                isPeakApplied = true;
+            }
+        }
+
+        if (isPeakApplied) {
+            // 피크 요금 적용: 기본요금 + (추가시간 / 피크단위시간 * 피크단위요금)
+            long peakUnits = (long) Math.ceil((double) billableMinutes / setting.getPeakUnitMinutes());
+            finalFee = setting.getBaseCharge() + ((int) peakUnits * setting.getPeakUnitCharge());
+            log.info("[Peak Fee] Applied. Total: {}원", finalFee);
+        } else {
+            // 일반 요금 적용: 기본요금 + (추가시간 / 일반단위시간 * 일반단위요금)
+            long normalUnits = (long) Math.ceil((double) billableMinutes / setting.getUnitMinutes());
+            finalFee = setting.getBaseCharge() + ((int) normalUnits * setting.getUnitCharge());
+            log.info("[Normal Fee] Applied. Total: {}원", finalFee);
+        }
+
+        return finalFee;
     }
 
     // 요금 정산완료시 처리
     @Override
+    @Transactional
     public void FeeSettlement(String payload, CargateServiceType serviceType) {
-        String plateNumber = payload.split("_")[1];
+        String[] data = payload.split("_");
+        String plateNumber = data[0];
+        String exitTimeStr = data[1];
+        String feeTotal = data[2];
 
-        // 차량번호로 차량 찾기
-        Vehicle findVehicle = vehicleDAO.findByPlateNumber(plateNumber  )
-                .orElseThrow(() -> new IllegalStateException("Not Found"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        LocalDateTime exitAt = LocalDateTime.parse(exitTimeStr, formatter);
 
-        // log엔티티에서 해당정보 찾기
-        cargateEventLogDAO.findVehicleByType(findVehicle.getVehicleId(), GateType.EXIT);
+        // 1. 차량 조회
+        Vehicle vehicle = vehicleDAO.findByPlateNumber(plateNumber)
+                .orElseThrow(() -> new NoSuchElementException("차량을 찾을 수 없습니다: " + plateNumber));
 
+        // 2. 현재 입차 중인 주차 세션 조회
+        ParkingSession ps = parkingSessionDAO.findByVehicleIdEntryStatus(vehicle.getVehicleId());
+        if (ps == null) {
+            log.error("정산 대상 세션이 없습니다: {}", plateNumber);
+            return;
+        }
 
+        ParkingFeeSetting feeSetting = parkingFeeSettingDAO.getFeeSetting();
 
+        Duration duration = Duration.between(ps.getEntryAt(), exitAt);
+
+        Integer stayMinutes = (int) duration.toMinutes();
+
+        // 3. 출차 처리 (세션 종료 및 상태 변경)
+        Cargate exitGate = cargateDAO.findByCargateType(GateType.EXIT);
+        ps.exit(exitGate, exitAt);
+        parkingSessionDAO.exitVehicleStatus(ps);
+
+        // 4. 출차 이벤트 로그 기록
+        cargateEventLogDAO.createCargateLog(CargateEventLog.builder()
+                .carGate(exitGate)
+                .vehicle(vehicle)
+                .parkingSession(ps)
+                .gateType(GateType.EXIT)
+                .eventAt(exitAt)
+                .imagePath("cargate_image/payment_settled_" + plateNumber + ".jpg")
+                .build());
+
+        parkingFeeDAO.createFeeHistory(ParkingFeeHistory.builder()
+                .parkingSession(ps)
+                .feeSetting(feeSetting)
+                .totalMinutes(stayMinutes)
+                .totalCharge(Integer.parseInt(feeTotal))
+                .paid(true)
+                .chargedAt(exitAt)
+                .build());
+
+        log.info("결제 완료 및 출차 처리 성공: {}", plateNumber);
     }
 }
