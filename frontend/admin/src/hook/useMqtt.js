@@ -1,9 +1,7 @@
 import mqtt from "mqtt";
 import { useCallback, useEffect, useState } from "react";
 
-const TOPIC_NAME = "jjld/entrance/door/#";
-
-const useMqtt = (brokerUrl) => {
+const useMqtt = (brokerUrl, onMessageReceived) => {
   const [connectStatus, setConnectStatus] = useState("connecting");
   const [client, setClient] = useState(null);
   const [rfidUid, setRfidUid] = useState("");
@@ -48,6 +46,10 @@ const useMqtt = (brokerUrl) => {
       if (deviceType === "card" && path[4] === "result") {
         console.log("통과");
         setRfidUid(msg);
+      }
+
+      if (onMessageReceived) {
+        onMessageReceived(topic, msg);
       }
     });
 

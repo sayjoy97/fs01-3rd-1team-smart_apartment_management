@@ -1,11 +1,10 @@
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { changePasswordApi } from "@/api/authApi";
 import Header from "@/components/Header";
 import { useUser } from "@/contexts/UserContext";
-import { useState } from "react";
-import { toast } from "sonner";
-import Toast from "react-native-toast-message";
-import { changePasswordApi } from "@/api/authApi";
 import { Building2, Lock } from "lucide-react";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function MyInfoScreen() {
   const { userInfo } = useUser();
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 10,
-    fontSize: 14,
+    fontSize: 12,
     color: "#6b7280",
   },
   infoNotice: {

@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EntranceMqttServiceImpl implements EntranceMqttService{
+public class  EntranceMqttServiceImpl implements EntranceMqttService{
     private final EntranceCardRepository cardRepository;
     private final EntranceGateLogRepository gateLogRepository;
     private final HouseRepository houseRepository;

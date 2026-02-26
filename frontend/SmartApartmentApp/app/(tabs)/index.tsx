@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import {
+  Button,
   FlatList,
   Modal,
   ScrollView,
@@ -9,10 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Button,
 } from "react-native";
 
-import { Picker } from "@react-native-picker/picker";
 import {
   complaintDeleteApi,
   complaintDetailApi,
@@ -20,6 +19,7 @@ import {
   complaintUpdateApi,
   complaintWrtieApi,
 } from "@/api/UserApi";
+import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
 import { toast } from "sonner";
 
@@ -181,7 +181,6 @@ export default function ComplaintScreen() {
     try {
       const res = await complaintDetailApi(complaintId);
       setSelectedComplaint(res.data);
-      console.log(res.data);
     } catch (error) {
       console.error(error);
     }

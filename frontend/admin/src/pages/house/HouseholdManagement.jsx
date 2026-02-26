@@ -172,7 +172,7 @@ const HouseholdMangement = () => {
             </select>
           </div>
           <div className="check">
-            <p style={{ marginBottom: "10px" }}>세대주</p>
+            <p>세대주</p>
             <div className="search">
               <input
                 type="text"
@@ -210,7 +210,7 @@ const HouseholdMangement = () => {
                   <th>(대표)세대주 이름</th>
                   <th>연락처</th>
                   <th>입주일</th>
-                  <th>상태</th>
+                  <th style={{ width: "100px" }}>상태</th>
                   <th>관리</th>
                 </tr>
               </thead>
@@ -222,20 +222,42 @@ const HouseholdMangement = () => {
                     </td>
                   </tr>
                 ) : (
-                  currentItems.map((h) => (
-                    <tr key={h.houseId}>
-                      <td>
-                        {h.houseDong}동 {h.houseHo}호
-                      </td>
-                      <td>{h.householderName}</td>
-                      <td>{h.householderPhone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")}</td>
-                      <td>{h.moveInAt}</td>
-                      {h.houseStatus === true ? <td>거주중</td> : <td>공실</td>}
-                      <td>
-                        <button onClick={() => openDetailModal(h.houseId)}>관리</button>
-                      </td>
-                    </tr>
-                  ))
+                  <>
+                    {currentItems.map((h) => (
+                      <tr key={h.houseId}>
+                        <td>
+                          {h.houseDong}동 {h.houseHo}호
+                        </td>
+                        <td>{h.householderName}</td>
+                        <td>{h.householderPhone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")}</td>
+                        <td>{h.moveInAt}</td>
+                        <td>
+                          <span
+                            className={
+                              h.houseStatus ? "status-badge occupied" : "status-badge empty"
+                            }
+                          >
+                            {h.houseStatus ? "거주중" : "공실"}
+                          </span>
+                        </td>
+                        <td>
+                          <button onClick={() => openDetailModal(h.houseId)}>관리</button>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* 부족한 행 채우기 */}
+                    {Array.from({ length: Math.max(0, 10 - currentItems.length) }).map((_, i) => (
+                      <tr key={`empty-${i}`}>
+                        <td>&nbsp;</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </>
                 )}
               </tbody>
             </table>
@@ -245,15 +267,31 @@ const HouseholdMangement = () => {
             <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
               ◀
             </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                disabled={currentPage === i + 1}
-              >
-                {i + 1}
-              </button>
-            ))}
+
+            {(() => {
+              const pageSize = 5;
+              const total = totalPages;
+
+              const currentGroup = Math.floor((currentPage - 1) / pageSize);
+
+              const start = currentGroup * pageSize + 1;
+              const end = Math.min(start + pageSize - 1, total);
+
+              return Array.from({ length: end - start + 1 }, (_, i) => {
+                const pageNumber = start + i;
+
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    disabled={currentPage === pageNumber}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              });
+            })()}
+
             <button
               onClick={() => setCurrentPage((p) => p + 1)}
               disabled={currentPage === totalPages}

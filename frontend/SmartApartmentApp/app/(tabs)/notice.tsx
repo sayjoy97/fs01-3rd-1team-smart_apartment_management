@@ -1,9 +1,8 @@
-import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import Header from "@/components/Header";
-import { Scroll } from "lucide-react";
 import { fixedNoticeList, noticeAllList, noticeDetail } from "@/api/notice";
-import { Bell, X } from "lucide-react";
+import Header from "@/components/Header";
+import { Bell } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Notice {
   noticeId: string;
@@ -69,7 +68,6 @@ export default function NoticeScreen() {
     // 고정 게시글 목록 조회
     fixedNoticeList()
       .then((res) => {
-        console.log("고정 게시글 목록조회 성공: ", res.data || []);
         setFixedNoticeList(res.data);
       })
       .catch((err) => console.log("고정 게시글 조회 실패: ", err));
@@ -233,15 +231,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   noticeTitle: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: "500",
     color: "#733e0a",
   },
   writer: {
-    fontSize: 12,
+    fontSize: 8,
   },
   noticeDate: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#6B7280",
   },
   emptyContainer: {},
@@ -264,7 +262,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "black",
-    fontSize: 16,
+    fontSize: 12,
   },
   noticeHeader: {},
   noticeText: {},
@@ -326,11 +324,11 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     color: "#733e0a",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
   },
   modalDate: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#6B7280",
     marginBottom: 12,
   },
@@ -341,7 +339,7 @@ const styles = StyleSheet.create({
   modalContent: {
     maxHeight: 100,
     height: 100,
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: 20,
     padding: 10,
     color: "#111",

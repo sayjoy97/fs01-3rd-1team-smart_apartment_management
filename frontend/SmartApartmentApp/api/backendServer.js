@@ -1,4 +1,3 @@
-// backendServer.js
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
@@ -8,12 +7,10 @@ const backendServer = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 쿠키 사용 시 필요
+  withCredentials: true,
 });
 
-// -------------------------
 // 요청 인터셉터: Access Token 자동 추가
-// -------------------------
 backendServer.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("accessToken");
@@ -25,15 +22,13 @@ backendServer.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-// -------------------------
-// 응답 인터셉터: 토큰 만료 처리 및 재발급
-// -------------------------
+// 토큰 만료 처리 및 재발급
 backendServer.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Access Token 만료 → 403 혹은 서버에서 지정한 상태 코드 확인
+    // Access Token 만료
     if (error.response?.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
 

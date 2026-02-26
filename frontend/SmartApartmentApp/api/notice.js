@@ -10,8 +10,6 @@ export const noticeAllList = async ({ page, size }) => {
 
     const response = await backendServer.get(requests.noticeAllList, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("전체 공지사항 호출 도중 에러발생: ", error);
@@ -23,8 +21,6 @@ export const noticeAllList = async ({ page, size }) => {
 export const fixedNoticeList = async () => {
   try {
     const response = await backendServer.get(requests.fixedNoticeList);
-
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {

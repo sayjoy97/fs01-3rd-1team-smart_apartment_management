@@ -93,14 +93,14 @@ const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-overlay">
         {/* 모달 박스*/}
         {data && (
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-box-detail" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">민원 상세보기</h3>
 
             {/* 상세 데이터 출력 */}
-            <div className="modal-content">
+            <div className="modal-content-detail">
               <div className="modal-section">
                 <label>#{data.complaintId}</label>
               </div>
