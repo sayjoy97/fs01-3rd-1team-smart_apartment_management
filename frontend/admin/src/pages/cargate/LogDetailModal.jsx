@@ -177,8 +177,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 <select
                   value={formData.vehicleType}
                   disabled={!isEditMode}
-                  onChange={(e) => handleTypeChange(e.target.value)}
-                >
+                  onChange={(e) => handleTypeChange(e.target.value)}>
                   <option value="REGISTERED">세대차량</option>
                   <option value="UNREGISTERED">미등록차량</option>
                   <option value="ADMIN_APPROVED">관리자 승인차량</option>

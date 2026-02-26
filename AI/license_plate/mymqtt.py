@@ -58,7 +58,7 @@ class MqttWorker:
             img = self.base64_to_cv2(myval)
 
             # 이미지 잘 불러와지는지 테스트
-            cv2.imwrite("image.jpg", img)
+            # cv2.imwrite("image.jpg", img)
 
             gate = topic.split("/")[2]
 
@@ -68,21 +68,29 @@ class MqttWorker:
 
             # 추출 결과
             if result["success"]:
-
                 file_name = result["file_name"]
 
-                parts = file_name.split("_")
-                plate_number = parts[3].split(".")[0]
+                # 파일명 분리 (년월일_시분초_게이트_소요시간_차번호_차번호.jpg)
+                parts = file_name.replace(".jpg", "").split("_")
 
-                print("처리 날짜: " + parts[0], end=", ")
-                print("소요시간 : " + parts[2] + "ms", end=", ")
-                print("추출한 번호판 텍스트 : " + plate_number)
+                # 안전한 파싱을 위해 인덱스 지정
+                res_date = parts[0]
+                res_time = parts[1]
+                res_gate = parts[2]
+                res_duration = parts[3]
+                res_plate = parts[4]  # 차번호
 
+                print(f"[{res_gate.upper()}] 처리 성공!")
+                print(f"날짜/시간: {res_date} {res_time}")
+                print(f"소요시간 : {res_duration}ms")
+                print(f"인식번호 : {res_plate}")
+
+                # 결과 토픽 발행
                 self.publish(f"jjld/cargate/{gate}/process_result", file_name)
 
             else:
                 self.publish(f"jjld/cargate/{gate}/gate_command", "reload")
-                print(result["message"])
+                print(f"[FAIL] {gate} - {result['message']}")
 
 
     # mqtt서버연결을 하는 메소드 - 사용자정의

@@ -541,22 +541,33 @@ public class CargateServiceImpl implements CargateService {
     // 입출차 처리
     @Override
     public void AddToTheAccessLog(String payload, CargateServiceType serviceType) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmmss");
-        String timeStr = payload.split("_")[0];
-        LocalDateTime resultTime = LocalDateTime.parse(timeStr, formatter);
-        String plateNumber = payload.split("_")[3].split("\\.")[0];
+        // AI 서버 파일명 규격: 20260226_173010_entry_150_78더3456_78더3456.jpg
+        String[] parts = payload.split("_");
 
+        // 1. 시간 파싱 (index 0: 날짜, index 1: 시간)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmmss");
+        String dateTimeStr = parts[0] + " " + parts[1]; // "20260226 173010"
+        LocalDateTime resultTime = LocalDateTime.parse(dateTimeStr, formatter);
+
+        // 2. 번호판 추출 (index 4: 차번호)
+        String rawPlate = parts[4].split("\\.")[0];
+
+        String plateNumber = rawPlate.replaceFirst("[가-힣]", "$0 ");
+
+        // 3. 차량 및 게이트 정보 조회
         Vehicle findVehicle = vehicleDAO.findByPlateNumber(plateNumber)
                 .orElseGet(() -> vehicleDAO.newVehicle(plateNumber, VehicleType.UNREGISTERED));
 
         Cargate cg = cargateDAO.findByCargateType(GateType.valueOf(serviceType.toString()));
-        String imgFile = payload.replace(" ", "_");
+
+        // 이미지 파일명 및 경로 설정 (AI 서버 파일명 그대로 사용)
+        String imgFile = payload;
         String imgPath = "cargate_image/" + imgFile;
 
         String message = "";
         String topic = "";
 
-        // --- [입차 로직] ---
+        // --- [입차 로직: 기존과 동일] ---
         if (cg.getCargateId() == 1) {
             ParkingSession existingSession = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
             if (existingSession != null) {
@@ -575,7 +586,7 @@ public class CargateServiceImpl implements CargateService {
                     .gateType(GateType.ENTRY).eventAt(resultTime).imagePath(imgPath).build());
         }
 
-        // --- [출차 로직] ---
+        // --- [출차 로직: 기존과 동일] ---
         else if (cg.getCargateId() == 2) {
             topic = "jjld/cargate/exit/gate_command";
             ParkingSession psEntity = parkingSessionDAO.findByVehicleIdEntryStatus(findVehicle.getVehicleId());
@@ -594,13 +605,11 @@ public class CargateServiceImpl implements CargateService {
                 case UNREGISTERED:
                     long stayMin = java.time.Duration.between(psEntity.getEntryAt(), resultTime).toMinutes();
                     int fee = FeeCount(psEntity.getEntryAt(), resultTime);
-                    // 아두이노 시간 동기화를 위해 서버 현재 시간 포맷팅
                     String currentTime = resultTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
                     if (stayMin <= 30) {
                         message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType() + "_" + stayMin;
                     } else {
-                        // 형식: request_payment_차량번호_유형_체류시간_금액_서버시간
                         message = "request_payment_" + findVehicle.getPlateNumber() + "_" +
                                 findVehicle.getVehicleType() + "_" + stayMin + "_" + fee + "_" + currentTime;
                     }
