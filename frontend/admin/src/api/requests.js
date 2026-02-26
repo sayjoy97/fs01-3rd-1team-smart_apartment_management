@@ -15,6 +15,12 @@ const requests = {
   logHistoryList: (adminId) => `admin/api/${adminId}/access-logs`, // 관리자 로그인 내역 조회
 
   // -------- 메인-대시보드 --------
+  // 공동현관 출입기록 - entranceLog: "/entrance/api/log" 사용
+  // 전체 요금 조회 - getTotalList: "parkingfee/api/totalList" 사용
+  // 에너지 관리 요약 조회 - energyDashboard: "/energy/api/dashboard"
+  // 관리자 정보 조회 - adminInfo: (adminId) => `admin/api/${adminId}` 사용
+  // 고정 공지사항 조회 - fixedNoticeList: "notices/api/fixed"
+  // 민원 목록 조회 - complaintList: "/complaint/api/list"
 
   // -------- 세대·입주민 --------
   // 1) 세대 관리

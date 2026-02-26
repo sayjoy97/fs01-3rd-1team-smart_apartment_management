@@ -1,9 +1,18 @@
-import {useEffect, useMemo, useState} from "react";
-import {useNavigate, useLocation} from "react-router-dom";
-import {Building2, Moon, Sun, Bell, UserCircle, Settings, LogOut, ChevronDown} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  Building2,
+  Moon,
+  Sun,
+  Bell,
+  UserCircle,
+  Settings,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
 
-import {menuStructure} from "../constants/menu";
-import {logout} from "../api/admin/adminAPI";
+import { menuStructure } from "../constants/menu";
+import { logout } from "../api/admin/adminAPI";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -50,7 +59,7 @@ export default function Header() {
       })
       .catch((err) => {
         const status = err.response.status;
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
 
         switch (code) {
           case "ADMIN_NOT_FOUND":
@@ -62,7 +71,7 @@ export default function Header() {
       });
 
     localStorage.removeItem("auth");
-    navigate("/login", {replace: true});
+    navigate("/login", { replace: true });
   };
 
   const toggleDropdown = (groupId) => {
@@ -77,7 +86,7 @@ export default function Header() {
 
   const markAsRead = (id, e) => {
     e.stopPropagation();
-    setNotifications((prev) => prev.map((n) => (n.id === id ? {...n, unread: false} : n)));
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, unread: false } : n)));
   };
 
   const isActivePath = (menuId) => {
@@ -86,7 +95,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="app-header fixed top-0 left-0 right-0 z-50">
       {/* 상단 바 */}
       <div className="bg-card border-b border-border">
         <div className="flex items-center justify-between px-6 py-4">

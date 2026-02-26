@@ -25,8 +25,8 @@ export default function NoiseCharts({
   compact = false,
   mode = "all", // ✅ "all" | "hourly" (기본 all)
 }) {
-  const barH = compact ? 220 : 300;
-  const pieH = compact ? 180 : 240;
+  const barH = compact ? 180 : 190;
+  const pieH = compact ? 100 : 100;
 
   const HourlyCard = (
     <Card className="noise2-card">

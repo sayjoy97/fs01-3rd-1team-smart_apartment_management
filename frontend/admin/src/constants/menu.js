@@ -57,10 +57,7 @@ export const menuStructure = [
     label: "시설",
     icon: ArrowUpDown,
     type: "dropdown",
-    items: [
-      { id: "elevator", label: "엘리베이터 관리", icon: ArrowUpDown },
-      { id: "garden", label: "정원 관리", icon: Leaf },
-    ],
+    items: [{ id: "elevator", label: "엘리베이터 관리", icon: ArrowUpDown }],
   },
   {
     id: "environment-group",
