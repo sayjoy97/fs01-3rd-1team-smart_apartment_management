@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  background-color: #f8fafc;
+  padding-top: 0px;
   min-height: 100vh;
 }
 
