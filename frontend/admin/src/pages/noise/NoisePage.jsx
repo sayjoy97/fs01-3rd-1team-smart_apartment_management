@@ -1,5 +1,6 @@
 import "./NoisePage.css";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HabitualPage from "./HabitualPage";
 import useNoisePage from "./components/useNoisePage";
 
@@ -15,6 +16,7 @@ import NoiseEventDetailModal from "./components/NoiseEventDetailModal";
 
 export default function NoisePage() {
   const [showHabitual, setShowHabitual] = useState(false);
+  const navigate = useNavigate();
 
   const {
     dashboard,
@@ -64,21 +66,21 @@ export default function NoisePage() {
     [],
   );
 
-  if (showHabitual) return <HabitualPage onBack={() => setShowHabitual(false)} />;
+  // if (showHabitual) return <HabitualPage onBack={() => setShowHabitual(false)} />;
 
   return (
     <div className="noise-page2">
-      <NoiseHeader onOpenHabitual={() => setShowHabitual(true)} onOpenPolicy={openPolicy} />
-
       <NoiseDashboardCards
         dashboard={dashboard}
         loading={dashboardLoading}
         activePolicy={activePolicy}
       />
+      <NoiseHeader onOpenHabitual={() => navigate("/noise/habitual")} onOpenPolicy={openPolicy} />
 
-      <div className="noise2-maingrid">
-        {/* LEFT: 즉시 처리 필요 */}
-        <div className="noise2-left">
+      {/* 대시보드 하단 메인 그리드: 2열 구조 */}
+      <div className="noise2-main-layout">
+        {/* 왼쪽 열: 즉시 처리 필요 목록 (1줄 차지) */}
+        <div className="noise2-left-column">
           <NoisePendingPanel
             pendingEvents={urgentEvents}
             pendingLoading={urgentLoading}
@@ -91,30 +93,31 @@ export default function NoisePage() {
           />
         </div>
 
-        {/* RIGHT TOP: 시간대별 소음 발생 그래프 */}
-        <div className="noise2-rightTop">
-          <NoiseCharts
-            statisticsLoading={statisticsLoading}
-            charts={charts}
-            viewMode={viewMode}
-            onChangeViewMode={(mode) => {
-              setViewMode(mode);
-              setPage(0);
-            }}
-            colors={COLORS}
-            mode="hourly" // 아래 2)에서 NoiseCharts가 mode 지원하도록
-            compact
-          />
-        </div>
+        {/* 오른쪽 열: 차트와 분포도를 위아래로 배치 */}
+        <div className="noise2-right-column">
+          <div className="noise2-chart-wrapper">
+            <NoiseCharts
+              statisticsLoading={statisticsLoading}
+              charts={charts}
+              viewMode={viewMode}
+              onChangeViewMode={(mode) => {
+                setViewMode(mode);
+                setPage(0);
+              }}
+              colors={COLORS}
+              mode="hourly"
+              compact={false} // 가로 폭이 넓어지므로 compact를 꺼도 좋습니다
+            />
+          </div>
 
-        {/* RIGHT BOTTOM: 센서/패턴 분포 (pillbar 토글) */}
-        <div className="noise2-rightBottom">
-          <NoiseDistributions
-            loading={statisticsLoading}
-            sensorPie={charts?.sensorPie ?? []}
-            patternPie={charts?.patternPie ?? []}
-            colors={COLORS}
-          />
+          <div className="noise2-dist-wrapper">
+            <NoiseDistributions
+              loading={statisticsLoading}
+              sensorPie={charts?.sensorPie ?? []}
+              patternPie={charts?.patternPie ?? []}
+              colors={COLORS}
+            />
+          </div>
         </div>
       </div>
 

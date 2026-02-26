@@ -35,13 +35,13 @@ export default function NoiseDistributions({ loading, sensorPie, patternPie, col
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="p-0">
         {loading ? (
           <div className="noise2-empty">로딩 중...</div>
         ) : !data?.length ? (
           <div className="noise2-empty">데이터가 없습니다.</div>
         ) : (
-          <div style={{ width: "100%", height: 220 }}>
+          <div style={{ width: "100%", height: "120px", marginTop: "-10px" }}>
             <ResponsiveContainer>
               <PieChart>
                 <Pie
@@ -50,8 +50,9 @@ export default function NoiseDistributions({ loading, sensorPie, patternPie, col
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  outerRadius={80}
+                  outerRadius={60}
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  style={{ fontSize: "11px" }}
                 >
                   {data.map((_, idx) => (
                     <Cell key={idx} fill={colors[idx % colors.length]} />

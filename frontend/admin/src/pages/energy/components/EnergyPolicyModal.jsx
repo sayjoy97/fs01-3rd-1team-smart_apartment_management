@@ -148,7 +148,7 @@ export default function EnergyPolicyModal({ open, onClose, onSaved }) {
         if (!nextOpen) onClose?.();
       }}
     >
-      <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-2xl max-h-[65vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>에너지 관리 정책 설정</DialogTitle>
           <DialogDescription>

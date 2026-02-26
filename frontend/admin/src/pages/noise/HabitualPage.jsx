@@ -1,6 +1,6 @@
 // src/pages/noise/HabitualPage.jsx
 import "./NoisePage.css";
-
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
@@ -51,6 +51,8 @@ export default function HabitualPage({ onBack }) {
     sendNotification,
   } = useHabitualPage();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     loadCounts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,23 +66,19 @@ export default function HabitualPage({ onBack }) {
   const monitoringCount = counts?.monitoringCount ?? 0;
   const closedCount = counts?.closedCount ?? 0;
 
+  console.log(location.pathname);
+  console.log(location.pathname.split("/").filter(Boolean));
+
   return (
     <div className="noise-page">
-      <div className="noise-header-row">
-        <div>
-          <h1 className="noise-title">상습 구간 관리</h1>
-          <p className="noise-subtitle">반복적인 층간소음 발생 구간 모니터링</p>
-        </div>
-
-        <div className="noise-header-actions">
-          <Button variant="outline" onClick={onBack}>
-            돌아가기
-          </Button>
-        </div>
+      <div className="noise-header-actions">
+        <Button variant="outline" onClick={() => navigate("/noise")}>
+          돌아가기
+        </Button>
       </div>
 
       {/* ===== 상단 카드 ===== */}
-      <div className="dashboard-grid">
+      <div className="dashboard-grid-hanoise">
         <Card className="border-2 border-red-400/60">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-gray-600">모니터링 중</CardTitle>
@@ -137,7 +135,7 @@ export default function HabitualPage({ onBack }) {
       </div>
 
       {/* ===== 목록 ===== */}
-      <Card>
+      <Card className="ha-list-table">
         <div className="list-topbar">
           <div className="pillbar">
             <button

@@ -1,6 +1,7 @@
 .main-layout {
   min-height: 100vh;
   background-color: var(--background);
+  padding: 0px;
 }
 
 .header {
@@ -14,4 +15,41 @@
 
 .main-content {
   padding-top: 7rem;
+}
+
+/* 브래드크럼 css */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  margin-bottom: 0px;
+
+  font-size: 13px;
+  color: #64748b;
+}
+
+.breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.breadcrumb-sep {
+  color: #cbd5e1;
+}
+
+.breadcrumb-link {
+  color: #64748b;
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--blue-primary);
+}
+
+.breadcrumb-current {
+  color: #0f172a;
+  font-weight: 600;
 }
