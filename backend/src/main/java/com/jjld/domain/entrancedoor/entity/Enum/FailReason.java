@@ -6,5 +6,6 @@ public enum FailReason {
     INVALID_CARD,
     LOST_CARD,
     EXPIRED_CARD,
-    SYSTEM_ERROR
+    SYSTEM_ERROR,
+    NOT_EXIST_HOUSE
 }
