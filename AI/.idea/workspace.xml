@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/license_plate/image.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/image.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/license_plate/mymqtt.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/mymqtt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/handler/cargate/CargateMqttHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/handler/cargate/CargateMqttHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ardu/energy/actu.ino" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

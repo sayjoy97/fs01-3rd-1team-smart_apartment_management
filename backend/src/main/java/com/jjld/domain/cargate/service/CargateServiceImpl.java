@@ -610,8 +610,9 @@ public class CargateServiceImpl implements CargateService {
                     if (stayMin <= 30) {
                         message = "open_" + findVehicle.getPlateNumber() + "_" + findVehicle.getVehicleType() + "_" + stayMin;
                     } else {
+                        // 마지막에 imgFile(원본 파일명)을 추가하여 전송
                         message = "request_payment_" + findVehicle.getPlateNumber() + "_" +
-                                findVehicle.getVehicleType() + "_" + stayMin + "_" + fee + "_" + currentTime;
+                                findVehicle.getVehicleType() + "_" + stayMin + "_" + fee + "_" + currentTime + "_" + imgFile;
                     }
                     break;
             }
@@ -669,6 +670,7 @@ public class CargateServiceImpl implements CargateService {
         String plateNumber = data[0];
         String exitTimeStr = data[1];
         String feeTotal = data[2];
+        String originalFileName = data[3];
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime exitAt = LocalDateTime.parse(exitTimeStr, formatter);
@@ -702,7 +704,8 @@ public class CargateServiceImpl implements CargateService {
                 .parkingSession(ps)
                 .gateType(GateType.EXIT)
                 .eventAt(exitAt)
-                .imagePath("cargate_image/payment_settled_" + plateNumber + ".jpg")
+                // 하드코딩된 문자열 대신 원본 파일명을 사용하여 경로 생성
+                .imagePath("cargate_image/" + originalFileName)
                 .build());
 
         parkingFeeDAO.createFeeHistory(ParkingFeeHistory.builder()
