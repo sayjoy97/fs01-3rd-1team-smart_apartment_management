@@ -21,6 +21,8 @@ export default function NoiseEventTable({
   onPrevPage,
   onNextPage,
   onOpenDetail,
+  listCounts, // ✅ 추가
+  countLoading,
 }) {
   return (
     <Card className="noise2-card noise2-mt">
@@ -39,7 +41,8 @@ export default function NoiseEventTable({
               className={`pill ${eventFilter === "all" ? "active" : ""}`}
               onClick={() => onChangeFilter("all")}
             >
-              전체 <span className="pill-count">({totalElements})</span>
+              전체{" "}
+              <span className="pill-count">({countLoading ? "…" : (listCounts?.all ?? 0)})</span>
             </button>
 
             <button
@@ -48,7 +51,10 @@ export default function NoiseEventTable({
               onClick={() => onChangeFilter("unprocessed")}
             >
               <Clock className="pill-icon" />
-              대기
+              대기{" "}
+              <span className="pill-count">
+                ({countLoading ? "…" : (listCounts?.unprocessed ?? 0)})
+              </span>
             </button>
 
             <button
@@ -57,7 +63,10 @@ export default function NoiseEventTable({
               onClick={() => onChangeFilter("observing")}
             >
               <Eye className="pill-icon" />
-              관찰 중
+              관찰 중{" "}
+              <span className="pill-count">
+                ({countLoading ? "…" : (listCounts?.observing ?? 0)})
+              </span>
             </button>
 
             <button
@@ -66,7 +75,10 @@ export default function NoiseEventTable({
               onClick={() => onChangeFilter("notified")}
             >
               <Bell className="pill-icon" />
-              알림 완료
+              알림 완료{" "}
+              <span className="pill-count">
+                ({countLoading ? "…" : (listCounts?.notified ?? 0)})
+              </span>
             </button>
 
             <div className="pill-spacer" />

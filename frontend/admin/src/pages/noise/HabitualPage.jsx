@@ -63,8 +63,9 @@ export default function HabitualPage({ onBack }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, page]);
 
-  const monitoringCount = counts?.monitoringCount ?? 0;
-  const closedCount = counts?.closedCount ?? 0;
+  const monitoringCount = Number(counts?.monitoringCount ?? 0);
+  const closedCount = Number(counts?.closedCount ?? 0);
+  const allCount = monitoringCount + closedCount; // 전체는 counts로 고정
 
   console.log(location.pathname);
   console.log(location.pathname.split("/").filter(Boolean));
@@ -124,7 +125,7 @@ export default function HabitualPage({ onBack }) {
               <div className="text-sm text-gray-500">로딩 중...</div>
             ) : (
               <div className="flex items-center justify-between">
-                <div className="text-2xl font-semibold">{totalElements} 구간</div>
+                <div className="text-2xl font-semibold">{allCount} 구간</div>
                 <div className="p-2 rounded-lg bg-blue-500">
                   <Activity className="size-5 text-white" />
                 </div>
@@ -146,7 +147,7 @@ export default function HabitualPage({ onBack }) {
                 setPage(0);
               }}
             >
-              전체 <span className="pill-count">({totalElements})</span>
+              전체 <span className="pill-count">({allCount})</span>
             </button>
 
             <button

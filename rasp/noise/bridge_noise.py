@@ -4,7 +4,7 @@ import serial
 import requests
 import paho.mqtt.client as mqtt   # ← 이 줄 반드시 있어야 함
 
-SERIAL_PORT = "/dev/cu.usbmodem1051DB3745982"  # 너의 noise 아두이노 포트로 바꿔
+SERIAL_PORT = "/dev/tty.usbmodem1051DB3745982"  # 너의 noise 아두이노 포트로 바꿔
 BAUD = 115200
 
 MQTT_HOST = "localhost"

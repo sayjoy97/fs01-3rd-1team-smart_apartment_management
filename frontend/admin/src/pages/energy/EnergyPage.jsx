@@ -157,6 +157,7 @@ export default function EnergyPage() {
     // loaders
     loadDashboard,
     loadDevices,
+    counts,
   } = useEnergyPage();
 
   // dashboard mapping
@@ -316,7 +317,7 @@ export default function EnergyPage() {
               className={`pill ${statusFilter === "ALL" ? "active" : ""}`}
               onClick={() => changeStatusFilter("ALL")}
             >
-              전체 <span className="pill-count">({totalElements})</span>
+              전체 <span className="pill-count">({counts.all})</span>
             </button>
 
             <button

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
@@ -36,8 +36,13 @@ function buildForm(policy) {
 }
 
 export default function PolicyModal({ open, onOpenChange, loading, policy, onSave }) {
-  // ✅ 최초 마운트 때만 초기값 세팅 (리셋은 부모 key가 담당)
+  // 최초 마운트 때만 초기값 세팅 (리셋은 부모 key가 담당)
   const [form, setForm] = useState(() => buildForm(policy));
+
+  useEffect(() => {
+    if (!open) return;
+    setForm(buildForm(policy));
+  }, [open, policy]);
 
   const canSave = useMemo(() => {
     if (!form.policyName?.trim()) return false;
@@ -56,6 +61,7 @@ export default function PolicyModal({ open, onOpenChange, loading, policy, onSav
       soundLimit: Number(form.soundLimit),
       repeatLimit: Number(form.repeatLimit),
       timeThreshold: Number(form.timeThreshold),
+      // isActive: true,
     };
     await onSave?.(payload);
   };

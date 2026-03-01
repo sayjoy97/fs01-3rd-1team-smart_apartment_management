@@ -9,7 +9,6 @@ function hhmmToMin(hhmm) {
 }
 
 function isDayNow(activePolicy) {
-  // policy 없으면 기본: 06:00~22:00
   const dayStart = hhmmToMin(activePolicy?.dayStartTime) ?? 6 * 60;
   const nightStart = hhmmToMin(activePolicy?.nightStartTime) ?? 22 * 60;
 
@@ -25,8 +24,8 @@ function isDayNow(activePolicy) {
 
 export default function NoiseDashboardCards({ dashboard, loading, activePolicy }) {
   const todayEventCount = dashboard?.todayEventCount ?? 0;
-  const policyBreakCount = dashboard?.policyBreakCount ?? 0;
-  const urgentCount = dashboard?.urgentCount ?? 0;
+  const policyBreakCount = dashboard?.todayPolicyBreakCount ?? 0;
+  const urgentCount = dashboard?.pendingEventCount ?? 0;
 
   const day = isDayNow(activePolicy);
 

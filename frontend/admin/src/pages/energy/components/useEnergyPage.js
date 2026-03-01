@@ -36,6 +36,33 @@ export default function useEnergyPage() {
   const [activePolicy, setActivePolicy] = useState(null);
   const [policyLoading, setPolicyLoading] = useState(false);
 
+  const [counts, setCounts] = useState({
+    all: 0,
+    checkRequired: 0,
+    checking: 0,
+    normal: 0,
+  });
+
+  const loadCounts = async () => {
+    try {
+      const [allRes, crRes, cRes, nRes] = await Promise.all([
+        getEnergyDeviceList(null, 0, 1),
+        getEnergyDeviceList("CHECK_REQUIRED", 0, 1),
+        getEnergyDeviceList("CHECKING", 0, 1),
+        getEnergyDeviceList("NORMAL", 0, 1),
+      ]);
+
+      setCounts({
+        all: allRes?.success ? (allRes.data?.totalElements ?? 0) : 0,
+        checkRequired: crRes?.success ? (crRes.data?.totalElements ?? 0) : 0,
+        checking: cRes?.success ? (cRes.data?.totalElements ?? 0) : 0,
+        normal: nRes?.success ? (nRes.data?.totalElements ?? 0) : 0,
+      });
+    } catch (e) {
+      console.error("카운트 로딩 실패:", e);
+    }
+  };
+
   const loadDashboard = useCallback(async () => {
     try {
       setDashboardLoading(true);
@@ -128,7 +155,7 @@ export default function useEnergyPage() {
     } catch (e) {
       console.error("점검 시작 실패:", e);
     } finally {
-      await Promise.all([loadDashboard(), loadDevices()]);
+      await Promise.all([loadDashboard(), loadDevices(), loadCounts()]);
     }
   };
 
@@ -138,7 +165,7 @@ export default function useEnergyPage() {
     } catch (e) {
       console.error("점검 완료 실패:", e);
     } finally {
-      await Promise.all([loadDashboard(), loadDevices()]);
+      await Promise.all([loadDashboard(), loadDevices(), loadCounts()]);
     }
   };
 
@@ -171,11 +198,6 @@ export default function useEnergyPage() {
       } else {
         setSavingResults({ content: [], totalPages: 0, number: 0 });
       }
-      // 상세창 열려있으면 상세 refresh
-      // if (detailOpen) {
-      //   const res = await getEnergyDeviceDetail(deviceId);
-      //   if (res?.success) setDetail(res.data);
-      // }
     } catch (e) {
       console.error("설비 제어 실패:", e);
       setDetail((prev) =>
@@ -203,7 +225,7 @@ export default function useEnergyPage() {
   // init
   useEffect(() => {
     (async () => {
-      await Promise.all([reloadPolicy(), loadDashboard(), loadDevices("ALL", 0)]);
+      await Promise.all([reloadPolicy(), loadDashboard(), loadDevices("ALL", 0)], loadCounts());
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -245,5 +267,8 @@ export default function useEnergyPage() {
     handleStartCheck,
     handleCompleteCheck,
     handleControl,
+
+    counts,
+    loadCounts,
   };
 }
