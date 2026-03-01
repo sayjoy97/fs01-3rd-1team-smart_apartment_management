@@ -35,12 +35,12 @@ export const createEnergyPolicy = async (requestBody) => {
    3️⃣ 설비 목록
 ================================================== */
 
-export const getEnergyDeviceList = async (status, page = 0) => {
+export const getEnergyDeviceList = async (status, page = 0, size = 10) => {
   const response = await backendServer.get(requests.energyDeviceList, {
     params: {
       status: status || undefined,
       page,
-      size: 10,
+      size,
     },
   });
   return response.data;

@@ -59,6 +59,8 @@ export default function NoisePage() {
     activePolicy,
     openPolicy,
     savePolicy,
+    listCounts,
+    countLoading,
   } = useNoisePage();
 
   const COLORS = useMemo(
@@ -129,6 +131,8 @@ export default function NoisePage() {
         totalElements={totalElements}
         viewMode={viewMode}
         eventFilter={eventFilter}
+        listCounts={listCounts}
+        countLoading={countLoading}
         onChangeFilter={(filter) => {
           setEventFilter(filter);
           setPage(0);

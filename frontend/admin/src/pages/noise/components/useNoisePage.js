@@ -14,6 +14,13 @@ import {
   getNoiseUrgentEvents,
 } from "../../../api/noiseAPI";
 
+function hhmmToMin(hhmm) {
+  if (!hhmm) return null;
+  const [h, m] = String(hhmm).slice(0, 5).split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+  return h * 60 + m;
+}
+
 /**
  * viewMode: all | day | night
  * eventFilter: all | unprocessed | notified
@@ -49,6 +56,42 @@ export default function useNoisePage() {
   const [viewMode, setViewMode] = useState("all");
   const [eventFilter, setEventFilter] = useState("all");
   const lastListKeyRef = useRef("");
+
+  const [listCounts, setListCounts] = useState({
+    all: 0,
+    unprocessed: 0,
+    observing: 0,
+    notified: 0,
+  });
+  const [countLoading, setCountLoading] = useState(false);
+
+  const loadListCounts = useCallback(async () => {
+    setCountLoading(true);
+    try {
+      // totalElements만 필요하니까 size=1로 충분
+      const base = { viewMode, page: 0, size: 1, sort: "createdAt,desc" };
+
+      const [a, u, o, n] = await Promise.all([
+        getNoiseEventList({ ...base, status: undefined }),
+        getNoiseEventList({ ...base, status: "UNPROCESSED" }),
+        getNoiseEventList({ ...base, status: "OBSERVING" }),
+        getNoiseEventList({ ...base, status: "NOTIFIED" }),
+      ]);
+
+      setListCounts({
+        all: a?.data?.totalElements ?? 0,
+        unprocessed: u?.data?.totalElements ?? 0,
+        observing: o?.data?.totalElements ?? 0,
+        notified: n?.data?.totalElements ?? 0,
+      });
+    } catch (e) {
+      console.error(e);
+      // 카운트는 실패해도 목록은 보이게(토스트는 optional)
+      setListCounts((prev) => prev);
+    } finally {
+      setCountLoading(false);
+    }
+  }, [viewMode]);
 
   const loadEvents = useCallback(async () => {
     setLoadingList(true);
@@ -122,7 +165,7 @@ export default function useNoisePage() {
     } finally {
       setUrgentLoading(false);
     }
-  }, [urgentPage, urgentSize]);
+  }, [urgentPage]);
 
   useEffect(() => {
     loadUrgentEvents();
@@ -172,7 +215,7 @@ export default function useNoisePage() {
 
       toast.success("관찰 시작 처리되었습니다.");
       closeDetail();
-      await Promise.all([loadDashboard(), loadEvents(), loadUrgentEvents()]);
+      await Promise.all([loadDashboard(), loadEvents(), loadUrgentEvents(), loadListCounts()]);
     } catch (e) {
       console.error(e);
       toast.error("관찰 처리 실패");
@@ -183,6 +226,7 @@ export default function useNoisePage() {
     loadDashboard,
     loadEvents,
     loadUrgentEvents,
+    loadListCounts,
     selectedEvent?.noiseEventId,
   ]);
 
@@ -209,7 +253,7 @@ export default function useNoisePage() {
     selectedEvent?.noiseEventId,
   ]);
 
-  // ✅ 상습 구간 등록(상세에서만)
+  // 상습 구간 등록(상세에서만)
   const registerHabitual = useCallback(async () => {
     const pid = selectedEvent?.noiseEventProcessId;
     if (!pid) {
@@ -241,6 +285,27 @@ export default function useNoisePage() {
     selectedEvent?.noiseEventProcessId,
   ]);
 
+  // ---------- POLICY ----------
+  const [policyOpen, setPolicyOpen] = useState(false);
+  const [policyLoading, setPolicyLoading] = useState(false);
+  const [activePolicy, setActivePolicy] = useState(null);
+
+  const loadActivePolicy = useCallback(async () => {
+    setPolicyLoading(true);
+    try {
+      const res = await getActiveNoisePolicy();
+      if (!res?.success) throw new Error("policy load fail");
+      setActivePolicy(res.data);
+    } catch (e) {
+      console.error(e);
+      // activePolicy 없을 수도 있으니까 치명 toast는 상황 봐서
+      toast.error("활성 정책을 불러오지 못했습니다.");
+      setActivePolicy(null);
+    } finally {
+      setPolicyLoading(false);
+    }
+  }, []);
+
   // ---------- STATISTICS ----------
   const [statisticsLoading, setStatisticsLoading] = useState(false);
   const [statistics, setStatistics] = useState(null);
@@ -269,14 +334,30 @@ export default function useNoisePage() {
 
     const hours = Array.from({ length: 24 }, (_, h) => h);
 
+    const dayStart = hhmmToMin(activePolicy?.dayStartTime) ?? 6 * 60;
+    const nightStart = hhmmToMin(activePolicy?.nightStartTime) ?? 22 * 60;
+
+    const isDayHour = (h) => {
+      const m = h * 60;
+      if (dayStart < nightStart) return m >= dayStart && m < nightStart; // 일반(06~22)
+      return m >= dayStart || m < nightStart; // 랩(22~06)
+    };
+
+    const allowHour = (h) => {
+      if (viewMode === "all") return true;
+      if (viewMode === "day") return isDayHour(h);
+      if (viewMode === "night") return !isDayHour(h);
+      return true;
+    };
+
     const noiseByHour = hours.map((h) => ({
       hour: String(h),
-      count: Number(byHourMap?.[h] ?? 0),
+      count: allowHour(h) ? Number(byHourMap?.[h] ?? 0) : 0, // ✅ 여기
     }));
 
     const breakByHour = hours.map((h) => ({
       hour: String(h),
-      count: Number(breakHourMap?.[h] ?? 0),
+      count: allowHour(h) ? Number(breakHourMap?.[h] ?? 0) : 0, // ✅ 여기
     }));
 
     const sensorPie = Object.entries(sensorMap).map(([name, value]) => ({
@@ -290,28 +371,7 @@ export default function useNoisePage() {
     }));
 
     return { noiseByHour, breakByHour, sensorPie, patternPie };
-  }, [statistics]);
-
-  // ---------- POLICY ----------
-  const [policyOpen, setPolicyOpen] = useState(false);
-  const [policyLoading, setPolicyLoading] = useState(false);
-  const [activePolicy, setActivePolicy] = useState(null);
-
-  const loadActivePolicy = useCallback(async () => {
-    setPolicyLoading(true);
-    try {
-      const res = await getActiveNoisePolicy();
-      if (!res?.success) throw new Error("policy load fail");
-      setActivePolicy(res.data);
-    } catch (e) {
-      console.error(e);
-      // activePolicy 없을 수도 있으니까 치명 toast는 상황 봐서
-      toast.error("활성 정책을 불러오지 못했습니다.");
-      setActivePolicy(null);
-    } finally {
-      setPolicyLoading(false);
-    }
-  }, []);
+  }, [statistics, viewMode, activePolicy]);
 
   const openPolicy = useCallback(async () => {
     setPolicyOpen(true);
@@ -339,16 +399,22 @@ export default function useNoisePage() {
     },
     [loadActivePolicy, loadDashboard, loadEvents, loadStatistics],
   );
-
   // 최초 로드
   useEffect(() => {
     if (didInit.current) return;
     didInit.current = true;
 
     loadDashboard();
+    loadActivePolicy();
     loadStatistics();
-  }, [loadDashboard, loadStatistics, loadUrgentEvents]);
+    loadUrgentEvents();
+    loadListCounts();
+  }, [loadDashboard, loadActivePolicy, loadStatistics, loadUrgentEvents, loadListCounts]);
 
+  useEffect(() => {
+    loadStatistics();
+    loadListCounts();
+  }, [viewMode, loadStatistics, loadListCounts]);
   return {
     // dashboard
     dashboard,
@@ -399,5 +465,7 @@ export default function useNoisePage() {
     activePolicy,
     openPolicy,
     savePolicy,
+    listCounts,
+    countLoading,
   };
 }
