@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Wrench, Play, DoorOpen } from "lucide-react";
-// import {ImageWithFallback} from "../../components/figma/ImageWithFallback";
-import { toast } from "sonner";
+import {useCallback, useEffect, useState} from "react";
+import {toast} from "sonner";
 import styles from "./ElevatorPage.module.css";
 import {
   createElevator,
@@ -43,11 +41,9 @@ export function ElevatorPage() {
     getElevatorsStats()
       .then((res) => {
         setElevatorsStats(res.data);
-        console.log("엘리베이터 통계 정보:", res.data);
       })
       .catch((err) => {
-        console.error("엘리베이터 통계 정보 조회 실패:", err);
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "엘리베이터 통계 정보 조회에 실패했습니다");
       });
   }, []);
@@ -68,12 +64,11 @@ export function ElevatorPage() {
       .then((res) => {
         toast.success("엘리베이터가 등록되었습니다");
         setIsCreateElevatorModalOpen(false);
-        setCreateElevatorForm({ dong: "", hogi: "" });
+        setCreateElevatorForm({dong: "", hogi: ""});
         fetchElevators();
       })
       .catch((err) => {
-        console.error("엘리베이터 등록 실패:", err);
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "엘리베이터 등록에 실패했습니다");
       });
   };
@@ -107,9 +102,7 @@ export function ElevatorPage() {
         setElevators(pageData.content || []);
         setTotalPages(pageData.totalPages || 0);
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => {});
   }, [page, searchCond]); // 여기서 searchCond를 넣어두면 필터 바뀔 때마다 자동 검색됨
 
   // 목록 호출 Effect
@@ -130,7 +123,7 @@ export function ElevatorPage() {
         fetchElevators();
       })
       .catch((err) => {
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "상태 변경에 실패했습니다.");
       });
   };
@@ -148,26 +141,13 @@ export function ElevatorPage() {
         toast.success("엘리베이터가 삭제되었습니다.");
         setIsDeleteElevatorModalOpen(false);
         setSelectedElevatorId();
-        setDeleteElevatorForm({ adminPass: "" });
+        setDeleteElevatorForm({adminPass: ""});
         fetchElevators();
       })
       .catch((err) => {
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "엘리베이터 삭제에 실패했습니다.");
       });
-  };
-
-  // 광고 등록 폼
-  const [createAdvertisementForm, setCreateAdvertisementForm] = useState({
-    advertisementTitle: "",
-    advertisementContent: "",
-    advertisementStartDate: "",
-    advertisementEndDate: "",
-  });
-
-  // 광고 등록 함수
-  const handleCreateAdvertisement = () => {
-    const adminId = localStorage.getItem("adminId");
   };
 
   return (
@@ -236,7 +216,7 @@ export function ElevatorPage() {
         open={isDeleteElevatorModalOpen}
         close={() => {
           setIsDeleteElevatorModalOpen(false);
-          setDeleteElevatorForm({ adminPass: "" });
+          setDeleteElevatorForm({adminPass: ""});
           setSelectedElevator();
         }}
         onDelete={handleDeleteElevator}
@@ -244,21 +224,6 @@ export function ElevatorPage() {
         deleteElevatorForm={deleteElevatorForm}
         setDeleteElevatorForm={setDeleteElevatorForm}
       />
-      {/* <CreateAdvertisementModal
-        open={isCreateAdvertisementModalOpen}
-        close={() => {
-          setIsCreateAdvertisementModalOpen(false);
-          setCreateAdvertisementForm({
-            advertisementTitle: "",
-            advertisementContent: "",
-            advertisementStartDate: "",
-            advertisementEndDate: "",
-          });
-        }}
-        onSubmit={handleCreateAdvertisement}
-        createAdvertisementForm={createAdvertisementForm}
-        setCreateAdvertisementForm={setCreateAdvertisementForm}
-      /> */}
     </div>
   );
 }

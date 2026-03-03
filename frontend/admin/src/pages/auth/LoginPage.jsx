@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import styles from "./LoginPage.module.css";
-import { Building2, LogIn } from "lucide-react";
+import {Building2, LogIn} from "lucide-react";
 
 import {initialSetupAdmin, login, logout, findPass, changePass} from "../../api/admin/adminAPI";
 
@@ -42,8 +42,8 @@ export default function LoginPage() {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAdminForm((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setAdminForm((prev) => ({...prev, [name]: value}));
   };
 
   const handleSubmit = async (e) => {
@@ -90,7 +90,6 @@ export default function LoginPage() {
         navigate("/"); // 대시보드로 이동
       })
       .catch((err) => {
-        console.error("초기 설정 오류:", err);
         if (err.response) {
           const {code, message} = err.response.data.error || {};
           alert(message || "초기 설정 실패");
