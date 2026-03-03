@@ -162,7 +162,7 @@ const EntranceDoor = () => {
   };
 
   return (
-    <>
+    <div style={{ padding: 24, paddingTop: 0 }}>
       <div className="card-grid">
         {doorList.map((e) => (
           <div key={e.doorId} className="component">
@@ -331,7 +331,7 @@ const EntranceDoor = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

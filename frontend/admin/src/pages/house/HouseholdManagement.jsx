@@ -132,7 +132,7 @@ const HouseholdMangement = () => {
   const trueCnt = list ? list.filter((item) => item.houseStatus === true).length : 0;
 
   return (
-    <>
+    <div style={{ padding: 24, paddingTop: 0 }}>
       <div className="component">
         <div className="title">
           <h2>세대 목록</h2>
@@ -273,7 +273,7 @@ const HouseholdMangement = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

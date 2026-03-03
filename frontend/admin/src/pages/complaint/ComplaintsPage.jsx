@@ -97,7 +97,7 @@ const ComplaintsPage = () => {
   console.log("민원 목록: ", pageData);
 
   return (
-    <>
+    <div style={{ padding: 24, paddingTop: 0 }}>
       {/* 본문 */}
       <div className="component">
         <div className="sub">
@@ -274,7 +274,7 @@ const ComplaintsPage = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 
