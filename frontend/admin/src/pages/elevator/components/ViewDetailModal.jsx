@@ -54,7 +54,6 @@ const ViewDetailModal = ({open, close, elevatorId}) => {
       };
       getElevatorDetail(elevatorId, searchParams, pageable)
         .then((res) => {
-          console.log(res);
           const {elevatorRes, elevatorEventLogs} = res.data;
           setDetailElevator({
             elevatorRes: elevatorRes,
@@ -66,7 +65,6 @@ const ViewDetailModal = ({open, close, elevatorId}) => {
           throw err;
         });
     } catch (err) {
-      console.error("엘리베이터 상세 정보 조회 실패:", err);
       const {code, message} = err.response.data.error;
       toast.error(message || "엘리베이터 상세 정보 조회에 실패했습니다");
     } finally {
