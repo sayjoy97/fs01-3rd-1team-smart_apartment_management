@@ -225,7 +225,8 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
                   borderRadius: "6px",
                   marginTop: "6px",
                   color: "white",
-                }}>
+                }}
+              >
                 카드 추가
               </button>
               <div className="card-list">

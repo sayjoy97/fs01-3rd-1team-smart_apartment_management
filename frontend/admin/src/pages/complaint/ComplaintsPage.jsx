@@ -202,7 +202,10 @@ const ComplaintsPage = () => {
                               )}
                             </td>
                             <td>
-                              <button onClick={() => openDetailModal(c.complaintId)}>
+                              <button
+                                onClick={() => openDetailModal(c.complaintId)}
+                                style={{ width: "100%" }}
+                              >
                                 상세보기
                               </button>
                             </td>

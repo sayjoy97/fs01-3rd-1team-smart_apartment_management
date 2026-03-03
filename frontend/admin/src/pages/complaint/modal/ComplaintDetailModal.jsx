@@ -10,8 +10,6 @@ const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
   console.log("민원 상세: ", data);
 
   const [answerText, setAnswerText] = useState("");
-  const [recheckModal, setRecheckModal] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
 
   // 참조 민원 조회
   const [selectedReferenceComplaint, setSelectedReferenceComplaint] = useState([]);
