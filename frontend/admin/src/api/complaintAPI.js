@@ -12,8 +12,6 @@ export const complaintAllList = async ({ category, status, page, size }) => {
 
     const response = await backendServer.get(request.complaintList, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("민원 목록 호출 중 에러발생: ", error);
@@ -55,7 +53,6 @@ export const detailView = async (complaintId) => {
 export const summaryRequest = async (complaintId) => {
   try {
     const response = await backendServer.post(`/complaint/api/${complaintId}/summary`);
-    console.log("요약 요청 완료", response.data);
     return response.data;
   } catch (error) {
     console.error("요약 요청 실패", error);

@@ -94,8 +94,6 @@ const ComplaintsPage = () => {
     setSelectedComplaint(null);
   };
 
-  console.log("민원 목록: ", pageData);
-
   return (
     <div style={{ padding: 24, paddingTop: 0 }}>
       {/* 본문 */}

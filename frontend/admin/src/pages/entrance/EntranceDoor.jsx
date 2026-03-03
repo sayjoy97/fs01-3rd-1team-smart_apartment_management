@@ -85,7 +85,6 @@ const EntranceDoor = () => {
   useEffect(() => {
     getEntranceDoor()
       .then((res) => {
-        console.log("공동현관 목록 응답: ", res);
         setDoorList(res.data);
       })
       .catch((err) => console.error("공동현관 목록 조회 실패: ", err));
@@ -99,7 +98,6 @@ const EntranceDoor = () => {
       size: itemsPerPage,
     })
       .then((res) => {
-        console.log("출입기록 응답: ", res);
         setPageData(res);
       })
       .catch((err) => console.log("공동현관 출입 기록 조회중 오류 발생", err));
@@ -122,7 +120,6 @@ const EntranceDoor = () => {
   // 모달 닫기
   const closeModal = () => {
     if (modalEntrance) {
-      console.log(modalEntrance);
       controlDevice(modalEntrance.houseDong, "cam", "stop");
     }
 
