@@ -131,6 +131,10 @@ public class ElevatorServiceImpl implements ElevatorService {
                 .message(message)
                 .build();
 
+        String topic = "jjld/command/elevator/" + elevator.getDong()  + "/" + elevator.getHogi() + "/status";
+        String payload = "{\"status\":\"" + eventType.toString() + "\"}";
+        mqttPublish.sendToMqtt(payload, topic);
+
         elevatorDAO.save(elevator);
         elevatorEventLogDAO.save(elevatorEventLog);
     }
@@ -205,7 +209,7 @@ public class ElevatorServiceImpl implements ElevatorService {
         long errorElevators = elevatorDAO.countByState(ElevatorState.ERROR);
         long repairElevators = elevatorDAO.countByState(ElevatorState.REPAIR);
 
-        ElevatorsStatsRes response = new ElevatorsStatsRes(totalElevators,  errorElevators, repairElevators);
+        ElevatorsStatsRes response = new ElevatorsStatsRes(totalElevators, errorElevators, repairElevators);
 
         return response;
     }
