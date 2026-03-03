@@ -582,13 +582,6 @@ export default function ComplaintScreen() {
                     }}
                     disabled={!selectedComplaint.canEdit}
                     onPress={() => {
-                      console.log("보내는 값:", {
-                        title: detailTitle,
-                        category: detailCategory,
-                        content: detailContent,
-
-                        referenceId: referencedIds,
-                      });
                       if (selectedComplaint.canEdit) {
                         handleEdit(selectedComplaint.complaintId, {
                           title: detailTitle,

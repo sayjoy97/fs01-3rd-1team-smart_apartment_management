@@ -7,8 +7,6 @@ import axios from "axios";
 const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
   if (!data) return null;
 
-  console.log("민원 상세: ", data);
-
   const [answerText, setAnswerText] = useState("");
 
   // 참조 민원 조회
@@ -45,7 +43,6 @@ const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
       setSelectedReferenceComplaint(res.data);
 
       setShowReferenceModal(true);
-      console.log(res.data);
     } catch (err) {
       console.error("민원참조 실패", err);
     }

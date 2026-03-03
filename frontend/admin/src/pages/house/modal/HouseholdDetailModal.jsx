@@ -4,8 +4,6 @@ import "./HouseholdDetailModal.css";
 const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
   const [cardInput, setCardInput] = useState("");
 
-  console.log("세대 상세: ", data);
-
   const [formData, setFormData] = useState({
     houseId: data.houseId,
     householderName: data.householderName || "",
@@ -133,7 +131,6 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
 
   if (!data) return null;
 
-  console.log("카드", rfidUid);
   return (
     <div className="modal-overlay">
       {/* 모달 박스 */}
@@ -225,7 +222,8 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
                   borderRadius: "6px",
                   marginTop: "6px",
                   color: "white",
-                }}>
+                }}
+              >
                 카드 추가
               </button>
               <div className="card-list">

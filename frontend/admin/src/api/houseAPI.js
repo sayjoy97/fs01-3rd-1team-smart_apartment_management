@@ -10,7 +10,6 @@ export const houseAllList = async ({ houseDong, houseHo, householderName }) => {
     if (householderName) params.householderName = householderName;
 
     const response = await backendServer.get(request.houseList, { params });
-    console.log("API응답: ", response.data);
 
     return response.data;
   } catch (error) {

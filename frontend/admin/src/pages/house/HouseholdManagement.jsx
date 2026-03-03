@@ -68,7 +68,6 @@ const HouseholdMangement = () => {
       householderName: searchKeyword,
     })
       .then((res) => {
-        console.log("응답: ", res);
         setHouseList(res.data);
       })
       .catch((err) => console.log("세대 정보 조회중 오류 발생", err));
@@ -125,8 +124,6 @@ const HouseholdMangement = () => {
       setErrorMsg(e.message);
     }
   };
-
-  console.log("값", list);
 
   const falseCnt = list ? list.filter((item) => item.houseStatus === false).length : 0;
   const trueCnt = list ? list.filter((item) => item.houseStatus === true).length : 0;

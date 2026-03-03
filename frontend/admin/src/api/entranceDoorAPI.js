@@ -36,8 +36,6 @@ export const getEntranceLog = async ({ houseDong, accessType, page, size }) => {
 
     const response = await backendServer.get(request.entranceLog, { params });
 
-    console.log("API응답: ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("공동현관 출입 기록 호출 중 에러발생: ", error);

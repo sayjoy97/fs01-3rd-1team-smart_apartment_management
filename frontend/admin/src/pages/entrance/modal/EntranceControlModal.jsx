@@ -14,7 +14,6 @@ export default function EntranceControlModal({ entrance, imageSrc, onConfirm, on
 
       publish(topic, command);
 
-      console.log("자식 → 부모 호출 전:", entrance.doorId, command);
       onConfirm(entrance.doorId, command);
     }
   };
