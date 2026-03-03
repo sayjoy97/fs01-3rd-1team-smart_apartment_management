@@ -97,13 +97,7 @@ const ComplaintsPage = () => {
   console.log("민원 목록: ", pageData);
 
   return (
-    <>
-      {/* 탭 버튼 */}
-      <div className="complaint-toggle">
-        <button onClick={() => setActiveTab("complaints")}>민원 목록</button>
-        <button onClick={() => setActiveTab("ai")}>AI 요약</button>
-      </div>
-
+    <div style={{ padding: 24, paddingTop: 0 }}>
       {/* 본문 */}
       <div className="component">
         <div className="sub">
@@ -156,8 +150,8 @@ const ComplaintsPage = () => {
                 <table className="complaint-table">
                   <thead>
                     <tr>
-                      <th>번호</th>
-                      <th>제목</th>
+                      <th style={{ width: "70px" }}>번호</th>
+                      <th style={{ width: "300px" }}>제목</th>
                       <th>카테고리</th>
                       <th>위치</th>
                       <th>접수일</th>
@@ -174,43 +168,63 @@ const ComplaintsPage = () => {
                         </td>
                       </tr>
                     ) : (
-                      list.map((c) => (
-                        <tr key={c.complaintId}>
-                          <td>{c.complaintId}</td>
-                          <td>{c.title}</td>
-                          <td>{CATEGORY_LABEL[c.category] || c.category}</td>
-                          <td>
-                            {c.houseDong}동 {c.houseHo}호
-                          </td>
-                          <td>{new Date(c.createAt).toLocaleDateString()}</td>
-                          <td>
-                            {c.status === "ANSWERED" ? (
-                              <p
-                                style={{
-                                  backgroundColor: "var(--blue-primary)",
-                                  color: "white",
-                                  textAlign: "center",
-                                }}
+                      <>
+                        {list.map((c) => (
+                          <tr key={c.complaintId}>
+                            <td>{c.complaintId}</td>
+                            <td style={{ fontSize: "15px" }}>{c.title}</td>
+                            <td>{CATEGORY_LABEL[c.category] || c.category}</td>
+                            <td>
+                              {c.houseDong}동 {c.houseHo}호
+                            </td>
+                            <td>{new Date(c.createAt).toLocaleDateString()}</td>
+                            <td>
+                              {c.status === "ANSWERED" ? (
+                                <p
+                                  style={{
+                                    backgroundColor: "var(--blue-primary)",
+                                    color: "white",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  답변 완료
+                                </p>
+                              ) : (
+                                <p
+                                  style={{
+                                    backgroundColor: "var(--status-error)",
+                                    color: "white",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  대기중
+                                </p>
+                              )}
+                            </td>
+                            <td>
+                              <button
+                                onClick={() => openDetailModal(c.complaintId)}
+                                style={{ width: "100%" }}
                               >
-                                답변 완료
-                              </p>
-                            ) : (
-                              <p
-                                style={{
-                                  backgroundColor: "var(--status-error)",
-                                  color: "white",
-                                  textAlign: "center",
-                                }}
-                              >
-                                대기중
-                              </p>
-                            )}
-                          </td>
-                          <td>
-                            <button onClick={() => openDetailModal(c.complaintId)}>상세보기</button>
-                          </td>
-                        </tr>
-                      ))
+                                상세보기
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+
+                        {/* 부족한 행 */}
+                        {Array.from({ length: Math.max(0, 10 - list.length) }).map((_, i) => (
+                          <tr key={`empty-${i}`}>
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        ))}
+                      </>
                     )}
                   </tbody>
                 </table>
@@ -221,15 +235,28 @@ const ComplaintsPage = () => {
                   ◀
                 </button>
 
-                {Array.from({ length: pageData?.totalPages || 0 }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => goToPage(i)}
-                    className={currentPage === i ? "active" : ""}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                {(() => {
+                  const total = pageData?.totalPages || 0;
+                  const pageSize = 5;
+
+                  const currentGroup = Math.floor(currentPage / pageSize);
+                  const start = currentGroup * pageSize;
+                  const end = Math.min(start + pageSize, total);
+
+                  return Array.from({ length: end - start }, (_, i) => {
+                    const pageIndex = start + i;
+
+                    return (
+                      <button
+                        key={pageIndex}
+                        onClick={() => goToPage(pageIndex)}
+                        className={currentPage === pageIndex ? "active" : ""}
+                      >
+                        {pageIndex + 1}
+                      </button>
+                    );
+                  });
+                })()}
 
                 <button
                   disabled={currentPage === (pageData?.totalPages || 1) - 1}
@@ -250,7 +277,7 @@ const ComplaintsPage = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

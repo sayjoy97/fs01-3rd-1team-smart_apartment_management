@@ -1,12 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import ElevatorScreen from "./elevator";
-import NoticeScreen from "./notice";
-import MyInfoScreen from "./myinfo";
+import { StyleSheet } from "react-native";
 import ComplaintScreen from ".";
+import MyInfoScreen from "./myinfo";
+import NoticeScreen from "./notice";
 
 export default function TabLayout() {
   const Tabs = createBottomTabNavigator();
@@ -42,16 +40,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="elevator"
-        component={ElevatorScreen}
-        options={{
-          title: "엘리베이터",
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialIcons name="elevator" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="notice"
         component={NoticeScreen}
         options={{
@@ -62,7 +50,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="myInfo"
+        name="myinfo"
         component={MyInfoScreen}
         options={{
           title: "My정보",

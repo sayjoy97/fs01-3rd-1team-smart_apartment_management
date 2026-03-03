@@ -6,6 +6,7 @@ import jwtAxios from "@/utils/jwtAxios";
 // 유저 정보
 export const getMyHouseApi = async () => {
   const res = await backendServer.get(request.userInfo);
+  console.log("로그인 유저 정보: ", res.data);
 
   return res.data;
 };

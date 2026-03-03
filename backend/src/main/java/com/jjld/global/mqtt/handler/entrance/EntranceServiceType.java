@@ -8,7 +8,8 @@ public enum EntranceServiceType {
     // 이 밑으로 복사 후 본인 파일에 붙여넣기
 
     // 토픽에서 지정한 서비스 타입을 이곳에서 관리
-    CARD;
+    CARD,
+    PASS;
 
     //          [본인 기능]
     public static EntranceServiceType from(String value) {

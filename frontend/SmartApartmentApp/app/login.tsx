@@ -1,9 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import { Building2, X } from "lucide-react";
 import { useState } from "react";
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { changePasswordApi, loginApi } from "../api/authApi";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Building2, X } from "lucide-react";
 
 export default function Login() {
   // 비밀번호 변경 모달
@@ -30,8 +30,8 @@ export default function Login() {
         password: loginData.password,
       };
 
-      const data = await loginApi(payload);
-
+      const res = await loginApi(payload);
+      const data = res.data || res;
       // 토큰이 있으면 저장
       if (data && data.accessToken) {
         await AsyncStorage.setItem("accessToken", data.accessToken);

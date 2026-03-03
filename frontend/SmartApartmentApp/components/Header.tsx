@@ -5,6 +5,7 @@ import { LogOut } from "lucide-react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { toast } from "sonner";
+import { useUser } from "@/contexts/UserContext";
 
 interface HeaderProps {
   title?: string;
@@ -12,10 +13,7 @@ interface HeaderProps {
 
 export default function Header({ title }: HeaderProps) {
   const router = useRouter();
-  const [userInfo, setUserInfo] = useState<{ houseDong: string; houseHo: string }>({
-    houseDong: "",
-    houseHo: "",
-  });
+  const { userInfo, setUserInfo } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
@@ -59,7 +57,7 @@ export default function Header({ title }: HeaderProps) {
         <View>
           {title && <Text style={styles.title}>{title}</Text>}
           <Text style={styles.userText}>
-            {userInfo.houseDong}동 {userInfo.houseHo}호
+            {userInfo?.houseDong}동 {userInfo?.houseHo}호
           </Text>
         </View>
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>

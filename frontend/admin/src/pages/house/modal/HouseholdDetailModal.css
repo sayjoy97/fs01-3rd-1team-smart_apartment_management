@@ -18,8 +18,8 @@
 .house-modal .row::before {
   content: "";
   position: absolute;
-  top: 80px;
-  bottom: 60px;
+  top: 350px;
+  bottom: 350px;
   left: 50%;
   width: 1px;
   background-color: #ccc;

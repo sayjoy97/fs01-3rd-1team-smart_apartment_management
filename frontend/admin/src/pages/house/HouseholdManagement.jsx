@@ -49,7 +49,7 @@ const HouseholdMangement = () => {
   // 에러 표시
   const [errorMsg, setErrorMsg] = useState("");
 
-  const { connectStatus, rfidUid, publish } = useMqtt("ws://223.171.136.185:9002");
+  const { connectStatus, rfidUid, publish } = useMqtt("ws://localhost:9001");
 
   const handleHouseHoChange = (e) => {
     setFilterHouseHo(e.target.value);
@@ -90,16 +90,11 @@ const HouseholdMangement = () => {
     if (connectStatus !== "connected") return;
 
     const topic = `jjld/house/000/${device}/control`;
-    console.log("topic : ", topic);
-    console.log("message: ", command);
-
     publish(topic, command);
   };
   // 모달 열기
   const openDetailModal = async (houseId) => {
     try {
-      console.log("모달열림, mqtt통신시작");
-
       const res = await houseDetail(houseId);
       setErrorMsg("");
       setSelectedHouse(res.data.data);
@@ -151,7 +146,8 @@ const HouseholdMangement = () => {
             <select
               value={filterHouseDong}
               onChange={handleHouseDongChange}
-              style={{ width: "95%", backgroundColor: "var(--background)" }}>
+              style={{ width: "95%", backgroundColor: "var(--background)" }}
+            >
               {houseDongOptions.map((ho) => (
                 <option key={ho.value} value={ho.value}>
                   {ho.label}
@@ -165,7 +161,8 @@ const HouseholdMangement = () => {
             <select
               value={filterHouseHo}
               onChange={handleHouseHoChange}
-              style={{ width: "95%", backgroundColor: "var(--background)" }}>
+              style={{ width: "95%", backgroundColor: "var(--background)" }}
+            >
               <option value="">전체</option>
               {houseHoOptions.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -175,7 +172,7 @@ const HouseholdMangement = () => {
             </select>
           </div>
           <div className="check">
-            <p style={{ marginBottom: "10px" }}>세대주</p>
+            <p>세대주</p>
             <div className="search">
               <input
                 type="text"
@@ -198,7 +195,8 @@ const HouseholdMangement = () => {
                 setSearchKeyword("");
                 setKeyword("");
               }}
-              className="clear">
+              className="clear"
+            >
               초기화
             </button>
           </div>
@@ -212,7 +210,7 @@ const HouseholdMangement = () => {
                   <th>(대표)세대주 이름</th>
                   <th>연락처</th>
                   <th>입주일</th>
-                  <th>상태</th>
+                  <th style={{ width: "100px" }}>상태</th>
                   <th>관리</th>
                 </tr>
               </thead>
@@ -224,20 +222,47 @@ const HouseholdMangement = () => {
                     </td>
                   </tr>
                 ) : (
-                  currentItems.map((h) => (
-                    <tr key={h.houseId}>
-                      <td>
-                        {h.houseDong}동 {h.houseHo}호
-                      </td>
-                      <td>{h.householderName}</td>
-                      <td>{h.householderPhone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")}</td>
-                      <td>{h.moveInAt}</td>
-                      {h.houseStatus === true ? <td>거주중</td> : <td>공실</td>}
-                      <td>
-                        <button onClick={() => openDetailModal(h.houseId)}>관리</button>
-                      </td>
-                    </tr>
-                  ))
+                  <>
+                    {currentItems.map((h) => (
+                      <tr key={h.houseId}>
+                        <td>
+                          {h.houseDong}동 {h.houseHo}호
+                        </td>
+                        <td>{h.householderName}</td>
+                        <td>{h.householderPhone?.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")}</td>
+                        <td>{h.moveInAt}</td>
+                        <td>
+                          <span
+                            className={
+                              h.houseStatus ? "status-badge occupied" : "status-badge empty"
+                            }
+                          >
+                            {h.houseStatus ? "거주중" : "공실"}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => openDetailModal(h.houseId)}
+                            style={{ width: "100%" }}
+                          >
+                            관리
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* 부족한 행 채우기 */}
+                    {Array.from({ length: Math.max(0, 10 - currentItems.length) }).map((_, i) => (
+                      <tr key={`empty-${i}`}>
+                        <td>&nbsp;</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </>
                 )}
               </tbody>
             </table>
@@ -247,17 +272,35 @@ const HouseholdMangement = () => {
             <button onClick={() => setCurrentPage((p) => p - 1)} disabled={currentPage === 1}>
               ◀
             </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                disabled={currentPage === i + 1}>
-                {i + 1}
-              </button>
-            ))}
+
+            {(() => {
+              const pageSize = 5;
+              const total = totalPages;
+
+              const currentGroup = Math.floor((currentPage - 1) / pageSize);
+
+              const start = currentGroup * pageSize + 1;
+              const end = Math.min(start + pageSize - 1, total);
+
+              return Array.from({ length: end - start + 1 }, (_, i) => {
+                const pageNumber = start + i;
+
+                return (
+                  <button
+                    key={pageNumber}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    disabled={currentPage === pageNumber}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              });
+            })()}
+
             <button
               onClick={() => setCurrentPage((p) => p + 1)}
-              disabled={currentPage === totalPages}>
+              disabled={currentPage === totalPages}
+            >
               ▶
             </button>
           </div>

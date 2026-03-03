@@ -30,7 +30,9 @@ export default function EntranceControlModal({ entrance, imageSrc, onConfirm, on
           {imageSrc ? (
             <img src={imageSrc} alt="camera" className="cctv-view" />
           ) : (
-            <div className="loading-placeholder">카메라 영상을 불러오는 중...</div>
+            <div className="loading-placeholder">
+              {entrance.houseDong}동 cctv가 아직 설치중입니다.
+            </div>
           )}
         </div>
 

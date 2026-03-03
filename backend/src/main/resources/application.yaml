@@ -28,7 +28,7 @@ spring:
     defer-datasource-initialization: true
 
   mqtt:
-    url: ${MQTT_URL} # 브로커의 주소
+    url: tcp://localhost:1883 # 브로커의 주소
     client-id: jjld-apartment-management2
     topic:
       command: jjld/command
