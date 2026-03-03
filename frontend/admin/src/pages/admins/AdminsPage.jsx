@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { toast } from "sonner";
+import {useEffect, useState, useCallback} from "react";
+import {toast} from "sonner";
 
 import {
   createAdmin,
@@ -86,7 +86,6 @@ export default function AdminsPage() {
 
     createAdmin(createAdminForm)
       .then((res) => {
-        console.log("관리자 추가 성공:", res);
         toast.success("관리자가 추가되었습니다");
         setIsCreateModalOpen(false);
         setCreateAdminForm({
@@ -98,7 +97,6 @@ export default function AdminsPage() {
         fetchAdmins(); // 새로 추가된 관리자 목록을 다시 불러옴
       })
       .catch((err) => {
-        console.error("관리자 추가 실패:", err);
         toast.error("관리자 추가에 실패했습니다");
       });
   };
@@ -126,7 +124,7 @@ export default function AdminsPage() {
         const statsData = res.data;
         setAdminsStats(statsData);
       })
-      .catch((err) => console.error("통계 로딩 실패:", err));
+      .catch((err) => {});
   }, []);
 
   // 2. 관리자 목록 가져오기 함수 (useCallback으로 메모이제이션)
@@ -149,9 +147,7 @@ export default function AdminsPage() {
         setAdmins(pageData.content || []);
         setTotalPages(pageData.totalPages || 0);
       })
-      .catch((err) => {
-        console.error(err);
-      });
+      .catch((err) => {});
   }, [page, searchCond]); // 여기서 searchCond를 넣어두면 필터 바뀔 때마다 자동 검색됨
 
   // 3. 목록 호출 Effect
@@ -179,15 +175,13 @@ export default function AdminsPage() {
 
     updateAdminRole(adminId, targetAdminId, editRoleForm)
       .then((res) => {
-        console.log("관리자 권한 수정 성공:", res);
         toast.success("관리자 권한이 수정되었습니다");
-        setEditRoleForm({ adminPass: "", adminRole: "" });
+        setEditRoleForm({adminPass: "", adminRole: ""});
         fetchAdmins();
         setIsEditRoleModalOpen(false);
       })
       .catch((err) => {
-        console.error("관리자 권한 수정 실패:", err);
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "관리자 권한 수정에 실패했습니다");
       });
   };
@@ -202,15 +196,13 @@ export default function AdminsPage() {
 
     deleteAdmin(adminId, targetAdminId, deleteAdminForm)
       .then((res) => {
-        console.log("관리자 삭제 성공:", res);
         toast.success("관리자가 삭제되었습니다");
         setIsDeleteModalOpen(false);
-        setDeleteAdminForm({ adminPass: "" });
+        setDeleteAdminForm({adminPass: ""});
         fetchAdmins();
       })
       .catch((err) => {
-        console.error("관리자 삭제 실패:", err);
-        const { code, message } = err.response.data.error;
+        const {code, message} = err.response.data.error;
         toast.error(message || "관리자 삭제에 실패했습니다");
       });
   };
@@ -248,7 +240,7 @@ export default function AdminsPage() {
         open={isCreateModalOpen}
         onClose={() => {
           setIsCreateModalOpen(false);
-          setCreateAdminForm({ adminLoginId: "", adminName: "", adminPass: "", adminRole: "" });
+          setCreateAdminForm({adminLoginId: "", adminName: "", adminPass: "", adminRole: ""});
         }}
         formData={createAdminForm}
         setFormData={setCreateAdminForm}
@@ -269,7 +261,7 @@ export default function AdminsPage() {
         open={isEditRoleModalOpen}
         onClose={() => {
           setIsEditRoleModalOpen(false);
-          setEditRoleForm({ adminPass: "", adminRole: "" });
+          setEditRoleForm({adminPass: "", adminRole: ""});
         }}
         admin={selectedAdmin}
         editRole={editRoleForm}
@@ -283,7 +275,7 @@ export default function AdminsPage() {
         open={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setDeleteAdminForm({ adminPass: "" });
+          setDeleteAdminForm({adminPass: ""});
         }}
         admin={selectedAdmin}
         deleteForm={deleteAdminForm}
