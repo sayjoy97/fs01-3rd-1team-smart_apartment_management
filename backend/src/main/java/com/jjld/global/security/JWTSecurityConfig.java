@@ -54,6 +54,7 @@ public class JWTSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/account/api/login","/account/api/refresh", "/admin/api/login", "/admin/api/find-pass", "/admin/api/change-pass", "/admin/api/refresh", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/cargate_image/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())

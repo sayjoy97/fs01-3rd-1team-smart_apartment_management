@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./HouseholdDetailModal.css";
 
 const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
-  if (!data) return null;
+  const [cardInput, setCardInput] = useState("");
 
   console.log("세대 상세: ", data);
 
@@ -16,8 +16,6 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
     householdSize: data.householdSize || 0,
     cardUid: data.cardUid || [],
   });
-
-  const [cardInput, setCardInput] = useState("");
 
   // 연락처 자동 하이픈
   const handlePhoneChange = (e) => {
@@ -133,6 +131,8 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
     }));
   };
 
+  if (!data) return null;
+
   console.log("카드", rfidUid);
   return (
     <div className="modal-overlay">
@@ -225,8 +225,7 @@ const HouseholdDetailModal = ({ data, onSave, rfidUid, onClose, errorMsg }) => {
                   borderRadius: "6px",
                   marginTop: "6px",
                   color: "white",
-                }}
-              >
+                }}>
                 카드 추가
               </button>
               <div className="card-list">

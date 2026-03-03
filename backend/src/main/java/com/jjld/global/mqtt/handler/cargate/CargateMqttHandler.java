@@ -33,7 +33,7 @@ public class CargateMqttHandler implements MqttMessageHandler {
         try{
             switch (serviceType){
                 case ENTRY, EXIT:
-                    if (message[3].endsWith(".jpg")) {
+                    if (message[4].endsWith(".jpg")) {
                         cargateService.AddToTheAccessLog(payload, serviceType);
                         break;
                     }

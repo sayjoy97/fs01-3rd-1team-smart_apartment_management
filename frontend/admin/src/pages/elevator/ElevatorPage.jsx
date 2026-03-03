@@ -1,7 +1,8 @@
-import {useCallback, useEffect, useState} from "react";
-import {AlertTriangle, Wrench, Play, DoorOpen} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { AlertTriangle, Wrench, Play, DoorOpen } from "lucide-react";
 // import {ImageWithFallback} from "../../components/figma/ImageWithFallback";
-import {toast} from "sonner";
+import { toast } from "sonner";
+import styles from "./ElevatorPage.module.css";
 import {
   createElevator,
   deleteElevator,
@@ -46,7 +47,7 @@ export function ElevatorPage() {
       })
       .catch((err) => {
         console.error("엘리베이터 통계 정보 조회 실패:", err);
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "엘리베이터 통계 정보 조회에 실패했습니다");
       });
   }, []);
@@ -67,12 +68,12 @@ export function ElevatorPage() {
       .then((res) => {
         toast.success("엘리베이터가 등록되었습니다");
         setIsCreateElevatorModalOpen(false);
-        setCreateElevatorForm({dong: "", hogi: ""});
+        setCreateElevatorForm({ dong: "", hogi: "" });
         fetchElevators();
       })
       .catch((err) => {
         console.error("엘리베이터 등록 실패:", err);
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "엘리베이터 등록에 실패했습니다");
       });
   };
@@ -129,7 +130,7 @@ export function ElevatorPage() {
         fetchElevators();
       })
       .catch((err) => {
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "상태 변경에 실패했습니다.");
       });
   };
@@ -147,11 +148,11 @@ export function ElevatorPage() {
         toast.success("엘리베이터가 삭제되었습니다.");
         setIsDeleteElevatorModalOpen(false);
         setSelectedElevatorId();
-        setDeleteElevatorForm({adminPass: ""});
+        setDeleteElevatorForm({ adminPass: "" });
         fetchElevators();
       })
       .catch((err) => {
-        const {code, message} = err.response.data.error;
+        const { code, message } = err.response.data.error;
         toast.error(message || "엘리베이터 삭제에 실패했습니다.");
       });
   };
@@ -170,7 +171,7 @@ export function ElevatorPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={styles.container12}>
       {/* 통계 카드 */}
       <ElevatorsStatsSection
         elevatorsStats={elevatorsStats}
@@ -235,7 +236,7 @@ export function ElevatorPage() {
         open={isDeleteElevatorModalOpen}
         close={() => {
           setIsDeleteElevatorModalOpen(false);
-          setDeleteElevatorForm({adminPass: ""});
+          setDeleteElevatorForm({ adminPass: "" });
           setSelectedElevator();
         }}
         onDelete={handleDeleteElevator}
