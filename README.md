@@ -57,6 +57,10 @@
 - **Database**: MariaDB (DBeaver)
 - **Communication**: MQTT (Mosquitto), I2C, Serial Communication
 
+### 📗 ERD
+![main](https://github.com/user-attachments/assets/e7fbfa79-fe4d-4366-b4cc-0fd6ed09028a)
+
+
 ### 💡 주요 기능 요약
 
 1. **엘리베이터 관리**: 실시간 위치 표시, 스텝 모터 시뮬레이션, LCD 내부 정보 출력
