@@ -7,9 +7,20 @@
 
 ---
 
-## 🎥 1. 프로젝트 시연 영상
+## 🎥 1. 프로젝트 시연 영상 및 산출물
 
-- **영상 보기**: [(YouTube 링크)]
+### 📌 프로젝트 시연 영상
+
+▶ [유튜브-시연 영상 바로가기](https://youtu.be/43mlDr0dnbs?si=iM4c-ZUGfxsSekom)
+| 공동현관 | 차량 출입 차단기 | 세대 간 층간소음 + 공용설비 | 엘리베이터 |
+|:--------:|:----------------:|:----------------:|:----------------:|
+| <img src="https://github.com/user-attachments/assets/3bb4fd1c-d91c-4c05-b298-9692949eae26" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/79b0dc80-ce5e-4ec6-9407-e81c2e06fd21" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/e5bf795b-bff4-40d9-b9ba-29f4bd77b695" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/9b86ae78-93ba-4490-b711-ead29bcb4071" width="180px" height="150px" style="object-fit:cover;"> |
+| 키패드 및 RFID 출입 통제 | 차량 OCR 출입 차단 제어 | 층간 소음 및 전력 측정·제어 | IoT 엘리베이터 제어 |
+
+### 📁 프로젝트 산출물
+프로젝트 계획서, 요구사항 정의서, 화면 설계서, API 명세서, ERD, 최종 보고서 등 전체 산출물은 아래 링크에서 확인하실 수 있습니다.
+
+▶ [Google Drive 바로가기](https://drive.google.com/drive/folders/14c2WsRr_N2Yw4wAXBgyR68jDmxspuLa4)
 
 ---
 
@@ -89,6 +100,8 @@
 | **통합 관제**    | 대시보드 시각화 성공       | 실시간 채팅 기능을 도입하여 민원 처리 실시간성 강화         |
 | **데이터 분석**  | 전력/소음 데이터 수집 성공 | 누적 데이터를 활용한 AI 기반 에너지 사용량 예측 모델 추가   |
 | **시스템 통합**  | HW-SW 연동 성공            | 마이크로서비스 아키텍처(MSA) 고려를 통한 시스템 확장성 확보 |
+| **AI 민원 요약**  | 스케줄러 및 관리자 수동 요청 성공            | AI 민원 분석 결과를 활용한 액추에이터 제어값 추천 기능 구현 |
+| **공동 현관 출입 통제**    | - 키패드, RFID 태그, 관리자 웹 원격 출입 구현 성공       | - 외부인의 방문 세대 호출 기능 고도화 (모바일 알림 연동) <br/>- 외부인의 관리자 호출 시 관리자 승인 기반 출입 방식 추가 구현         |
 
 ---
 
