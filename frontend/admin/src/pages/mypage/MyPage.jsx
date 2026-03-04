@@ -46,7 +46,6 @@ export default function MyPage() {
   useEffect(() => {
     getAdminInfo(localStorage.getItem("adminId"))
       .then((res) => {
-        console.log("Admin Info Response:", res.data);
         setAdminInfo(res.data.adminRes);
         setAdminStats({
           resolvedComplaintCount: res.data.resolvedComplaintCount,

@@ -6,8 +6,6 @@ import com.jjld.domain.elevator.entity.Enum.ElevatorState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface ElevatorService {
     void createElevator(Long adminId, ElevatorReq elevatorReq);
 

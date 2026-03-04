@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+
 @Repository
 public interface NoisePolicyRepository extends JpaRepository<NoisePolicy, Long> {
     // 현재 활성중인 정책이 뭔지 조회

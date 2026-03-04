@@ -6,8 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="1d4baeae-92f3-4645-a5ae-300fc8f0f3dc" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ardu/energy/actu.ino" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/license_plate/mymqtt.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/mymqtt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" beforeDir="false" afterPath="$PROJECT_DIR$/license_plate/plate_detector_byAI.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/LogDetailByRegisResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/LogDetailByRegisResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/RegisCarDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/dto/RegisCarDetailResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/domain/cargate/service/CargateServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/handler/cargate/CargateMqttHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/mqtt/handler/cargate/CargateMqttHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/security/JWTSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/java/com/jjld/global/security/JWTSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/api/backendServer.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/api/backendServer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/CargatePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/CargatePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.css" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/src/pages/cargate/LogDetailModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/admin/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/admin/vite.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +67,7 @@
     &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/NOVA_fullstack/Workspace/fs01-3rd-1team-smart_apartment_management/AI/license_plate&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -70,12 +80,13 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\AI\license_plate" />
       <recent name="C:\Workspace\fs01-3rd-1team-smart_apartment_management\AI\license_plate" />
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\images" />
       <recent name="C:\NOVA_fullstack\Workspace\fs01-3rd-1team-smart_apartment_management\ai\test\Koushim_yolov8-license-plate-detection" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.start">
+  <component name="RunManager" selected="Python.test">
     <configuration name="start" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ai" />
       <option name="ENV_FILES" value="" />
@@ -130,8 +141,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.start" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.start" />
       </list>
     </recent_temporary>
   </component>

@@ -5,7 +5,7 @@ import time
 from houserfid import HouseRFID
 import paho.mqtt.publish as publisher
 
-BROKER_URL = "223.171.136.185"
+BROKER_URL = "URL"
 
 class MqttWorker:
     def __init__(self):
@@ -43,7 +43,7 @@ class MqttWorker:
     # 세대 관리 RFID
     def publish_rfid(self, uid):
         topic = f"jjld/house/{self.MY_DONG}/card/result"
-        publisher.single(topic, uid, hostname=BROKER_URL, port=1884)
+        publisher.single(topic, uid, hostname=BROKER_URL, port=1883)
 
     
     # MQTT 연결 콜백
@@ -79,7 +79,7 @@ class MqttWorker:
                     print("출차 감지")
                     Thread(
                         target=self.capture_image,
-                        args=(1, "exit"),
+                        args=(0, "exit"),
                         daemon=True
                     ).start()
             
@@ -96,7 +96,7 @@ class MqttWorker:
     def mymqtt_connect(self):
         try:
             print("브로커 연결 시작")
-            self.client.connect(BROKER_URL, 1884, 60)
+            self.client.connect(BROKER_URL, 1883, 60)
             self.client.loop_forever()
         except KeyboardInterrupt:
             pass

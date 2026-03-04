@@ -14,6 +14,11 @@ const requests = {
   complaintWrite: "/user/api/write", // 민원 작성
   complaintDelete: "/user/api/delete", // 민원 삭제
   complaintUpdate: "/user/api/update", // 민원 수정
+
+  // 공지
+  noticeAllList: "notices/api/list", // 공지사항 조회
+  fixedNoticeList: "notices/api/fixed", // 고정 공지사항 조회
+  noticeDetail: "notices/api/detail", // 공지사항 상세조회
 };
 
 export default requests;

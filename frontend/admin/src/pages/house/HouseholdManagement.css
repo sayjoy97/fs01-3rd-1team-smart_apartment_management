@@ -111,6 +111,9 @@
 .search {
   display: flex;
   gap: 4px;
+  height: 25px;
+  text-align: center;
+  align-items: center;
 }
 
 .search input {
@@ -145,4 +148,26 @@
   font-weight: 500;
   font-size: 14px;
   margin: 0;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 70px;
+}
+
+.status-badge.occupied {
+  background-color: #e6f2ff;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.status-badge.empty {
+  background-color: #fff9e6;
+  color: #f9a825;
+  border: 1px solid #ffe082;
 }

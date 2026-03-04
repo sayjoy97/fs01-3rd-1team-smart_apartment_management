@@ -1,11 +1,9 @@
 package com.jjld.domain.admin.dao;
 
 import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.elevator.entity.Advertisement;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
-
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.List;

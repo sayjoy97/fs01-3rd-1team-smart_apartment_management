@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-
 //          이름 수정
 @Component("cargateMqttHandler")  // 어노테이션들 복붙
 @RequiredArgsConstructor
@@ -34,6 +32,7 @@ public class CargateMqttHandler implements MqttMessageHandler {
             switch (serviceType){
                 case ENTRY, EXIT:
                     if (message[4].endsWith(".jpg")) {
+                        System.out.println("fdsjfoisndoifnsonodsijofisfjoisfiofd");
                         cargateService.AddToTheAccessLog(payload, serviceType);
                         break;
                     }

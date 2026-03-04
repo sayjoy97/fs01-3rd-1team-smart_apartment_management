@@ -7,11 +7,7 @@ import axios from "axios";
 const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
   if (!data) return null;
 
-  console.log("민원 상세: ", data);
-
   const [answerText, setAnswerText] = useState("");
-  const [recheckModal, setRecheckModal] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
 
   // 참조 민원 조회
   const [selectedReferenceComplaint, setSelectedReferenceComplaint] = useState([]);
@@ -47,7 +43,6 @@ const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
       setSelectedReferenceComplaint(res.data);
 
       setShowReferenceModal(true);
-      console.log(res.data);
     } catch (err) {
       console.error("민원참조 실패", err);
     }
@@ -93,14 +88,14 @@ const ComplaintDetailModal = ({ data, onClose, onReplyComplete }) => {
 
   return (
     <>
-      <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-overlay">
         {/* 모달 박스*/}
         {data && (
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-box-detail" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">민원 상세보기</h3>
 
             {/* 상세 데이터 출력 */}
-            <div className="modal-content">
+            <div className="modal-content-detail">
               <div className="modal-section">
                 <label>#{data.complaintId}</label>
               </div>

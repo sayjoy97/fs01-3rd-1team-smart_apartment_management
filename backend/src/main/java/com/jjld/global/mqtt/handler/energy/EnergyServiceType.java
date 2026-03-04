@@ -2,7 +2,6 @@ package com.jjld.global.mqtt.handler.energy;
 
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.BadRequestException;
-import com.jjld.global.mqtt.handler.garden.GardenServiceType;
 
 public enum EnergyServiceType {
     // 토픽에서 지정한 서비스 타입을 이곳에서 관리

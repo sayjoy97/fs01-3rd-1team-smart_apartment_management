@@ -33,6 +33,7 @@ const failReasonTypeMap = {
   LOST_CARD: "분실 카드",
   EXPIRED_CARD: "만료된 카드",
   SYSTEM_ERROR: "시스템 에러",
+  NOT_EXIST_HOUSE: "잘못된 세대 호수 입력",
 };
 
 const EntranceDoor = () => {
@@ -84,7 +85,6 @@ const EntranceDoor = () => {
   useEffect(() => {
     getEntranceDoor()
       .then((res) => {
-        console.log("공동현관 목록 응답: ", res);
         setDoorList(res.data);
       })
       .catch((err) => console.error("공동현관 목록 조회 실패: ", err));
@@ -98,7 +98,6 @@ const EntranceDoor = () => {
       size: itemsPerPage,
     })
       .then((res) => {
-        console.log("출입기록 응답: ", res);
         setPageData(res);
       })
       .catch((err) => console.log("공동현관 출입 기록 조회중 오류 발생", err));
@@ -121,7 +120,6 @@ const EntranceDoor = () => {
   // 모달 닫기
   const closeModal = () => {
     if (modalEntrance) {
-      console.log(modalEntrance);
       controlDevice(modalEntrance.houseDong, "cam", "stop");
     }
 
@@ -161,7 +159,7 @@ const EntranceDoor = () => {
   };
 
   return (
-    <>
+    <div style={{ padding: 24, paddingTop: 0 }}>
       <div className="card-grid">
         {doorList.map((e) => (
           <div key={e.doorId} className="component">
@@ -215,7 +213,6 @@ const EntranceDoor = () => {
             </div>
           </div>
 
-          {/* 테이블 */}
           <div className="table-wrapper">
             <div className="table-scroll">
               <table className="complaint-table">
@@ -230,42 +227,53 @@ const EntranceDoor = () => {
                 <tbody>
                   {list.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ textAlign: "center", height: "300px" }}>
+                      <td colSpan={4} style={{ textAlign: "center", height: "300px" }}>
                         데이터가 없습니다
                       </td>
                     </tr>
                   ) : (
-                    list.map((l) => (
-                      <tr key={l.accessLogId}>
-                        <td>{new Date(l.accessedAt).toLocaleString()}</td>
-                        <td>
-                          {l.houseDong}동 {!l.houseHo ? "" : `${l.houseHo} 호실`}
-                        </td>
-                        <td>
-                          {accessTypeOptions.find((o) => o.value === l.accessType)?.label || "-"}
-                        </td>
-                        <td
-                          className={
-                            l.failReason && l.failReason !== "NONE"
-                              ? "fail-reason error"
-                              : "fail-reason"
-                          }
-                        >
-                          {l.failReason === "NONE" ? (
-                            <div className="row-icon">
-                              <FiCheckCircle className="icon" />
-                              {failReasonTypeMap[l.failReason]}
-                            </div>
-                          ) : (
-                            <div className="row-icon">
-                              <FiXCircle className="icon" />
+                    <>
+                      {list.map((l) => (
+                        <tr key={l.accessLogId}>
+                          <td>{new Date(l.accessedAt).toLocaleString()}</td>
+                          <td>
+                            {l.houseDong}동 {!l.houseHo ? "" : `${l.houseHo} 호실`}
+                          </td>
+                          <td>
+                            {accessTypeOptions.find((o) => o.value === l.accessType)?.label || "-"}
+                          </td>
+                          <td
+                            className={
+                              l.failReason && l.failReason !== "NONE"
+                                ? "fail-reason error"
+                                : "fail-reason"
+                            }
+                          >
+                            {l.failReason === "NONE" ? (
+                              <div className="row-icon">
+                                <FiCheckCircle className="icon" />
+                                {failReasonTypeMap[l.failReason]}
+                              </div>
+                            ) : (
+                              <div className="row-icon">
+                                <FiXCircle className="icon" />
+                                {failReasonTypeMap[l.failReason] || "-"}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
 
-                              {failReasonTypeMap[l.failReason] || "-"}
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                      {/* 부족한 행 */}
+                      {Array.from({ length: 10 - list.length }).map((_, index) => (
+                        <tr key={`empty-${index}`}>
+                          <td>&nbsp;</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      ))}
+                    </>
                   )}
                 </tbody>
               </table>
@@ -276,15 +284,29 @@ const EntranceDoor = () => {
                 ◀
               </button>
 
-              {Array.from({ length: pageData?.totalPages || 0 }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goToPage(i)}
-                  className={currentPage === i ? "active" : ""}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              {(() => {
+                const total = pageData?.totalPages || 0;
+                const pageSize = 5; // 고정 개수
+
+                const currentGroup = Math.floor(currentPage / pageSize);
+
+                const start = currentGroup * pageSize;
+                const end = Math.min(start + pageSize, total);
+
+                return Array.from({ length: end - start }, (_, i) => {
+                  const pageIndex = start + i;
+
+                  return (
+                    <button
+                      key={pageIndex}
+                      onClick={() => goToPage(pageIndex)}
+                      className={currentPage === pageIndex ? "active" : ""}
+                    >
+                      {pageIndex + 1}
+                    </button>
+                  );
+                });
+              })()}
 
               <button
                 disabled={currentPage === (pageData?.totalPages || 1) - 1}
@@ -306,7 +328,7 @@ const EntranceDoor = () => {
           />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

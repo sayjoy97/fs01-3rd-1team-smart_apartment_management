@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import {
+  Button,
   FlatList,
   Modal,
   ScrollView,
@@ -9,10 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Button,
 } from "react-native";
 
-import { Picker } from "@react-native-picker/picker";
 import {
   complaintDeleteApi,
   complaintDetailApi,
@@ -20,6 +19,7 @@ import {
   complaintUpdateApi,
   complaintWrtieApi,
 } from "@/api/UserApi";
+import { Picker } from "@react-native-picker/picker";
 import Toast from "react-native-toast-message";
 import { toast } from "sonner";
 
@@ -81,6 +81,17 @@ export default function ComplaintScreen() {
   const [referencedIds, setReferencedIds] = useState<number[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+
+    return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+  };
 
   useEffect(() => {
     const init = async () => {
@@ -170,7 +181,6 @@ export default function ComplaintScreen() {
     try {
       const res = await complaintDetailApi(complaintId);
       setSelectedComplaint(res.data);
-      console.log(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -390,21 +400,37 @@ export default function ComplaintScreen() {
               <FlatList<Complaint>
                 data={paginatedComplaints}
                 keyExtractor={(item) => item.complaintId.toString()}
+                contentContainerStyle={{ paddingBottom: 40 }} // 리스트 아래 여백
+                showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    style={styles.card}
+                    style={styles.complaintCard} // 스타일 적용
                     onPress={() => handleSelectComplaint(item.complaintId)}
                   >
-                    <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
-                    <Text>{getCategoryLabel(item.category)}</Text>
-                    <Text>{item.createAt}</Text>
-                    <Text>{item.status === "ANSWERED" ? "답변완료" : "대기중"}</Text>
+                    <View style={styles.complaintHeader}>
+                      <Text style={styles.complaintTitle}>{item.title}</Text>
+                      <Text style={styles.complaintCategory}>
+                        {getCategoryLabel(item.category)}
+                      </Text>
+                    </View>
+
+                    <View style={styles.complaintInfo}>
+                      <Text style={styles.complaintDate}>{formatDate(item.createAt)}</Text>
+                      <Text
+                        style={[
+                          styles.complaintStatus,
+                          item.status === "ANSWERED" ? styles.answered : styles.pending,
+                        ]}
+                      >
+                        {item.status === "ANSWERED" ? "답변완료" : "대기중"}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 )}
               />
             ) : (
-              <View style={{ alignItems: "center", marginTop: 40 }}>
-                <Text style={{ color: "#6B7280" }}>현재 작성한 민원이 없습니다</Text>
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>현재 작성한 민원이 없습니다</Text>
               </View>
             )}
 
@@ -493,8 +519,10 @@ export default function ComplaintScreen() {
                   </View>
                 )}
 
-                <Text>답변자: {selectedComplaint.adminName ?? "-"}</Text>
-                <Text style={{ color: selectedComplaint.answer ? "green" : "orange" }}>
+                <Text style={styles.referenceAdmin}>
+                  답변자: {selectedComplaint.adminName ?? "-"}
+                </Text>
+                <Text style={{ color: selectedComplaint.answer ? "green" : "#dc362e" }}>
                   {selectedComplaint.answer ?? "아직 답변이 없습니다."}
                 </Text>
                 {selectedComplaint.answer && (
@@ -508,6 +536,7 @@ export default function ComplaintScreen() {
                     backgroundColor: selectedComplaint.canEdit ? "#4f46e5" : "#999",
                     padding: 8,
                     borderRadius: 6,
+                    marginTop: 10,
                   }}
                   disabled={!selectedComplaint.canEdit}
                   onPress={() => {
@@ -541,7 +570,7 @@ export default function ComplaintScreen() {
                       }
                     }}
                   >
-                    <Text style={styles.buttonSecondaryText}>삭제</Text>
+                    <Text style={{ color: "#ffffff", fontWeight: "bold" }}>삭제</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{
@@ -553,13 +582,6 @@ export default function ComplaintScreen() {
                     }}
                     disabled={!selectedComplaint.canEdit}
                     onPress={() => {
-                      console.log("보내는 값:", {
-                        title: detailTitle,
-                        category: detailCategory,
-                        content: detailContent,
-
-                        referenceId: referencedIds,
-                      });
                       if (selectedComplaint.canEdit) {
                         handleEdit(selectedComplaint.complaintId, {
                           title: detailTitle,
@@ -659,31 +681,37 @@ export default function ComplaintScreen() {
                   <View style={{ backgroundColor: "#fff", borderRadius: 8, padding: 16 }}>
                     {selectedReferenceComplaint && (
                       <>
-                        <Text style={{ fontWeight: "bold", fontSize: 16, marginBottom: 8 }}>
-                          작성한 민원 제목: {selectedReferenceComplaint.title}
-                        </Text>
-                        <Text style={{ marginBottom: 4 }}>
-                          작성한 내용: {selectedReferenceComplaint.content}
-                        </Text>
-                        <Text style={{ marginBottom: 4 }}>
-                          {selectedReferenceComplaint.content}
-                        </Text>
-                        <Text style={{ marginBottom: 4 }}>
-                          답변자: {selectedReferenceComplaint.adminName}
-                        </Text>
-                        <Text
-                          style={{
-                            marginBottom: 4,
-                            color: selectedReferenceComplaint.answer ? "green" : "orange",
-                          }}
+                        <ScrollView
+                          style={{ maxHeight: 300, padding: 12 }} // 높이 제한을 두고 스크롤 가능
+                          showsVerticalScrollIndicator={true}
                         >
-                          {selectedReferenceComplaint.answer ?? "아직 답변이 없습니다."}
-                        </Text>
-                        {selectedReferenceComplaint.answer && (
-                          <Text style={{ marginBottom: 12 }}>
-                            답변일: {selectedReferenceComplaint.replyAt}
+                          <Text style={styles.referenceTitle}>
+                            작성한 민원 제목: {selectedReferenceComplaint.title}
                           </Text>
-                        )}
+
+                          <Text style={styles.referenceContent}>
+                            작성한 내용: {selectedReferenceComplaint.content}
+                          </Text>
+
+                          <Text style={styles.referenceAdmin}>
+                            답변자: {selectedReferenceComplaint.adminName}
+                          </Text>
+
+                          <Text
+                            style={[
+                              styles.referenceAnswer,
+                              { color: selectedReferenceComplaint.answer ? "green" : "#dc362e" },
+                            ]}
+                          >
+                            {selectedReferenceComplaint.answer ?? "아직 답변이 없습니다."}
+                          </Text>
+
+                          {selectedReferenceComplaint.answer && (
+                            <Text style={styles.referenceReplyAt}>
+                              답변일: {selectedReferenceComplaint.replyAt}
+                            </Text>
+                          )}
+                        </ScrollView>
 
                         <TouchableOpacity
                           onPress={() => setSelectedReferenceComplaint(null)}
@@ -822,11 +850,34 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   referenceTitle: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#4F46E5",
-    marginBottom: 6,
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 8,
   },
+  referenceContent: {
+    fontSize: 14,
+    marginBottom: 8,
+    lineHeight: 20,
+    backgroundColor: "#f3f6ff",
+    padding: 6,
+  },
+  referenceAdmin: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  referenceAnswer: {
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: "500",
+    backgroundColor: "#f3f6ff",
+    padding: 6,
+  },
+  referenceReplyAt: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginBottom: 12,
+  },
+
   referenceList: {
     maxHeight: 120,
   },
@@ -871,5 +922,65 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 6,
     marginTop: 12,
+  },
+  complaintCard: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  complaintHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  complaintTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    flex: 1,
+  },
+  complaintCategory: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginLeft: 8,
+  },
+  complaintInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  complaintDate: {
+    fontSize: 12,
+    color: "#6B7280",
+  },
+  complaintStatus: {
+    fontSize: 12,
+    fontWeight: "500",
+    paddingVertical: 2,
+    paddingHorizontal: 6,
+    borderRadius: 6,
+    overflow: "hidden",
+  },
+  answered: {
+    backgroundColor: "#D1FAE5",
+    color: "#065F46",
+  },
+  pending: {
+    backgroundColor: "#FEF3C7",
+    color: "#92400E",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: 40,
+  },
+  emptyText: {
+    color: "#6B7280",
+    fontSize: 14,
   },
 });

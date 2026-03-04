@@ -1,6 +1,5 @@
 package com.jjld.domain.house.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

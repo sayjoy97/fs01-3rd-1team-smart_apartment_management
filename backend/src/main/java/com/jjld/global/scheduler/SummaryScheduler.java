@@ -1,11 +1,9 @@
 package com.jjld.global.scheduler;
 
-
 import com.jjld.domain.complaint.ai.AiSummaryService;
 import com.jjld.domain.complaint.ai.SummaryResponse;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
-import com.jjld.domain.complaint.entity.Enum.AnalysisPeriodType;
 import com.jjld.domain.complaint.entity.Enum.SummaryStatus;
 import com.jjld.domain.complaint.repository.ComplaintAnalysisRepository;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
@@ -16,7 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Component

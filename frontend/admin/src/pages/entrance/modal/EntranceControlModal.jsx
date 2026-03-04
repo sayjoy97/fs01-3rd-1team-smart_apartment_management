@@ -14,7 +14,6 @@ export default function EntranceControlModal({ entrance, imageSrc, onConfirm, on
 
       publish(topic, command);
 
-      console.log("자식 → 부모 호출 전:", entrance.doorId, command);
       onConfirm(entrance.doorId, command);
     }
   };
@@ -30,7 +29,9 @@ export default function EntranceControlModal({ entrance, imageSrc, onConfirm, on
           {imageSrc ? (
             <img src={imageSrc} alt="camera" className="cctv-view" />
           ) : (
-            <div className="loading-placeholder">카메라 영상을 불러오는 중...</div>
+            <div className="loading-placeholder">
+              {entrance.houseDong}동 cctv가 아직 설치중입니다.
+            </div>
           )}
         </div>
 

@@ -1,7 +1,5 @@
-import axios from "axios";
-import request from "./requests";
 import backendServer from "./backendServer";
-import jwtAxios from "@/utils/jwtAxios";
+import request from "./requests";
 
 // 유저 정보
 export const getMyHouseApi = async () => {

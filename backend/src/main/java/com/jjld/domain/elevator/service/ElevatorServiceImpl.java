@@ -25,15 +25,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,6 +126,10 @@ public class ElevatorServiceImpl implements ElevatorService {
                 .message(message)
                 .build();
 
+        String topic = "jjld/command/elevator/" + elevator.getDong()  + "/" + elevator.getHogi() + "/status";
+        String payload = "{\"status\":\"" + eventType.toString() + "\"}";
+        mqttPublish.sendToMqtt(payload, topic);
+
         elevatorDAO.save(elevator);
         elevatorEventLogDAO.save(elevatorEventLog);
     }
@@ -205,7 +204,7 @@ public class ElevatorServiceImpl implements ElevatorService {
         long errorElevators = elevatorDAO.countByState(ElevatorState.ERROR);
         long repairElevators = elevatorDAO.countByState(ElevatorState.REPAIR);
 
-        ElevatorsStatsRes response = new ElevatorsStatsRes(totalElevators,  errorElevators, repairElevators);
+        ElevatorsStatsRes response = new ElevatorsStatsRes(totalElevators, errorElevators, repairElevators);
 
         return response;
     }

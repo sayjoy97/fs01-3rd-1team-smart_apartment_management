@@ -1,17 +1,11 @@
 package com.jjld.domain.house.service;
 
-import com.jjld.domain.house.dto.UserResponse;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
-import com.jjld.domain.house.dto.login.CustomWebAuthenticationDetails;
 import com.jjld.domain.house.dto.login.UserLoginRequest;
-import com.jjld.domain.house.entity.Account;
-import com.jjld.domain.house.repository.AccountRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import com.jjld.global.security.UserAuthenticationToken;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,10 +50,12 @@ public class AccountAuthenticationProvider implements AuthenticationProvider {
             throw new UnauthorizedException(ErrorCode.UNAUTHORIZED, "비활성 계정은 로그인할 수 없습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken
-                (accountDetail,
-                        null,
-                        accountDetail.getAuthorities());
+
+        return new UserAuthenticationToken(
+                accountDetail,
+                null,
+                accountDetail.getAuthorities()
+        );
     }
 
     @Override

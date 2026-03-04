@@ -1,6 +1,5 @@
 package com.jjld.domain.admin.dto;
 
-import com.jjld.domain.admin.entity.Enum.AdminRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

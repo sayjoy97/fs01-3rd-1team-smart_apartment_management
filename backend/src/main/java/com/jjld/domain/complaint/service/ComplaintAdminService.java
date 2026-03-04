@@ -4,14 +4,7 @@ import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintSearchCond;
-import com.jjld.domain.complaint.dto.user.ComplaintReference;
-import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
-import com.jjld.domain.complaint.entity.Complaint;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface ComplaintAdminService {
 

@@ -158,3 +158,20 @@
 .ldm-btn-edit:hover {
   background: #f8fafc;
 }
+
+/* 하단 정보 섹션 전용 스타일 (추가) */
+.ldm-footer-info {
+  margin-top: 4px; /* 폼 요소 사이 간격 유지 */
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0; /* 구분선 */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 강조 텍스트 (정산 금액용) */
+.ldm-field input.fee-highlight {
+  color: #ef4444; /* 강조 빨간색 */
+  font-weight: 700;
+  background: #fef2f2; /* 연한 붉은 배경 */
+}

@@ -2,9 +2,9 @@ package com.jjld.domain.noise.service;
 
 import com.jjld.domain.noise.entity.NoisePolicy;
 import com.jjld.domain.noise.repository.NoisePolicyRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 

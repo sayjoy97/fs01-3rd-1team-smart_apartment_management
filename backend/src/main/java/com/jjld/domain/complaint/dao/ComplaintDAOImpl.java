@@ -1,7 +1,5 @@
 package com.jjld.domain.complaint.dao;
 
-
-import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.repository.ComplaintRepository;
 import lombok.RequiredArgsConstructor;

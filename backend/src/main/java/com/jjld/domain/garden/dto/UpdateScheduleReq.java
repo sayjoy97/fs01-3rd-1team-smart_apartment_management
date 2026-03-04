@@ -2,7 +2,6 @@ package com.jjld.domain.garden.dto;
 
 import com.jjld.domain.garden.entity.Enum.Priority;
 import com.jjld.domain.garden.entity.Enum.ScheduleState;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

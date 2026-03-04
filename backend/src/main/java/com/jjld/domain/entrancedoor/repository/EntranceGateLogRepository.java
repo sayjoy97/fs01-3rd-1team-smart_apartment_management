@@ -1,8 +1,6 @@
 package com.jjld.domain.entrancedoor.repository;
 
-import com.jjld.domain.entrancedoor.dto.EntranceGateLogResponse;
 import com.jjld.domain.entrancedoor.entity.EntranceGateLog;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

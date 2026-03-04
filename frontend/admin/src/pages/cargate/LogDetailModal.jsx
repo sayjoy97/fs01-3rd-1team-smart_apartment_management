@@ -7,87 +7,66 @@ import {
   getLogDetail,
 } from "../../api/cargateAPI";
 
-const BASE_IMAGE_URL = "http://localhost:9600"; // 이미지 서버 주소
+const BASE_IMAGE_URL = "http://localhost:9600";
 
 export function LogDetailModal({ open, setOpen, cargateEventId }) {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-
   const [imagePath, setImagePath] = useState(null);
 
   const [formData, setFormData] = useState({
     plateNumber: "",
     vehicleType: "REGISTERED",
-    houseInfo: null,
+    houseInfo: "",
     vehicleOwner: "",
     approvalReason: "",
     startAt: "",
     endAt: "",
+    stayMinutes: 0,
+    calculatedFee: 0,
   });
 
-  // ==============================
-  // 상세 조회
-  // ==============================
+  const formatStayTime = (minutes) => {
+    if (!minutes || minutes <= 0) return "0시간 0분";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}시간 ${m}분`;
+  };
+
   useEffect(() => {
     if (!open || !cargateEventId) return;
 
     const fetchDetail = async () => {
       try {
         setLoading(true);
-
-        const res = await getLogDetail({
-          cargate_event_log_id: cargateEventId,
-        });
-        console.log("cargateEventId:", cargateEventId);
-
+        const res = await getLogDetail({ cargate_event_log_id: cargateEventId });
         if (!res?.success) return;
 
         const data = res.data;
-
-        // 이미지 경로 저장 (백엔드 필드명에 맞게 수정 가능)
         const path = data.image_path || null;
-
         setImagePath(path);
 
-        if (path) {
-          console.log(`${BASE_IMAGE_URL}/${encodeURI(imagePath)}`);
-        }
-
         let extraData = null;
-
-        // REGISTERED
         if (data.vehicleType === "REGISTERED" && data.vehicleId) {
-          const regRes = await getRegisCarDetail({
-            vehicle_id: data.vehicleId,
-          });
+          const regRes = await getRegisCarDetail({ vehicle_id: data.vehicleId });
           if (regRes?.success) extraData = regRes.data;
         }
 
-        // ADMIN_APPROVED
         if (data.vehicleType === "ADMIN_APPROVED" && data.vehicleId) {
-          const appRes = await getApproCarDetail({
-            vehicle_id: data.vehicleId,
-          });
+          const appRes = await getApproCarDetail({ vehicle_id: data.vehicleId });
           if (appRes?.success) extraData = appRes.data;
         }
-
-        // houseDong + houseHo 조합
-        const houseInfoText =
-          extraData?.houseDong && extraData?.houseHo
-            ? `${extraData.houseDong}동 ${extraData.houseHo}호`
-            : null;
 
         setFormData({
           plateNumber: data.plateNumber || "",
           vehicleType: data.vehicleType || "REGISTERED",
-
-          houseInfo: houseInfoText,
+          houseInfo: extraData?.houseInfo || "",
           vehicleOwner: extraData?.vehicleOwner || "",
-
           approvalReason: extraData?.approvalReason || "",
-
           startAt: data.entryAt?.slice(0, 16) || "",
           endAt: data.exitAt?.slice(0, 16) || "",
+          stayMinutes: data.stayMinutes || 0,
+          calculatedFee: data.calculatedFee || 0,
         });
       } catch (err) {
         console.error("상세 조회 실패", err);
@@ -99,19 +78,38 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
     fetchDetail();
   }, [open, cargateEventId]);
 
-  // 차량 유형 변경
   const handleTypeChange = (type) => {
     setFormData({
       ...formData,
       vehicleType: type,
-      houseInfo: null,
+      houseInfo: "",
       vehicleOwner: "",
       approvalReason: "",
     });
   };
 
-  // 저장
   const handleSave = async () => {
+    if (!formData.plateNumber.trim()) {
+      alert("번호판 정보를 입력해주세요.");
+      return;
+    }
+
+    if (formData.vehicleType === "REGISTERED") {
+      if (!formData.houseInfo.trim()) {
+        alert("세대 정보를 입력해주세요 (예: 101동 101호).");
+        return;
+      }
+      if (!formData.vehicleOwner.trim()) {
+        alert("소유주 정보를 입력해주세요.");
+        return;
+      }
+    } else if (formData.vehicleType === "ADMIN_APPROVED") {
+      if (!formData.approvalReason.trim()) {
+        alert("승인 사유를 입력해주세요.");
+        return;
+      }
+    }
+
     try {
       const payload = {
         plateNumber: formData.plateNumber,
@@ -132,6 +130,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
       }
     } catch (err) {
       console.error("저장 실패", err);
+      alert("저장 중 오류가 발생했습니다.");
     }
   };
 
@@ -149,7 +148,6 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
   return (
     <div className="ldm-backdrop" onClick={handleClose}>
       <div className="ldm-card-horizontal" onClick={(e) => e.stopPropagation()}>
-        {/* ================= 왼쪽 이미지 (4:3 고정) ================= */}
         <div className="ldm-image-container">
           <div className="ldm-image-wrapper">
             {imagePath ? (
@@ -160,7 +158,6 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
           </div>
         </div>
 
-        {/* ================= 오른쪽 정보 (컴팩트 레이아웃) ================= */}
         <div className="ldm-content">
           <h2 className="ldm-title">차량 상세 정보</h2>
 
@@ -174,6 +171,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                   value={formData.plateNumber}
                   disabled={!isEditMode}
                   onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
+                  placeholder="예: 12가 3456"
                 />
               </div>
 
@@ -189,13 +187,13 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 </select>
               </div>
 
+              {/* 입차/출차 시간 필드: 항상 disabled로 설정 */}
               <div className="ldm-field">
                 <label>입차시간</label>
                 <input
                   type="datetime-local"
                   value={formData.startAt}
-                  disabled={!isEditMode}
-                  onChange={(e) => setFormData({ ...formData, startAt: e.target.value })}
+                  disabled // 수정 모드에서도 수정 불가
                 />
               </div>
 
@@ -204,8 +202,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 <input
                   type="datetime-local"
                   value={formData.endAt}
-                  disabled={!isEditMode}
-                  onChange={(e) => setFormData({ ...formData, endAt: e.target.value })}
+                  disabled // 수정 모드에서도 수정 불가
                 />
               </div>
 
@@ -213,7 +210,12 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                 <>
                   <div className="ldm-field">
                     <label>세대 정보</label>
-                    <input value={formData.houseInfo || "-"} disabled />
+                    <input
+                      value={formData.houseInfo}
+                      disabled={!isEditMode}
+                      onChange={(e) => setFormData({ ...formData, houseInfo: e.target.value })}
+                      placeholder="예: 101동 101호"
+                    />
                   </div>
                   <div className="ldm-field">
                     <label>소유주</label>
@@ -221,6 +223,7 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                       value={formData.vehicleOwner}
                       disabled={!isEditMode}
                       onChange={(e) => setFormData({ ...formData, vehicleOwner: e.target.value })}
+                      placeholder="이름 입력"
                     />
                   </div>
                 </>
@@ -233,9 +236,33 @@ export function LogDetailModal({ open, setOpen, cargateEventId }) {
                     value={formData.approvalReason}
                     disabled={!isEditMode}
                     onChange={(e) => setFormData({ ...formData, approvalReason: e.target.value })}
+                    placeholder="승인 사유 입력"
                   />
                 </div>
               )}
+
+              <div className="ldm-footer-info">
+                <div className="ldm-field">
+                  <label>체류 시간</label>
+                  <input
+                    value={formatStayTime(formData.stayMinutes)}
+                    disabled
+                    style={{ cursor: "default" }}
+                  />
+                </div>
+
+                {formData.vehicleType === "UNREGISTERED" && (
+                  <div className="ldm-field">
+                    <label>정산 금액</label>
+                    <input
+                      className="fee-highlight"
+                      value={`${formData.calculatedFee?.toLocaleString()}원`}
+                      disabled
+                      style={{ cursor: "default" }}
+                    />
+                  </div>
+                )}
+              </div>
 
               <div className="ldm-buttons">
                 {!isEditMode ? (

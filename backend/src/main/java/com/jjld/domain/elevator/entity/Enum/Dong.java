@@ -15,4 +15,13 @@ public enum Dong {
     public int getDong() {
         return dong;
     }
+
+    public static Dong fromDong(int dong) {
+        for (Dong d : values()) {
+            if (d.getDong() == dong) {
+                return d;
+            }
+        }
+        throw new IllegalArgumentException("Invalid dong: " + dong);
+    }
 }

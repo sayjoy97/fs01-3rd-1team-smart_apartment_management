@@ -1,6 +1,5 @@
 package com.jjld.domain.complaint.dao;
 
-import com.jjld.domain.complaint.dto.user.ComplaintUserWrite;
 import com.jjld.domain.complaint.entity.Complaint;
 import org.springframework.data.jpa.repository.EntityGraph;
 

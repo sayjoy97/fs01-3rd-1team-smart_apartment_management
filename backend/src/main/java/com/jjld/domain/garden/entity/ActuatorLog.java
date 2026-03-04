@@ -4,7 +4,10 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.garden.entity.Enum.ActionType;
 import com.jjld.domain.garden.entity.Enum.ControlType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;

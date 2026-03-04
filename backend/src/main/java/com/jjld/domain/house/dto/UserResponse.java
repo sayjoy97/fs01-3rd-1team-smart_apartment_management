@@ -1,7 +1,5 @@
 package com.jjld.domain.house.dto;
 
-
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

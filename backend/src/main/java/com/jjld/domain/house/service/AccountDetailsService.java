@@ -1,13 +1,9 @@
 package com.jjld.domain.house.service;
 
 import com.jjld.domain.admin.dao.AdminDAO;
-import com.jjld.domain.admin.entity.Admin;
-import com.jjld.domain.admin.security.AdminUserDetail;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
 import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.repository.AccountRepository;
-import com.jjld.global.exception.ErrorCode;
-import com.jjld.global.exception.businessexceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;

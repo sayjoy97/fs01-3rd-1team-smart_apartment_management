@@ -58,7 +58,7 @@ class MqttWorker:
             img = self.base64_to_cv2(myval)
 
             # 이미지 잘 불러와지는지 테스트
-            # cv2.imwrite("image.jpg", img)
+            cv2.imwrite("image.jpg", img)
 
             gate = topic.split("/")[2]
 
