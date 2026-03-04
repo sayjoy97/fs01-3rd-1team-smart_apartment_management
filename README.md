@@ -33,7 +33,7 @@
 | **노건우** | **Project Manager** | - 차량 번호판 추출 AI 모델(YOLOv8 + EasyOCR) 개발<br>- 차량 출입 관리 로직 및 요금 정산 시스템 End-to-End 개발 <br/>- 공지사항 End-to-End 개발 총괄<br/>- 산출물 최종정리 담당                                           | [geonwoo1226](https://github.com/geonwoo1226) |
 | **이다온** | **ERD Manager**     | - 입주민 출입 관리(RFID) 및 통합 민원 관리 End-to-End 개발 <br>- KoBERT 기반 민원 요약 AI 모델 및 DB 스키마 설계<br/>- 세대관리 End-to-End 개발 총괄<br/>- 입주민 네이티브 앱 개발 총괄 <br/>- 최종 시연 영상 제작 담당자                                      | [DaOn1072](https://github.com/DaOn1072)       |
 | **장세종** | **Network Manager** | - 엘리베이터 상태 관리/시뮬레이션 및 정원 관리 End-to-End 개발 <br>- 관리자 계정 보안 및 권한 제어(Spring Security/JWT)<br/>- 관리자 관리 시스템 End-to-End 개발<br/>- API 오류처리 총괄 담당 | [sayjoy97](https://github.com/sayjoy97)       |
-| **조수민** | **Design Manager**  | - 최종 발표 담당자<br/>- 세대 간 층간소음 모니터링 및 에너지 관리 시스템 End-to-End 개발<br/>- 웹 대시보드 구성 및 개발<br>- 통합 대시보드 UI/UX 디자인 및 센서 데이터 시각화                                                | [sumin0223](https://github.com/sumin0223)     |
+| **조수민** | **Dashboard & Data Manager**  | - IoT 센서 기반 세대 간 층간소음 모니터링 시스템 End-to-End 개발<br/>- 전력 사용량 수집 및 분석 기반 에너지 관리 시스템 End-to-End 개발<br/>- 통합 웹 대시보드 설계 및 개발<br>- 관리자용 통합 모니터링 UI/UX 디자인 및 센서 데이터 시각화<br/>- 최종 발표 담당자                                                | [sumin0223](https://github.com/sumin0223)     |
 
 ---
 
