@@ -1,12 +1,10 @@
 package com.jjld.domain.energy.repository;
 
-import com.jjld.domain.energy.entity.EnergyAnalysis;
 import com.jjld.domain.energy.entity.EnergyDevice;
 import com.jjld.domain.energy.entity.EnergyMeasurement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository

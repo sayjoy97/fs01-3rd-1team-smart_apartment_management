@@ -16,7 +16,6 @@ public class RegisCarDetailResponse {
     private VehicleType vehicleType;
     List<ParkingSessionResponse> parkingSessions;
     private String vehicleOwner;
-    private int hounsDong;
-    private int houseHo;
+    private String houseInfo;
     private LocalDateTime createdAt;
 }

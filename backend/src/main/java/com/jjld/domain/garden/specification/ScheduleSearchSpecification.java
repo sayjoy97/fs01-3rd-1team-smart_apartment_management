@@ -6,11 +6,11 @@ import com.jjld.domain.garden.entity.Garden;
 import com.jjld.domain.garden.entity.Schedule;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.criteria.Predicate;
 
 public class ScheduleSearchSpecification {
     public static Specification<Schedule> withCondition(ScheduleSearchCondition cond) {

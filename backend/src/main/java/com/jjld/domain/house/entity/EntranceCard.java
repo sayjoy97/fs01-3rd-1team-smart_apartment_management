@@ -1,6 +1,5 @@
 package com.jjld.domain.house.entity;
 
-
 import com.jjld.domain.house.entity.Enum.CardStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

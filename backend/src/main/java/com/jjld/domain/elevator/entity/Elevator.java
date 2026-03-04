@@ -3,8 +3,12 @@ package com.jjld.domain.elevator.entity;
 import com.jjld.domain.elevator.entity.Enum.*;
 import com.jjld.domain.house.entity.House;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity

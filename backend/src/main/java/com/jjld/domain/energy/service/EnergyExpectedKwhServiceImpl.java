@@ -2,7 +2,6 @@ package com.jjld.domain.energy.service;
 
 import com.jjld.domain.energy.entity.EnergyDevice;
 import com.jjld.domain.energy.entity.EnergyPolicy;
-import com.jjld.domain.energy.entity.Enum.CompareBase;
 import com.jjld.domain.energy.entity.Enum.PeriodType;
 import com.jjld.domain.energy.repository.EnergyUsageSummaryRepository;
 import lombok.RequiredArgsConstructor;

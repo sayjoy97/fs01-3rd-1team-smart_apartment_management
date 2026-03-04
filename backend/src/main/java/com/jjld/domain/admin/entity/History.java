@@ -1,7 +1,6 @@
 package com.jjld.domain.admin.entity;
 
 import com.jjld.domain.admin.entity.Enum.AccessType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -35,14 +35,12 @@ class LicensePlateRecognizer:
         if not os.path.exists(self.img_path): os.makedirs(self.img_path)
 
     def preprocess_simple(self, img):
-        """과도한 이진화는 오히려 EasyOCR의 딥러닝 인식을 방해합니다."""
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # 단순히 크기만 키워도 인식률이 확 올라갑니다.
         resized = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
         return resized
 
     def extract_text(self, img_input):
-        """이미지에서 텍스트를 추출하고 번호판 패턴을 찾음"""
         # detail=0, paragraph=True로 설정하여 문장 단위로 읽어오기
         results = self.reader.readtext(img_input, detail=0, paragraph=True)
         joined_text = "".join(results).replace(" ", "")
@@ -68,7 +66,7 @@ class LicensePlateRecognizer:
         for box in results[0].boxes:
             found_plate = True
             x1, y1, x2, y2 = map(int, box.xyxy[0])
-            # 약간의 마진 추가
+            # 약간의 마진 추가f
             crop = img[max(0, y1 - 10):y2 + 10, max(0, x1 - 10):x2 + 10]
 
             processed_crop = self.preprocess_simple(crop)

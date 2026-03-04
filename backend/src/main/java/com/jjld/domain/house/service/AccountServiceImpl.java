@@ -1,7 +1,6 @@
 package com.jjld.domain.house.service;
 
 import com.jjld.domain.admin.dto.TokenRes;
-import com.jjld.domain.admin.entity.RefreshToken;
 import com.jjld.domain.admin.repository.RefreshTokenRepository;
 import com.jjld.domain.house.dto.HouseDetailResponse;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
@@ -17,19 +16,16 @@ import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.NotFoundException;
 import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import com.jjld.global.security.JwtTokenProvider;
-import com.jjld.global.security.UserAuthenticationToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
 
 @Service
 @RequiredArgsConstructor

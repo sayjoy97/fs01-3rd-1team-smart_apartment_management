@@ -5,7 +5,6 @@ import com.jjld.domain.admin.service.AdminDetailsService;
 import com.jjld.domain.house.service.AccountAuthenticationProvider;
 import com.jjld.domain.house.service.AccountDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -53,7 +51,7 @@ public class JWTSecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/account/api/login","/account/api/refresh", "/admin/api/login", "/admin/api/find-pass", "/admin/api/change-pass", "/admin/api/refresh", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/account/api/login", "/admin/api/login", "/admin/api/find-pass", "/admin/api/change-pass", "/admin/api/refresh", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/cargate_image/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -70,13 +68,19 @@ public class JWTSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configurationSource = new CorsConfiguration();
 
+        configurationSource.addAllowedOrigin("http://localhost:5173");
+        configurationSource.addAllowedOrigin("http://localhost:9600");
+        configurationSource.addAllowedOrigin("http://192.168.14.103:5173");
+
         // 허용 주소
         configurationSource.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://192.168.14.59:5173",
                 "http://localhost:8000/summarize",
                 "http://localhost:8081",
-                "http://localhost:9600"
+                "http://localhost:9600",
+                "http://192.168.14.103:5173",
+                "http://192.168.14.103:9600"
         ));
 
         configurationSource.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

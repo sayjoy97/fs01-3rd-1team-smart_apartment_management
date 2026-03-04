@@ -3,7 +3,10 @@ package com.jjld.domain.elevator.entity;
 import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.notice.entity.Notice;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

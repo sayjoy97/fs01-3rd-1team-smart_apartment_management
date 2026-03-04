@@ -2,11 +2,8 @@ package com.jjld.domain.complaint.repository;
 
 import com.jjld.domain.complaint.entity.Complaint;
 import com.jjld.domain.complaint.entity.ComplaintAnalysis;
-import com.jjld.domain.complaint.entity.Enum.AnalysisPeriodType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 public interface ComplaintAnalysisRepository extends JpaRepository<ComplaintAnalysis, Long> {

@@ -1,7 +1,6 @@
 package com.jjld.domain.noise.dao;
 
 import com.jjld.domain.noise.entity.Enum.ProcessStatus;
-import com.jjld.domain.noise.entity.NoiseEvent;
 import com.jjld.domain.noise.entity.NoisePolicy;
 import com.jjld.domain.noise.repository.NoiseEventAnalysisRepository;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

@@ -1,6 +1,5 @@
 package com.jjld.domain.house.dto.login;
 
-
 import lombok.*;
 
 @Builder

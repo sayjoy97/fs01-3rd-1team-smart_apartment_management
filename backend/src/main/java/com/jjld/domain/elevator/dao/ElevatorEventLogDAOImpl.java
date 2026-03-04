@@ -1,14 +1,12 @@
 package com.jjld.domain.elevator.dao;
 
-import com.jjld.domain.elevator.entity.Elevator;
 import com.jjld.domain.elevator.entity.ElevatorEventLog;
 import com.jjld.domain.elevator.repository.ElevatorEventLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
-
-import org.springframework.data.domain.Pageable;
 
 @Repository
 @RequiredArgsConstructor

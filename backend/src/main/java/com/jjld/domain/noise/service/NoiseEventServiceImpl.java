@@ -5,20 +5,17 @@ import com.jjld.domain.noise.dao.NoiseEventDAO;
 import com.jjld.domain.noise.dto.NoiseEventDetailResponse;
 import com.jjld.domain.noise.dto.NoiseEventListResponse;
 import com.jjld.domain.noise.dto.NoiseUrgentEventResponse;
-import com.jjld.domain.noise.entity.*;
 import com.jjld.domain.noise.entity.Enum.ProcessStatus;
+import com.jjld.domain.noise.entity.*;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
 import com.jjld.domain.noise.repository.NoiseHabitualZoneRepository;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Sort;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

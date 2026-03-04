@@ -1,10 +1,12 @@
 package com.jjld.domain.noise.entity;
 
-import com.jjld.domain.house.entity.House;
 import com.jjld.domain.noise.entity.Enum.NoisePattern1;
 import com.jjld.domain.noise.entity.Enum.NoisePattern2;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;

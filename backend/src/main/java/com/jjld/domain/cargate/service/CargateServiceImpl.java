@@ -132,6 +132,8 @@ public class CargateServiceImpl implements CargateService {
 
         RegisteredCar rc = registeredDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
 
+        String houseInfo = rc.getHouse().getHouseDong() + "동 " + rc.getHouse().getHouseHo() + "호";
+
         return LogDetailByRegisResponse.builder()
                 .cargateEventId(log.getCargateEventId())
                 .plateNumber(vehicle.getPlateNumber())
@@ -142,7 +144,7 @@ public class CargateServiceImpl implements CargateService {
                 .exitAt(ps.getExitAt())
                 .stayMinutes(stayMinutes)
                 .vehicleType(vehicle.getVehicleType())
-                .houseId(rc.getHouse().getHouseId())
+                .houseInfo(houseInfo)
                 .vehicleOwner(rc.getVehicleOwner())
                 .build();
     }
@@ -345,6 +347,13 @@ public class CargateServiceImpl implements CargateService {
                 ApprovedCar updateEntity = approvedDAO.findByVehicle_VehicleId(vehicle.getVehicleId());
 
                 updateEntity.setApprovalReason(request.getApprovalReason());
+                if (request.getStartAt() == null){
+                    request.setStartAt(LocalDate.now());
+                }
+                if(request.getEndAt() == null){
+                    LocalDate lastDayOfYear = LocalDate.of(LocalDate.now().getYear(), 12, 31);
+                    request.setEndAt(lastDayOfYear);
+                }
                 updateEntity.setStartAt(request.getStartAt());
                 updateEntity.setEndAt(request.getEndAt());
 
@@ -451,14 +460,16 @@ public class CargateServiceImpl implements CargateService {
                         .build()
                 ).toList();
 
+        // houseInfo정보 넘기기
+        String houseInfo = registeredCarEntity.getHouse().getHouseDong() + "동 " + registeredCarEntity.getHouse().getHouseHo() + "호";
+
         return RegisCarDetailResponse.builder()
                 .id(registeredCarEntity.getId())
                 .plateNumber(registeredCarEntity.getVehicle().getPlateNumber())
                 .vehicleType(registeredCarEntity.getVehicle().getVehicleType())
                 .parkingSessions(sessions)
                 .vehicleOwner(registeredCarEntity.getVehicleOwner())
-                .hounsDong(registeredCarEntity.getHouse().getHouseDong())
-                .houseHo(registeredCarEntity.getHouse().getHouseHo())
+                .houseInfo(houseInfo)
                 .createdAt(registeredCarEntity.getCreatedAt())
                 .build();
     }

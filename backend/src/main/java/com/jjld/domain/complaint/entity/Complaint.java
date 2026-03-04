@@ -1,6 +1,5 @@
 package com.jjld.domain.complaint.entity;
 
-import com.jjld.domain.complaint.dto.user.ComplaintUserUpdate;
 import com.jjld.domain.complaint.entity.Enum.ComplaintCategory;
 import com.jjld.domain.complaint.entity.Enum.ComplaintStatus;
 import com.jjld.domain.complaint.entity.Enum.SummaryStatus;
@@ -11,9 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity

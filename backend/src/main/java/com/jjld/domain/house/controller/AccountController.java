@@ -1,36 +1,17 @@
 package com.jjld.domain.house.controller;
 
-
 import com.jjld.domain.admin.dto.TokenRes;
-import com.jjld.domain.admin.entity.RefreshToken;
-import com.jjld.domain.admin.repository.RefreshTokenRepository;
 import com.jjld.domain.house.dto.login.*;
 import com.jjld.domain.house.entity.Account;
 import com.jjld.domain.house.service.AccountService;
-import com.jjld.domain.house.service.AccountServiceImpl;
-import com.jjld.domain.house.service.HouseService;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import com.jjld.global.response.ApiResponse;
-import com.jjld.global.security.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.attribute.UserPrincipal;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/account/api")

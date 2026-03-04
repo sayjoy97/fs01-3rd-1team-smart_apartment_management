@@ -4,7 +4,10 @@ package com.jjld.domain.garden.entity;
 import com.jjld.domain.garden.entity.Enum.DeviceState;
 import com.jjld.domain.garden.entity.Enum.DeviceType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "garden_device")

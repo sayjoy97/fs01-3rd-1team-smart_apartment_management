@@ -1,8 +1,6 @@
 package com.jjld.domain.entrancedoor.dto;
 
 import com.jjld.domain.entrancedoor.entity.EntranceGateLog;
-import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
-import com.jjld.domain.entrancedoor.entity.Enum.FailReason;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

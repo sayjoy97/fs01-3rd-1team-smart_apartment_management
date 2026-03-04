@@ -1,12 +1,10 @@
 package com.jjld.domain.complaint.entity;
 
 
-import com.jjld.domain.complaint.entity.Enum.AnalysisPeriodType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

@@ -1,28 +1,18 @@
 package com.jjld.domain.house.service;
 
-import com.jjld.domain.house.dto.UserResponse;
 import com.jjld.domain.house.dto.login.AccountUserDetail;
-import com.jjld.domain.house.dto.login.CustomWebAuthenticationDetails;
 import com.jjld.domain.house.dto.login.UserLoginRequest;
-import com.jjld.domain.house.entity.Account;
-import com.jjld.domain.house.repository.AccountRepository;
 import com.jjld.global.exception.ErrorCode;
 import com.jjld.global.exception.businessexceptions.UnauthorizedException;
 import com.jjld.global.security.UserAuthenticationToken;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

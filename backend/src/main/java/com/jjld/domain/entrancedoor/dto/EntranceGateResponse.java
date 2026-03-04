@@ -1,7 +1,9 @@
 package com.jjld.domain.entrancedoor.dto;
 
-import com.jjld.domain.entrancedoor.entity.Enum.FrontDoorStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

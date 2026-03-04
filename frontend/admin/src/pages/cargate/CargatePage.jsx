@@ -71,8 +71,7 @@ export function CargatePage() {
         <tr
           key={r.cargateEventId}
           className="cg-tr-hover"
-          onClick={() => handleRowClick(r.cargateEventId)}
-        >
+          onClick={() => handleRowClick(r.cargateEventId)}>
           <td>{r.plateNumber}</td>
           <td>
             <span className={`cg-badge type-${r.vehicleType}`}>
@@ -80,7 +79,9 @@ export function CargatePage() {
                 ? "등록"
                 : r.vehicleType === "UNREGISTERED"
                   ? "미등록"
-                  : "세대 방문"}
+                  : r.vehicleType === "ADMIN_APPROVED"
+                    ? "관리자 승인"
+                    : "세대 방문"}
             </span>
           </td>
           <td>
@@ -122,8 +123,7 @@ export function CargatePage() {
         key="first"
         className="cg-page-nav"
         onClick={() => setCurrentPage(1)}
-        disabled={currentPage === 1}
-      >
+        disabled={currentPage === 1}>
         «
       </button>,
     );
@@ -134,8 +134,7 @@ export function CargatePage() {
         key="prev"
         className="cg-page-nav"
         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-        disabled={currentPage === 1}
-      >
+        disabled={currentPage === 1}>
         ‹
       </button>,
     );
@@ -146,8 +145,7 @@ export function CargatePage() {
         <button
           key={i}
           className={i === currentPage ? "active" : ""}
-          onClick={() => setCurrentPage(i)}
-        >
+          onClick={() => setCurrentPage(i)}>
           {i}
         </button>,
       );
@@ -159,8 +157,7 @@ export function CargatePage() {
         key="next"
         className="cg-page-nav"
         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-        disabled={currentPage === totalPages}
-      >
+        disabled={currentPage === totalPages}>
         ›
       </button>,
     );
@@ -171,8 +168,7 @@ export function CargatePage() {
         key="last"
         className="cg-page-nav"
         onClick={() => setCurrentPage(totalPages)}
-        disabled={currentPage === totalPages}
-      >
+        disabled={currentPage === totalPages}>
         »
       </button>,
     );

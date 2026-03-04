@@ -1,7 +1,6 @@
 package com.jjld.domain.noise.dao;
 
 import com.jjld.domain.noise.entity.Enum.ProcessStatus;
-import com.jjld.domain.noise.entity.NoiseEvent;
 import com.jjld.domain.noise.entity.NoiseEventProcess;
 import com.jjld.domain.noise.repository.NoiseEventProcessRepository;
 import com.jjld.domain.noise.repository.NoiseEventRepository;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
 // repo에서 조회한 데이터 관리자 화면으로 반환 / 처리로직은 service(승인, 보류 ..)
 @Repository
 @RequiredArgsConstructor

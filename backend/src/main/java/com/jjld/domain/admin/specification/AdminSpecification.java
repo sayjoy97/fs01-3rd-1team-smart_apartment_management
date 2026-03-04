@@ -2,11 +2,11 @@ package com.jjld.domain.admin.specification;
 
 import com.jjld.domain.admin.dto.AdminSearchCondition;
 import com.jjld.domain.admin.entity.Admin;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.criteria.Predicate;
 
 public class AdminSpecification {
     // 관리자 필터 조회를 위한 동적 필터 쿼리

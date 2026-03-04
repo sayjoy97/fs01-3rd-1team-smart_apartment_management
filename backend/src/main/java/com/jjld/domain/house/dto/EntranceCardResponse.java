@@ -1,7 +1,5 @@
 package com.jjld.domain.house.dto;
 
-
-import com.jjld.domain.house.entity.Enum.CardStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

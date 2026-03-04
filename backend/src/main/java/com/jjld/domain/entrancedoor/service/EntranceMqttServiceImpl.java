@@ -1,6 +1,5 @@
 package com.jjld.domain.entrancedoor.service;
 
-
 import com.jjld.domain.entrancedoor.entity.EntranceGateLog;
 import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
 import com.jjld.domain.entrancedoor.entity.Enum.FailReason;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Service
 @RequiredArgsConstructor

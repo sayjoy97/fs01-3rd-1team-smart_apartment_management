@@ -4,10 +4,6 @@ import com.jjld.domain.complaint.dto.admin.ComplaintAdminAnswerResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminDetailResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintAdminResponse;
 import com.jjld.domain.complaint.dto.admin.ComplaintSearchCond;
-import com.jjld.domain.complaint.dto.user.ComplaintReference;
-import com.jjld.domain.complaint.dto.user.ComplaintUserDetailResponse;
-import com.jjld.domain.complaint.dto.user.ComplaintUserResponse;
-import com.jjld.domain.complaint.service.ComplaintAdminService;
 import com.jjld.domain.complaint.service.ComplaintAdminServiceImpl;
 import com.jjld.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/complaint/api")

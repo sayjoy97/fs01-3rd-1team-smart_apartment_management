@@ -4,7 +4,6 @@ import com.jjld.domain.admin.entity.Admin;
 import com.jjld.domain.entrancedoor.entity.Enum.AccessType;
 import com.jjld.domain.entrancedoor.entity.Enum.FailReason;
 import com.jjld.domain.house.entity.EntranceCard;
-import com.jjld.domain.house.entity.House;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
