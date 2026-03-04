@@ -58,8 +58,7 @@
 - **Communication**: MQTT (Mosquitto), I2C, Serial Communication
 
 ### 📗 ERD
-![main](https://github.com/user-attachments/assets/e7fbfa79-fe4d-4366-b4cc-0fd6ed09028a)
-
+<img width="2709" height="1689" alt="erd" src="https://github.com/user-attachments/assets/dfd251b6-9008-46e6-acb3-4097126b9a67" />
 
 ### 💡 주요 기능 요약
 
