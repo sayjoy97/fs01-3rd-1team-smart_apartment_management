@@ -12,7 +12,7 @@
 ### 📌 프로젝트 시연 영상
 
 ▶ [유튜브-시연 영상 바로가기](https://youtu.be/43mlDr0dnbs?si=iM4c-ZUGfxsSekom)
-| 공동현관 | 차량 출입 차단기 | 세대 간 층간소음 + 공용설비 | 엘리베이터 |
+| 공동현관 | 차량 출입 차단기 | 세대 간 층간소음+공용설비 | 엘리베이터 |
 |:--------:|:----------------:|:----------------:|:----------------:|
 | <img src="https://github.com/user-attachments/assets/3bb4fd1c-d91c-4c05-b298-9692949eae26" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/79b0dc80-ce5e-4ec6-9407-e81c2e06fd21" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/e5bf795b-bff4-40d9-b9ba-29f4bd77b695" width="180px" height="150px" style="object-fit:cover;"> | <img src="https://github.com/user-attachments/assets/9b86ae78-93ba-4490-b711-ead29bcb4071" width="180px" height="150px" style="object-fit:cover;"> |
 | 키패드 및 RFID 출입 통제 | 차량 OCR 출입 차단 제어 | 층간 소음 및 전력 측정·제어 | IoT 엘리베이터 제어 |
