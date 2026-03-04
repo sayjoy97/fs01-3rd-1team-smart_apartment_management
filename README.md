@@ -1,4 +1,5 @@
 # 🏢 스마트 아파트 통합 매니지먼트 시스템 (A-Pioneer)
+![main](https://github.com/user-attachments/assets/7faa49cc-05a9-478a-aa29-1978647cf63d)
 
 > **[HDC Labs] 스마트 IoT 풀스택 개발자 과정 1조 프로젝트**
 >
